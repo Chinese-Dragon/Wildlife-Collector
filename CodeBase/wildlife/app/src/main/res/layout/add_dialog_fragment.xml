@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:paddingLeft="24dp"
+        android:paddingTop="24dp"
+        android:text="New Collection"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="21sp" />
+
+    <TextView
+        android:id="@+id/subtitle_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_new"
+        android:paddingBottom="24dp"
+        android:paddingLeft="24dp"
+        android:textColor="@color/colorSecondaryText"
+        android:text="Please name new collection" />
+
+    <EditText
+        android:id="@+id/name_collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subtitle_new"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:inputType="text"
+        android:hint="Name new collection"/>
+
+    <Button
+        android:id="@+id/create"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/name_collection"
+        android:layout_marginRight="24dp"
+        android:text="CREATE" />
+
+    <Button
+        android:id="@+id/cancel"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_collection"
+        android:layout_toLeftOf="@id/create"
+        android:text="CANCEL" />
+
+</RelativeLayout>
