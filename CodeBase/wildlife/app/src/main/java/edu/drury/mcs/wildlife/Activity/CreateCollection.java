@@ -2,6 +2,7 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import edu.drury.mcs.wildlife.JavaClass.myStepperIndicator;
 
@@ -21,6 +22,13 @@ public class CreateCollection extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_collection);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Build Collection");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         // get references of pager and indicator from layout
         pager = (NonSwipeableViewPager) findViewById(R.id.pager);
         pager.setPagingEnabled(pagerScrollEnabled);
@@ -31,7 +39,6 @@ public class CreateCollection extends AppCompatActivity {
         pagerAdapter = new StepperAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         indicator.setViewPager(pager);
-
 
     }
 

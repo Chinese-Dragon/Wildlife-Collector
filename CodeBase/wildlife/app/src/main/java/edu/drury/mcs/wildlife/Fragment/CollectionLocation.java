@@ -65,4 +65,10 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
             CreateCollection.pager.setCurrentItem(2);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.print("Second pager resume");
+    }
 }

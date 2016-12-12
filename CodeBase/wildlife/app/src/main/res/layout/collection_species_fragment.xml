@@ -5,27 +5,19 @@
     tools:context="edu.drury.mcs.wildlife.Fragment.CollectionSpecies">
 
     <!-- TODO: Update blank fragment layout -->
-    <RadioGroup
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/species_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-
-    </RadioGroup>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
     <LinearLayout
+        android:id="@+id/butonGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="#80000000"
         android:weightSum="5">
 
         <Button
@@ -33,7 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BACK"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
+            android:textColor="@color/colorText"
             style="?android:attr/borderlessButtonStyle"
             android:layout_weight="1"/>
 
@@ -54,7 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="CANCEL"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
+            android:textColor="@color/colorText"
             style="?android:attr/borderlessButtonStyle"
             android:layout_weight="1"/>
 
@@ -65,9 +59,11 @@
             android:layout_weight="1"
             android:text="DONE"
             android:textColor="@color/colorText"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:background="@color/colorAccent" />
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

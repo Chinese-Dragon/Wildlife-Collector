@@ -61,4 +61,10 @@ public class CollectionDate extends Fragment implements View.OnClickListener {
             CreateCollection.pager.setCurrentItem(1);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.print("First pager resume");
+    }
 }

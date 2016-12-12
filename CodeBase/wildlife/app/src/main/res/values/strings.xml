@@ -9,4 +9,6 @@
     <string name="action_edit">Edit</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hala habibi</string>
+    <string name="title_activity_create_collection">CreateCollection</string>
+    <string name="title_activity_species_data_table">SpeciesDataTable</string>
 </resources>
