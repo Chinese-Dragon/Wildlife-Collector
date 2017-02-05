@@ -10,6 +10,10 @@ public class Species {
     private String scientificName;
     private int group_ID;
 
+    public Species(){
+
+    }
+
     public Species(String common, String science, int ID) {
         this.commonName = common;
         this.scientificName = science;

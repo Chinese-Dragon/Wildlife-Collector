@@ -8,20 +8,22 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <Button
+        android:id="@+id/getLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Location"
+        android:padding="15dp"
+        android:layout_marginTop="10dp"
+        android:background="#99000000"
+        android:textColor="@color/colorText"
+        android:layout_centerHorizontal="true"/>
 
-            <Button
-                android:id="@+id/getLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Get Location"
-                android:padding="15dp"
-                android:layout_marginTop="10dp"
-                android:background="#99000000"
-                android:textColor="@color/colorText"
-                android:layout_centerHorizontal="true"/>
-
-
-
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/getLocation" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +31,7 @@
         android:orientation="horizontal"
         android:weightSum="2"
         android:layout_margin="8dp"
-        android:layout_below="@id/getLocation">
+        android:layout_below="@id/location">
 
         <EditText
             android:layout_width="wrap_content"
