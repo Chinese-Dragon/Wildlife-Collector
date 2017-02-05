@@ -14,11 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.R;
+import edu.drury.mcs.wildlife.JavaClass.MyLocation;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,7 +29,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     private View layout;
     private Button back, cancel, next, getLocation;
     private LocationManager locationManager;
-    private TextView location;
+    private EditText coordinates;
 
 //    /**
 //     * Instead of handing over potential parameters via constructor,
@@ -59,11 +61,12 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
         getLocation = (Button) layout.findViewById(R.id.getLocation);
-        location = (TextView) layout.findViewById(R.id.location);
+        coordinates = (EditText) layout.findViewById(R.id.coordinates);
 
         back.setOnClickListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
+        getLocation.setOnClickListener(this);
 
         return layout;
     }
@@ -77,7 +80,19 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         } else if (view == next) {
             CreateCollection.pager.setCurrentItem(2);
         } else if (view == getLocation) {
-            locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+
+            MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
+                @Override
+                public void gotLocation(Location location){
+                    //Got the location!
+                    coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
+                }
+            };
+            MyLocation myLocation = new MyLocation(getActivity());
+            myLocation.getLocation(getActivity(), locationResult);
+
+            /*locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
             LocationListener locationListener = new LocationListener() {
                 @Override
@@ -114,7 +129,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                 return;
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
+*/
         }
     }
 
