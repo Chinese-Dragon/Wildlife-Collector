@@ -19,11 +19,11 @@ public class SpeciesDataTable extends AppCompatActivity {
 
         // get bundles
         int groupID = getIntent().getExtras().getInt(sAdapter.EXTRA_SPECIESID);
-        String commonName = getIntent().getExtras().getString(sAdapter.EXTRA_SPECIESNAME);
+        String scientificName = getIntent().getExtras().getString(sAdapter.EXTRA_SPECIESNAME);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(commonName);
+        getSupportActionBar().setTitle(scientificName);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

@@ -72,11 +72,11 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
         @Override
         public void onClick(View v) {
             int groupID = data.get(this.getAdapterPosition()).getGroup_ID();
-            String commonName = data.get(this.getAdapterPosition()).getCommonName();
+            String scientificName = data.get(this.getAdapterPosition()).getCommonName();
             Intent intent = new Intent(context, SpeciesDataTable.class);
             Bundle sBundle = new Bundle();
             sBundle.putInt(EXTRA_SPECIESID, groupID);
-            sBundle.putString(EXTRA_SPECIESNAME,commonName);
+            sBundle.putString(EXTRA_SPECIESNAME,scientificName);
             intent.putExtras(sBundle);
             context.startActivity(intent);
         }

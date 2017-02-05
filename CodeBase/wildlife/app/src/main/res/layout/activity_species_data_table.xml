@@ -36,7 +36,7 @@
                 android:id="@+id/common_name"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Common Name"
+                android:text="Scientific Name"
                 android:textSize="18sp"
                 android:textColor="@color/colorPrimaryText"
                 android:layout_weight="1"/>
