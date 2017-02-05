@@ -100,9 +100,9 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
                     break;
                 case 3:
                     data.add(new Species("Snakes","Serpentes",i));
-                    //break;
-                //case 4:
-                    //data.add(new Species("Turtles","Testudines",i));
+                    break;
+                case 4:
+                    data.add(new Species("Turtles","Testudines",i));
             }
         }
 
