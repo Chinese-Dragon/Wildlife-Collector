@@ -42,7 +42,7 @@ public class Collection extends Fragment {
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addDialog dialog = new addDialog();
+                AddDialog dialog = new AddDialog();
                 dialog.show(getActivity().getSupportFragmentManager(), "Add Collection");
             }
         });

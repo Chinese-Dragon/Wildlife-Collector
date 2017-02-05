@@ -15,12 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class addDialog extends DialogFragment {
+public class AddDialog extends DialogFragment {
+    public static final String EXTRA_CURRENTCOLLECTION = "edu.drury.mcs.wildlife.CURRENTCOLLECTION";;
     private AlertDialog.Builder dialogBuilder;
     private LayoutInflater inflater;
     private View dialog_view;
@@ -49,16 +51,24 @@ public class addDialog extends DialogFragment {
             public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                addDialog.this.getDialog().cancel();
+                AddDialog.this.getDialog().cancel();
             }
         });
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CollectionObj currentCollection = new CollectionObj();
+                currentCollection.setCollection_name(editText.getText().toString());
+
                 // Segue to CreateCollection activity
                 Intent intent = new Intent(getActivity(), CreateCollection.class);
-                addDialog.this.getDialog().cancel();
+
+                Bundle cBundle = new Bundle();
+                cBundle.putSerializable(EXTRA_CURRENTCOLLECTION,currentCollection);
+                intent.putExtras(cBundle);
+
+                AddDialog.this.getDialog().cancel();
                 startActivity(intent);
             }
         });

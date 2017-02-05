@@ -24,42 +24,32 @@
             android:id="@+id/currentDateChecked"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Use Current Date (12/10/2016)"
-            android:textSize="18sp"
-            android:layout_marginBottom="20dp"/>
+            android:text="Use Current Date"
+            android:textSize="16sp"
+            android:layout_marginBottom="0dp" />
+
+        <TextView
+            android:id="@+id/currentDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"/>
 
         <RadioButton
             android:id="@+id/customDateChecked"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Specify Date"
-            android:textSize="18sp"/>
-
-    </RadioGroup>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/radioGroup"
-        android:weightSum="4">
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:textSize="16sp"/>
 
         <Button
             android:id="@+id/datePickerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MM-DD-YYYY"
+            android:text="Pick a date"
             android:layout_weight="2" />
 
-        <Space
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
+    </RadioGroup>
+
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,41 +1,38 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CollectionDate extends Fragment implements View.OnClickListener {
-//    public final static String EXTRA_INDICATOR = "edu.drury.mcs.wildlife.INDICATOR";
-//    public final static String EXTRA_PAGER = "edu.drury.mcs.wildlife.PAGER";
     private View layout;
-    private Button next,cancel;
-//
-//    /**
-//     * Instead of handing over potential parameters via constructor,
-//     * use the newInstance(...) method and the Bundle for handing over parameters.
-//     * This way if detached and re-attached the object state can be stored through the arguments.
-//     * Much like Bundles attached to Intents
-//     */
-//    public static CollectionDate newInstance(myStepperIndicator indicator, NonSwipeableViewPager pager /* 3rd parameter will be collection data*/) {
-//        CollectionDate myFragment = new CollectionDate();
-//
-//        Bundle args = new Bundle();
-//        args.putSerializable(EXTRA_INDICATOR,indicator);
-//        args.putSerializable(EXTRA_PAGER, pager);
-//
-//        myFragment.setArguments(args);
-//        return myFragment;
-//    }
+    private Button next,cancel,datePickerButton;
+    private TextView currentDate;
+    private RadioButton getCurrentDate,getCustomizedDate;
+    private DatePickerDialog datePicker;
+    private SimpleDateFormat dateFormatter;
+    private CollectionObj currentCollection;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +44,15 @@ public class CollectionDate extends Fragment implements View.OnClickListener {
         // deal with buttons
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
+        datePickerButton = (Button) layout.findViewById(R.id.datePickerButton);
+        getCurrentDate = (RadioButton) layout.findViewById(R.id.currentDateChecked);
+        getCustomizedDate = (RadioButton) layout.findViewById(R.id.customDateChecked);
+
+        currentDate = (TextView) layout.findViewById(R.id.currentDate);
+        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+
+        datePickerButton.setOnClickListener(this);
+        getCurrentDate.setOnClickListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
 
@@ -59,6 +65,22 @@ public class CollectionDate extends Fragment implements View.OnClickListener {
             getActivity().finish();
         } else if (view == next) {
             CreateCollection.pager.setCurrentItem(1);
+        } else if (view == getCurrentDate) {
+
+        } else if (view == datePickerButton) {
+            if(getCustomizedDate.isChecked()) {
+                Calendar calendar = Calendar.getInstance();
+                datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.set(year,month,day);
+                        currentDate.setText(dateFormatter.format(newDate.getTime()));
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+                datePicker.show();
+            }
         }
     }
 
@@ -67,4 +89,5 @@ public class CollectionDate extends Fragment implements View.OnClickListener {
         super.onResume();
         System.out.print("First pager resume");
     }
+
 }

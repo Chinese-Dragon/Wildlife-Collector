@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import edu.drury.mcs.wildlife.Fragment.AddDialog;
+import edu.drury.mcs.wildlife.Fragment.CollectionDate;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.myStepperIndicator;
 
 import edu.drury.mcs.wildlife.JavaClass.NonSwipeableViewPager;
@@ -14,6 +17,7 @@ public class CreateCollection extends AppCompatActivity {
     public static NonSwipeableViewPager pager;
     private myStepperIndicator indicator;
     private StepperAdapter pagerAdapter;
+    private CollectionObj currentCollection;
 
     private final boolean pagerScrollEnabled = false;
 
@@ -27,6 +31,8 @@ public class CreateCollection extends AppCompatActivity {
         getSupportActionBar().setTitle("Build Collection");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
+        // received collection we are working on from AddDialog
+        currentCollection = (CollectionObj) getIntent().getExtras().getSerializable(AddDialog.EXTRA_CURRENTCOLLECTION);
 
         // get references of pager and indicator from layout
         pager = (NonSwipeableViewPager) findViewById(R.id.pager);
