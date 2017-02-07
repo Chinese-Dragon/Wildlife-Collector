@@ -30,6 +30,8 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     private Button back, cancel, next, getLocation;
     private LocationManager locationManager;
     private EditText coordinates;
+    private EditText latitude;
+    private EditText longitude;
 
 //    /**
 //     * Instead of handing over potential parameters via constructor,
@@ -62,6 +64,8 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         next = (Button) layout.findViewById(R.id.next);
         getLocation = (Button) layout.findViewById(R.id.getLocation);
         coordinates = (EditText) layout.findViewById(R.id.coordinates);
+        latitude = (EditText) layout.findViewById(R.id.latitude);
+        longitude = (EditText) layout.findViewById(R.id.longitude);
 
         back.setOnClickListener(this);
         cancel.setOnClickListener(this);
@@ -86,7 +90,9 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                 @Override
                 public void gotLocation(Location location){
                     //Got the location!
-                    coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
+                    //coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
+                    latitude.setText(Double.toString(location.getLatitude()));
+                    longitude.setText(Double.toString(location.getLongitude()));
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());

@@ -20,6 +20,7 @@
         android:layout_centerHorizontal="true"/>
 
     <LinearLayout
+        android:id="@+id/entercoordinates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -41,6 +42,30 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="@color/colorPrimaryText"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_margin="8dp"
+        android:layout_below="@id/entercoordinates">
+
+        <EditText
+            android:id="@+id/latitude"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Enter Latitude"/>
+
+        <EditText
+            android:id="@+id/longitude"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Enter Longitude"/>
 
     </LinearLayout>
 
