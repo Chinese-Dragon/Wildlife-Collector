@@ -63,7 +63,6 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
         getLocation = (Button) layout.findViewById(R.id.getLocation);
-        coordinates = (EditText) layout.findViewById(R.id.coordinates);
         latitude = (EditText) layout.findViewById(R.id.latitude);
         longitude = (EditText) layout.findViewById(R.id.longitude);
 

@@ -19,53 +19,43 @@
         android:textColor="@color/colorText"
         android:layout_centerHorizontal="true"/>
 
-    <LinearLayout
-        android:id="@+id/entercoordinates"
+    <Space
+        android:id="@+id/space1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_margin="8dp"
-        android:layout_below="@id/getLocation">
-
-        <EditText
-            android:id="@+id/coordinates"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="Enter Coordinates"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="GPS Coordinates"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="@color/colorPrimaryText"/>
-
-    </LinearLayout>
+        android:layout_height="100px"
+        android:layout_weight="1"
+        android:layout_below="@id/getLocation"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:weightSum="2"
         android:layout_margin="8dp"
-        android:layout_below="@id/entercoordinates">
+        android:layout_below="@id/space1">
 
         <EditText
             android:id="@+id/latitude"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Enter Latitude"/>
+            android:hint="Enter Latitude"
+            android:textAlignment="center"/>
+
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:layout_weight="1"
+            android:layout_below="@id/latitude"/>
 
         <EditText
             android:id="@+id/longitude"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Enter Longitude"/>
+            android:hint="Enter Longitude"
+            android:textAlignment="center"/>
 
     </LinearLayout>
 
