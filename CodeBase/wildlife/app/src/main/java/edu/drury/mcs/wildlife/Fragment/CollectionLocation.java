@@ -1,64 +1,66 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
-import edu.drury.mcs.wildlife.JavaClass.Message;
-import edu.drury.mcs.wildlife.R;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.MyLocation;
+import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
+import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
+import edu.drury.mcs.wildlife.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionLocation extends Fragment implements View.OnClickListener {
+public class CollectionLocation extends Fragment implements View.OnClickListener, ViewpagerFragmentLifecycle {
     private View layout;
     private Button back, cancel, next, getLocation;
     private LocationManager locationManager;
     private EditText coordinates;
     private EditText latitude;
     private EditText longitude;
+    private CollectionObj currentCollection;
+    private OnDataPassListener dataListener;
 
-//    /**
-//     * Instead of handing over potential parameters via constructor,
-//     * use the newInstance(...) method and the Bundle for handing over parameters.
-//     * This way if detached and re-attached the object state can be stored through the arguments.
-//     * Much like Bundles attached to Intents
-//     *
-//     * @param indicator
-//     * @param pager
-//     * @return
-//     */
-//    public static CollectionLocation newInstance(myStepperIndicator indicator, NonSwipeableViewPager pager /* 3rd parameter will be collection data*/) {
-//        CollectionLocation myFragment = new CollectionLocation();
-//
-//        Bundle args = new Bundle();
-//        args.putSerializable(CollectionDate.EXTRA_INDICATOR,indicator);
-//        args.putSerializable(CollectionDate.EXTRA_PAGER, pager);
-//
-//        myFragment.setArguments(args);
-//        return myFragment;
-//    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity a;
+
+        if(context instanceof Activity) {
+            a = (Activity) context;
+
+            try {
+                dataListener = (OnDataPassListener) a;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(a.toString() + " must implement OnDataPassListener interface");
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.collection_location_fragment, container, false);
+
+        currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
+
         back = (Button) layout.findViewById(R.id.back);
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
@@ -81,7 +83,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         } else if (view == cancel) {
             getActivity().finish();
         } else if (view == next) {
-            CreateCollection.pager.setCurrentItem(2);
+            dataListener.onDataPass(currentCollection, 2);
         } else if (view == getLocation) {
 
 
@@ -92,6 +94,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                     //coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
                     latitude.setText(Double.toString(location.getLatitude()));
                     longitude.setText(Double.toString(location.getLongitude()));
+                    currentCollection.setLocation(location);
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());
@@ -141,6 +144,22 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        System.out.print("Second pager resume");
+        Log.i(TAG,"CollectionLocation is resumed");
+    }
+
+    @Override
+    public void onPauseFragment() {
+        Log.i(TAG,"Location -- onPauseFragment()");
+    }
+
+    @Override
+    public void onResumeFragment() {
+        Log.i(TAG,"Location -- onResumeFragment()");
+
+    }
+
+    public void setCurrentCollection(CollectionObj collection) {
+        this.currentCollection = collection;
+        Log.i(TAG,"CurrentCollection Date" + currentCollection.getDate());
     }
 }

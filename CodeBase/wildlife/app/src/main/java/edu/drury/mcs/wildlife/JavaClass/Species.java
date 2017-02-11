@@ -1,23 +1,29 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by yma004 on 12/11/16.
  */
 
-public class Species {
+public class Species implements Parcelable{
 
     private String commonName;
     private String scientificName;
     private int group_ID;
 
-    public Species(){
-
-    }
-
     public Species(String common, String science, int ID) {
         this.commonName = common;
         this.scientificName = science;
         this.group_ID = ID;
+    }
+
+    public Species(Parcel input) {
+        this.commonName = input.readString();
+        this.scientificName = input.readString();
+        this.group_ID = input.readInt();
+
     }
 
     public String getCommonName() {
@@ -47,4 +53,29 @@ public class Species {
     public void setGroup_ID(int group_ID) {
         this.group_ID = group_ID;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(commonName);
+        parcel.writeString(scientificName);
+        parcel.writeInt(group_ID);
+    }
+
+
+    public static final Parcelable.Creator<Species> CREATOR
+            = new Parcelable.Creator<Species>() {
+        public Species createFromParcel(Parcel in) {
+            return new Species(in);
+        }
+
+        public Species[] newArray(int size) {
+            return new Species[size];
+        }
+    };
+
 }

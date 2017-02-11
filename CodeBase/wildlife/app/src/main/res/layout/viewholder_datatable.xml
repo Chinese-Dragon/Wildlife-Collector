@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_species_data_table"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="edu.drury.mcs.wildlife.Activity.SpeciesDataTable">
+
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_menu_gallery"
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:id="@+id/name_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/icon"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/certain_commonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Common Name"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryText"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:id="@+id/certain_scientificName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:text="Scientific Name" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/number_captured"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/name_group"
+        android:layout_alignBaseline="@id/name_group"/>
+
+
+</RelativeLayout>

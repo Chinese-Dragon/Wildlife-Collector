@@ -65,7 +65,7 @@ public class AddDialog extends DialogFragment {
                 Intent intent = new Intent(getActivity(), CreateCollection.class);
 
                 Bundle cBundle = new Bundle();
-                cBundle.putSerializable(EXTRA_CURRENTCOLLECTION,currentCollection);
+                cBundle.putParcelable(EXTRA_CURRENTCOLLECTION,currentCollection);
                 intent.putExtras(cBundle);
 
                 AddDialog.this.getDialog().cancel();

@@ -1,10 +1,14 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,47 +18,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
+import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.JavaClass.Species;
+import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
 import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionSpecies extends Fragment implements View.OnClickListener {
+public class CollectionSpecies extends Fragment implements View.OnClickListener, ViewpagerFragmentLifecycle {
     private View layout;
     private Button back,cancel,done;
     private RecyclerView sRecyclerView;
     private RecyclerView.Adapter sAdapter;
+    private CollectionObj currentCollection;
+    private OnDataPassListener dataListener;
 
 
-//    /**
-//     * Instead of handing over potential parameters via constructor,
-//     * use the newInstance(...) method and the Bundle for handing over parameters.
-//     * This way if detached and re-attached the object state can be stored through the arguments.
-//     * Much like Bundles attached to Intents
-//     *
-//     * @param indicator
-//     * @param pager
-//     * @return
-//     */
-//    public static CollectionSpecies newInstance(myStepperIndicator indicator, NonSwipeableViewPager pager /* 3rd parameter will be collection data*/) {
-//        CollectionSpecies myFragment = new CollectionSpecies();
-//
-//        Bundle args = new Bundle();
-//        args.putSerializable(CollectionDate.EXTRA_INDICATOR,indicator);
-//        args.putSerializable(CollectionDate.EXTRA_PAGER, pager);
-//
-//        myFragment.setArguments(args);
-//        return myFragment;
-//    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity a;
+
+        if(context instanceof Activity) {
+            a = (Activity) context;
+
+            try {
+                dataListener = (OnDataPassListener) a;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(a.toString() + " must implement OnDataPassListener interface");
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.collection_species_fragment, container, false);
+
+        currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
         back = (Button) layout.findViewById(R.id.back);
         cancel = (Button) layout.findViewById(R.id.cancel);
@@ -68,6 +76,8 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         sRecyclerView = (RecyclerView) layout.findViewById(R.id.species_recyclerview);
         sRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         sAdapter = new sAdapter(getActivity(), getData());
+        // get initial data
+        currentCollection.setSpecies(getData());
         sRecyclerView.setAdapter(sAdapter);
 
         return layout;
@@ -112,6 +122,28 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        System.out.print("Third pager resume");
+        Log.i(TAG,"CollectionSpecies is Resumed");
+    }
+
+    @Override
+    public void onPauseFragment() {
+        Log.i(TAG,"Species -- onPauseFragment()");
+    }
+
+    @Override
+    public void onResumeFragment() {
+        Log.i(TAG,"Species -- onResumeFragment()");
+    }
+
+    public void setCurrentCollection(CollectionObj collection) {
+        this.currentCollection = collection;
+        Log.i(TAG,"CurrentCollection Date" + Double.toString(currentCollection.getLocation().getLatitude()));
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Message.showMessage(getActivity(),"get species results back in Fragment");
     }
 }

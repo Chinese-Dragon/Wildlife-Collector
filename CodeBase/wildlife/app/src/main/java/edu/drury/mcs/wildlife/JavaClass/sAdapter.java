@@ -1,9 +1,11 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +17,15 @@ import java.util.List;
 import edu.drury.mcs.wildlife.Activity.SpeciesDataTable;
 import edu.drury.mcs.wildlife.R;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by yma004 on 12/11/16.
  */
 
 public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
-    public final static String EXTRA_SPECIESNAME = "edu.drury.mcs.wildlife.SPECIESNAME";
-    public final static String EXTRA_SPECIESID = "edu.drury.mcs.wildlife.SPECIESID";
+    public final static String EXTRA_CURRENTSPECIES = "edu.drury.mcs.wildlife.CURRENTSPECIES";
+    public final static int STATIC_INTEGER_VALUE = 100;
     private Context context;
     private LayoutInflater inflater;
     private List<Species> data;
@@ -72,14 +76,17 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
         @Override
         public void onClick(View v) {
             int groupID = data.get(this.getAdapterPosition()).getGroup_ID();
-            String scientificName = data.get(this.getAdapterPosition()).getCommonName();
+            String scientificName = data.get(this.getAdapterPosition()).getScientificName();
+            String commonName = data.get(this.getAdapterPosition()).getCommonName();
+
+            Species currentSpecies = new Species(commonName,scientificName,groupID);
             Intent intent = new Intent(context, SpeciesDataTable.class);
             Bundle sBundle = new Bundle();
-            sBundle.putInt(EXTRA_SPECIESID, groupID);
-            sBundle.putString(EXTRA_SPECIESNAME,scientificName);
+
+            sBundle.putParcelable(EXTRA_CURRENTSPECIES,currentSpecies);
             intent.putExtras(sBundle);
-            context.startActivity(intent);
+            Log.i(TAG,currentSpecies.getCommonName());
+            ((Activity)context).startActivityForResult(intent,STATIC_INTEGER_VALUE);
         }
     }
-
 }
