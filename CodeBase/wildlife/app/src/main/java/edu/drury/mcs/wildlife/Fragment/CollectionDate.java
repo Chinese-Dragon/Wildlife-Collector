@@ -73,7 +73,7 @@ public class CollectionDate extends Fragment implements View.OnClickListener,Vie
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
         currentDate = (TextView) layout.findViewById(R.id.currentDate);
-        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
 
         datePickerButton.setOnClickListener(this);
         getCurrentDate.setOnClickListener(this);
