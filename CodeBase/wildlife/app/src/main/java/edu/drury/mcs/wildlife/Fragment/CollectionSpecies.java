@@ -3,7 +3,6 @@ package edu.drury.mcs.wildlife.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +21,7 @@ import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.JavaClass.Species;
-import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
+import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.R;
 
@@ -31,7 +30,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionSpecies extends Fragment implements View.OnClickListener, ViewpagerFragmentLifecycle {
+public class CollectionSpecies extends Fragment implements View.OnClickListener {
     private View layout;
     private Button back,cancel,done;
     private RecyclerView sRecyclerView;
@@ -62,6 +61,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener,
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.collection_species_fragment, container, false);
 
+        Message.showMessage(getActivity(),"COllectionSPecies view is created");
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
         back = (Button) layout.findViewById(R.id.back);
@@ -125,25 +125,17 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener,
         Log.i(TAG,"CollectionSpecies is Resumed");
     }
 
-    @Override
-    public void onPauseFragment() {
-        Log.i(TAG,"Species -- onPauseFragment()");
-    }
-
-    @Override
-    public void onResumeFragment() {
-        Log.i(TAG,"Species -- onResumeFragment()");
-    }
-
     public void setCurrentCollection(CollectionObj collection) {
         this.currentCollection = collection;
         Log.i(TAG,"CurrentCollection Date" + Double.toString(currentCollection.getLocation().getLatitude()));
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Message.showMessage(getActivity(),"get species results back in Fragment");
+    public void updateCollection(List<SpeciesCollected> newSpeciesData, int speciesGroupID) {
+        for(SpeciesCollected s : newSpeciesData) {
+            Log.i(TAG,s.getCommonName());
+            Log.i(TAG,Integer.toString(s.getQuantity()));
+        }
     }
+
 }

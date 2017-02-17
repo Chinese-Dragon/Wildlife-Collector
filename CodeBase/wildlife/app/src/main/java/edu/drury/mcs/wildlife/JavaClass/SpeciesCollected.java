@@ -11,6 +11,7 @@ public class SpeciesCollected implements Parcelable{
     private int quantity;
     private String scientificName;
     private String commonName;
+    private int selected = 0;
 
     public SpeciesCollected(String scientificName, String commonName) {
         this.scientificName = scientificName;
@@ -70,4 +71,12 @@ public class SpeciesCollected implements Parcelable{
             return new SpeciesCollected[size];
         }
     };
+
+    public void setSelected(int selected) {
+        this.selected = selected;
+    }
+
+    public int getSelected() {
+        return selected;
+    }
 }

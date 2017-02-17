@@ -18,7 +18,6 @@ import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.MyLocation;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
-import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
 import edu.drury.mcs.wildlife.R;
 
 import static android.content.ContentValues.TAG;
@@ -26,7 +25,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionLocation extends Fragment implements View.OnClickListener, ViewpagerFragmentLifecycle {
+public class CollectionLocation extends Fragment implements View.OnClickListener {
     private View layout;
     private Button back, cancel, next, getLocation;
     private LocationManager locationManager;
@@ -145,17 +144,6 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         Log.i(TAG,"CollectionLocation is resumed");
-    }
-
-    @Override
-    public void onPauseFragment() {
-        Log.i(TAG,"Location -- onPauseFragment()");
-    }
-
-    @Override
-    public void onResumeFragment() {
-        Log.i(TAG,"Location -- onResumeFragment()");
-
     }
 
     public void setCurrentCollection(CollectionObj collection) {

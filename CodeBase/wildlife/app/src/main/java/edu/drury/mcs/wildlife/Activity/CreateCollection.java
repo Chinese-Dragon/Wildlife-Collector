@@ -2,18 +2,20 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import java.util.List;
 
 import edu.drury.mcs.wildlife.Fragment.AddDialog;
 import edu.drury.mcs.wildlife.Fragment.CollectionLocation;
 import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.NonSwipeableViewPager;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
+import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.JavaClass.StepperAdapter;
-import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
 import edu.drury.mcs.wildlife.JavaClass.myStepperIndicator;
 import edu.drury.mcs.wildlife.R;
 
@@ -48,30 +50,6 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         //NOTE: pagerAdapter: Controller; pager: View
         pagerAdapter = new StepperAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            int currrentPosition = 0;
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // dont need to use that right now
-            }
-
-            @Override
-            public void onPageSelected(int newPosition) {
-                ViewpagerFragmentLifecycle fragmentToShow = (ViewpagerFragmentLifecycle) pagerAdapter.getItem(newPosition);
-                fragmentToShow.onResumeFragment();
-
-                ViewpagerFragmentLifecycle fragmentToHide = (ViewpagerFragmentLifecycle) pagerAdapter.getItem(currrentPosition);
-                fragmentToHide.onPauseFragment();
-
-                currrentPosition = newPosition;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // dont need to use that right now
-            }
-        });
         indicator.setViewPager(pager);
 
     }
@@ -113,5 +91,15 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK){
+            Message.showMessage(this,"get species results back in Activity");
+            List<SpeciesCollected> newData = data.getExtras().getParcelableArrayList(SpeciesDataTable.SAVEDSPECIESDATA);
+            int group_id = data.getExtras().getInt(SpeciesDataTable.CURRENT_GROUP_ID);
+            CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(2);
+            speciesFrag.updateCollection(newData,group_id);
+        }
+
+
     }
 }

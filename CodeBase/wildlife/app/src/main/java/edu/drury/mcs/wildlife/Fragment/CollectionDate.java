@@ -22,7 +22,6 @@ import java.util.Locale;
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
-import edu.drury.mcs.wildlife.JavaClass.ViewpagerFragmentLifecycle;
 import edu.drury.mcs.wildlife.R;
 
 import static android.content.ContentValues.TAG;
@@ -30,7 +29,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionDate extends Fragment implements View.OnClickListener,ViewpagerFragmentLifecycle {
+public class CollectionDate extends Fragment implements View.OnClickListener {
     private View layout;
     private Button next,cancel,datePickerButton;
     private TextView currentDate;
@@ -113,15 +112,5 @@ public class CollectionDate extends Fragment implements View.OnClickListener,Vie
     public void onResume() {
         super.onResume();
         Log.i(TAG,"CollectionDate is Resumed");
-    }
-
-    @Override
-    public void onPauseFragment() {
-        Log.i(TAG,"Date -- onPauseFragment()");
-    }
-
-    @Override
-    public void onResumeFragment() {
-        Log.i(TAG,"Date -- onResumeFragment()");
     }
 }

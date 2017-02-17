@@ -1,13 +1,14 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -51,50 +52,49 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
 
 
 
-    class tViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnItemSelectedListener{
+    class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        static final int DURATION = 250;
         TextView commonName;
         TextView scientificName;
-        Spinner quantify_spinner;
+        ImageView toggle;
+        CardView card;
+        ViewGroup linearLayoutDetail;
 
         public tViewHolder(View itemView) {
             super(itemView);
 
-            commonName = (TextView) itemView.findViewById(R.id.certain_commonName);
-            scientificName = (TextView) itemView.findViewById(R.id.certain_scientificName);
-            quantify_spinner = (Spinner) itemView.findViewById(R.id.number_captured);
-            ArrayAdapter<Integer> spinner_adapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, get_spinner_array(100));
-            spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            quantify_spinner.setAdapter(spinner_adapter);
+            commonName = (TextView) itemView.findViewById(R.id.commonName);
+            scientificName = (TextView) itemView.findViewById(R.id.scientificName);
+            toggle = (ImageView) itemView.findViewById(R.id.toggle);
+            card = (CardView) itemView.findViewById(R.id.card);
+            linearLayoutDetail = (ViewGroup) itemView.findViewById(R.id.lineardetail);
 
-            quantify_spinner.setOnItemSelectedListener(this);
-
+            toggle.setOnClickListener(this);
+            card.getPreventCornerOverlap();
         }
 
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if (i != 0) {
-                SpeciesCollected current = data.get(this.getAdapterPosition());
-                int quantity = (int) adapterView.getSelectedItem();
-                current.setQuantity(quantity);
+        public void onClick(View view) {
+            if(view == toggle) {
+                if(linearLayoutDetail.getVisibility() == View.GONE){
+                    ExpandAndCollapseViewUtil.expand(linearLayoutDetail, DURATION);
+                    toggle.setImageResource(R.drawable.circled_chevron_down);
+                    rotate(-180.0f);
+                } else {
+                    ExpandAndCollapseViewUtil.collapse(linearLayoutDetail, DURATION);
+                    toggle.setImageResource(R.drawable.circled_chevron_up);
+                    rotate(180.0f);
+                }
             }
-
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
+        private void rotate(float angle) {
+            Animation animation = new RotateAnimation(0.0f, angle, Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f);
+            animation.setFillAfter(true);
+            animation.setDuration(DURATION);
+            toggle.startAnimation(animation);
         }
-    }
-
-
-    private List<Integer> get_spinner_array(int maxNumber) {
-        List<Integer> result = new ArrayList<>();
-        int i = 0;
-        while(i < maxNumber) {
-            result.add(i);
-            i++;
-        }
-        return result;
     }
 
     public List<SpeciesCollected> getLastestItems() {

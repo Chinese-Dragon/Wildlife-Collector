@@ -11,9 +11,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import edu.drury.mcs.wildlife.JavaClass.BackgroundTask;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.Species;
 import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
@@ -22,11 +28,16 @@ import edu.drury.mcs.wildlife.JavaClass.tAdapter;
 import edu.drury.mcs.wildlife.R;
 
 public class SpeciesDataTable extends AppCompatActivity implements View.OnClickListener {
-    private static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
+    public static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
+    public static final String CURRENT_GROUP_ID = "edu.drury.mcs.wildlife.CURRENT_GROUP_ID";
     private RecyclerView tRecyclerView;
     private tAdapter tAdapter;
     private Species currentSpecies;
     private Button cancel,save;
+    private List<SpeciesCollected> data;
+    private BackgroundTask backgroundTask;
+    private String JSON_STRING;
+    private String method = "getSpecies";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,18 +52,28 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // send request and get json string data
+        backgroundTask = new BackgroundTask(this);
+        try{
+            JSON_STRING = backgroundTask.execute(method,Integer.toString(currentSpecies.getGroup_ID())).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        data = getData(JSON_STRING);
+
         //initilze and setup recycler view
         tRecyclerView = (RecyclerView) findViewById(R.id.data_table_recyclerview);
         tRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        tAdapter = new tAdapter(this, getData(currentSpecies.getGroup_ID()));
+        tAdapter = new tAdapter(this, data);
         tRecyclerView.setAdapter(tAdapter);
 
-//        //buttons
+        //buttons
         cancel = (Button) findViewById(R.id.cancel);
         save = (Button) findViewById(R.id.done);
+
         cancel.setOnClickListener(this);
         save.setOnClickListener(this);
-
 
 
     }
@@ -75,27 +96,24 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         return super.onOptionsItemSelected(item);
     }
 
-    private List<SpeciesCollected> getData(int groupId) {
+    private List<SpeciesCollected> getData(String json_string) {
         List<SpeciesCollected> data = new ArrayList<SpeciesCollected>();
-        switch (groupId) {
-            case 0:
-                data.add(new SpeciesCollected("Siren intermedia", "Western Lesser Siren"));
-                data.add(new SpeciesCollected("Cryptobranchus", "Hellbender"));
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            default:
-                break;
+        String common_name;
+        String scientific_name;
+        JSONObject jsonObject;
+        JSONArray jsonArray;
+
+        try{
+//            jsonArray = new JSONArray(JSON_STRING);
+//            jsonArray.getJ
+
+        } catch (JSONException e){
+            e.printStackTrace();
         }
 
         return data;
     }
+
 
     @Override
     public void onClick(View view) {
@@ -104,7 +122,10 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         } else if (view == save) {
             List<SpeciesCollected> savedSpeciesData = tAdapter.getLastestItems();
             Intent resultIntent = new Intent();
-            resultIntent.putParcelableArrayListExtra(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));
+            Bundle resultBundle = new Bundle();
+            resultBundle.putParcelableArrayList(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));
+            resultBundle.putInt(CURRENT_GROUP_ID,currentSpecies.getGroup_ID());
+            resultIntent.putExtras(resultBundle);
             setResult(CreateCollection.RESULT_OK, resultIntent);
             finish();
         }
