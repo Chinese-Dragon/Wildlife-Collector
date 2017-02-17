@@ -64,6 +64,9 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         Message.showMessage(getActivity(),"COllectionSPecies view is created");
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
+        // get initial data
+        currentCollection.setSpecies(getData());
+
         back = (Button) layout.findViewById(R.id.back);
         cancel = (Button) layout.findViewById(R.id.cancel);
         done = (Button) layout.findViewById(R.id.done);
@@ -76,8 +79,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         sRecyclerView = (RecyclerView) layout.findViewById(R.id.species_recyclerview);
         sRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         sAdapter = new sAdapter(getActivity(), getData());
-        // get initial data
-        currentCollection.setSpecies(getData());
+
         sRecyclerView.setAdapter(sAdapter);
 
         return layout;
@@ -131,11 +133,23 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
 
     }
 
+    /*
+        This method only be called after we comeback from speciesTable with some data returned
+        caller will be onActivityResult in parent activity
+        so we gurentee that currentCollection has a list of species already
+     */
     public void updateCollection(List<SpeciesCollected> newSpeciesData, int speciesGroupID) {
         for(SpeciesCollected s : newSpeciesData) {
             Log.i(TAG,s.getCommonName());
             Log.i(TAG,Integer.toString(s.getQuantity()));
         }
+
+//        for(Species s : currentCollection.getSpecies()) {
+//            if (s.getGroup_ID() == speciesGroupID) {
+//                // then we just update this species data
+//                s.setSpecies_Data(newSpeciesData);
+//            }
+//        }
     }
 
 }

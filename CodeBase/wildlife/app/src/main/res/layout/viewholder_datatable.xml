@@ -54,17 +54,46 @@
             <LinearLayout
                 android:id="@+id/lineardetail"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:visibility="gone">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:gravity="center_horizontal"
+                android:weightSum="5">
 
-                <NumberPicker
-                    android:id="@+id/quantity_select"
-                    android:layout_width="match_parent"
+                <Space
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    />
+                    android:layout_weight="1"/>
+
+
+                <ImageView
+                    android:id="@+id/decrease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/decrease"
+                    android:layout_weight="1"/>
+
+
+                <EditText
+                    android:id="@+id/quantity_captured"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:inputType="number"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:id="@+id/increase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/increase"
+                    android:layout_weight="1"/>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
 
 
             </LinearLayout>

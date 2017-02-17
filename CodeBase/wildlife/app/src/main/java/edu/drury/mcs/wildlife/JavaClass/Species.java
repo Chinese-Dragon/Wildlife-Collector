@@ -3,6 +3,9 @@ package edu.drury.mcs.wildlife.JavaClass;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by yma004 on 12/11/16.
  */
@@ -12,11 +15,13 @@ public class Species implements Parcelable{
     private String commonName;
     private String scientificName;
     private int group_ID;
+    private List<SpeciesCollected> species_Data;
 
     public Species(String common, String science, int ID) {
         this.commonName = common;
         this.scientificName = science;
         this.group_ID = ID;
+        this.species_Data = new ArrayList<>();
     }
 
     public Species(Parcel input) {
@@ -52,6 +57,14 @@ public class Species implements Parcelable{
 
     public void setGroup_ID(int group_ID) {
         this.group_ID = group_ID;
+    }
+
+    public void setSpecies_Data(List<SpeciesCollected> species_Data) {
+        this.species_Data = species_Data;
+    }
+
+    public List<SpeciesCollected> getSpecies_Data() {
+        return species_Data;
     }
 
     @Override

@@ -38,7 +38,7 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         getSupportActionBar().setTitle("Build Collection");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        // received collection we are working on from AddDialog
+        // received collection we are working on from AddDialog.java
         currentCollection = (CollectionObj) getIntent().getExtras().getParcelable(AddDialog.EXTRA_CURRENTCOLLECTION);
 
         // get references of pager and indicator from layout
@@ -99,7 +99,5 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
             CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(2);
             speciesFrag.updateCollection(newData,group_id);
         }
-
-
     }
 }

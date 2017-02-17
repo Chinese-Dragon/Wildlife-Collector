@@ -29,7 +29,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CollectionDate extends Fragment implements View.OnClickListener {
+public class    CollectionDate extends Fragment implements View.OnClickListener {
     private View layout;
     private Button next,cancel,datePickerButton;
     private TextView currentDate;

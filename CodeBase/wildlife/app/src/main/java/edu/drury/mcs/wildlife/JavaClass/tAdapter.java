@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,7 +44,6 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         SpeciesCollected current = data.get(position);
         holder.scientificName.setText(current.getScientificName());
         holder.commonName.setText(current.getCommonName());
-
     }
 
     @Override
@@ -59,6 +60,9 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         ImageView toggle;
         CardView card;
         ViewGroup linearLayoutDetail;
+        ImageView increase,decrease;
+        EditText quantity;
+        int quantity_captured = 0;
 
         public tViewHolder(View itemView) {
             super(itemView);
@@ -68,8 +72,15 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             toggle = (ImageView) itemView.findViewById(R.id.toggle);
             card = (CardView) itemView.findViewById(R.id.card);
             linearLayoutDetail = (ViewGroup) itemView.findViewById(R.id.lineardetail);
+            increase = (ImageView) itemView.findViewById(R.id.increase);
+            decrease = (ImageView) itemView.findViewById(R.id.decrease);
+            quantity = (EditText) itemView.findViewById(R.id.quantity_captured);
+            quantity.setText("0");
 
             toggle.setOnClickListener(this);
+            increase.setOnClickListener(this);
+            decrease.setOnClickListener(this);
+
             card.getPreventCornerOverlap();
         }
 
@@ -85,6 +96,16 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                     toggle.setImageResource(R.drawable.circled_chevron_up);
                     rotate(180.0f);
                 }
+            } else if (view == increase){
+                quantity_captured ++;
+                quantity.setText(Integer.toString(quantity_captured));
+                data.get(getAdapterPosition()).setQuantity(quantity_captured);
+            } else  if (view == decrease){
+                if(quantity_captured > 0) {
+                    quantity_captured --;
+                    quantity.setText(Integer.toString(quantity_captured));
+                    data.get(getAdapterPosition()).setQuantity(quantity_captured);
+                }
             }
         }
 
@@ -97,11 +118,12 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         }
     }
 
-    public List<SpeciesCollected> getLastestItems() {
+    public List<SpeciesCollected> getLatestItems() {
         List<SpeciesCollected> result = new ArrayList<>();
 
         for(int i = 0; i < getItemCount(); i ++) {
-            if(data.get(i).getQuantity() != 0) {
+            if(data.get(i).getQuantity() > 0) {
+
                 result.add(data.get(i));
             }
         }

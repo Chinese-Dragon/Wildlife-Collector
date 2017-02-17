@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,8 +105,14 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         JSONArray jsonArray;
 
         try{
-//            jsonArray = new JSONArray(JSON_STRING);
-//            jsonArray.getJ
+            jsonArray = new JSONArray(JSON_STRING);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject a = jsonArray.getJSONObject(i);
+                scientific_name = a.getString("scientific_name");
+                common_name = a.getString("common_name");
+                SpeciesCollected s = new SpeciesCollected(scientific_name,common_name);
+                data.add(s);
+            }
 
         } catch (JSONException e){
             e.printStackTrace();
@@ -120,7 +127,10 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         if (view == cancel) {
             onBackPressed();
         } else if (view == save) {
-            List<SpeciesCollected> savedSpeciesData = tAdapter.getLastestItems();
+            List<SpeciesCollected> savedSpeciesData = tAdapter.getLatestItems();
+            for(SpeciesCollected s: savedSpeciesData) {
+                Message.showMessage(this,s.getCommonName());
+            }
             Intent resultIntent = new Intent();
             Bundle resultBundle = new Bundle();
             resultBundle.putParcelableArrayList(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));

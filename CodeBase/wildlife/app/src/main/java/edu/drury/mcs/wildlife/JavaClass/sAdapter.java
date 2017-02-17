@@ -29,10 +29,12 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
     private Context context;
     private LayoutInflater inflater;
     private List<Species> data;
+    private CollectionObj currentCollection;
 
     public sAdapter(Context context, List<Species> data) {
         this.context = context;
         this.data = data;
+        this.currentCollection = currentCollection;
         inflater = LayoutInflater.from(context);
     }
 
