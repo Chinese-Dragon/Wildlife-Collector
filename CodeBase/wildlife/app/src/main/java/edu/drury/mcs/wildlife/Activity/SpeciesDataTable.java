@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,13 +100,13 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         List<SpeciesCollected> data = new ArrayList<SpeciesCollected>();
         String common_name;
         String scientific_name;
-        JSONObject jsonObject;
+        JSONObject a;
         JSONArray jsonArray;
 
         try{
             jsonArray = new JSONArray(JSON_STRING);
             for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject a = jsonArray.getJSONObject(i);
+                a = jsonArray.getJSONObject(i);
                 scientific_name = a.getString("scientific_name");
                 common_name = a.getString("common_name");
                 SpeciesCollected s = new SpeciesCollected(scientific_name,common_name);

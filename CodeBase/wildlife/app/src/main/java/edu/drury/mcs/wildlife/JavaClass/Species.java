@@ -17,6 +17,10 @@ public class Species implements Parcelable{
     private int group_ID;
     private List<SpeciesCollected> species_Data;
 
+    public Species() {
+
+    }
+
     public Species(String common, String science, int ID) {
         this.commonName = common;
         this.scientificName = science;

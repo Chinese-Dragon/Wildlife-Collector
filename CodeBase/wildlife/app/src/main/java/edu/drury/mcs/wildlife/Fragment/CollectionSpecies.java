@@ -21,7 +21,6 @@ import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.JavaClass.Species;
-import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.R;
 
@@ -62,10 +61,12 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         layout = inflater.inflate(R.layout.collection_species_fragment, container, false);
 
         Message.showMessage(getActivity(),"COllectionSPecies view is created");
+        Log.i(TAG,"CollectionSpecies onCreateVIew");
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
-        // get initial data
+        // set collection initial species data
         currentCollection.setSpecies(getData());
+        ((CreateCollection) getActivity()).setCurrentCollection(currentCollection);
 
         back = (Button) layout.findViewById(R.id.back);
         cancel = (Button) layout.findViewById(R.id.cancel);
@@ -78,8 +79,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         //initilize and setup recycler view
         sRecyclerView = (RecyclerView) layout.findViewById(R.id.species_recyclerview);
         sRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        sAdapter = new sAdapter(getActivity(), getData());
-
+        sAdapter = new sAdapter(getActivity(), getData(), this);
         sRecyclerView.setAdapter(sAdapter);
 
         return layout;
@@ -129,27 +129,14 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
 
     public void setCurrentCollection(CollectionObj collection) {
         this.currentCollection = collection;
-        Log.i(TAG,"CurrentCollection Date" + Double.toString(currentCollection.getLocation().getLatitude()));
-
-    }
-
-    /*
-        This method only be called after we comeback from speciesTable with some data returned
-        caller will be onActivityResult in parent activity
-        so we gurentee that currentCollection has a list of species already
-     */
-    public void updateCollection(List<SpeciesCollected> newSpeciesData, int speciesGroupID) {
-        for(SpeciesCollected s : newSpeciesData) {
-            Log.i(TAG,s.getCommonName());
-            Log.i(TAG,Integer.toString(s.getQuantity()));
+        Log.i(TAG,"CurrentCollection Location" + Double.toString(currentCollection.getLocation().getLatitude()));
+        for(Species s: currentCollection.getSpecies()){
+            Log.i(TAG,s.getCommonName()+" has "+ Integer.toString(s.getSpecies_Data().size()) + "species collected");
         }
-
-//        for(Species s : currentCollection.getSpecies()) {
-//            if (s.getGroup_ID() == speciesGroupID) {
-//                // then we just update this species data
-//                s.setSpecies_Data(newSpeciesData);
-//            }
-//        }
     }
 
+
+    public CollectionObj getCurrentCollection() {
+        return currentCollection;
+    }
 }

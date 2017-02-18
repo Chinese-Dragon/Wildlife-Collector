@@ -11,12 +11,13 @@ import edu.drury.mcs.wildlife.Fragment.AddDialog;
 import edu.drury.mcs.wildlife.Fragment.CollectionLocation;
 import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
-import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.NonSwipeableViewPager;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
+import edu.drury.mcs.wildlife.JavaClass.Species;
 import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.JavaClass.StepperAdapter;
 import edu.drury.mcs.wildlife.JavaClass.myStepperIndicator;
+import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.R;
 
 public class CreateCollection extends AppCompatActivity implements OnDataPassListener {
@@ -79,11 +80,11 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
     public void onDataPass(CollectionObj collection, int nextPosition) {
         setCurrentCollection(collection);
         if(nextPosition == 1) {
-            CollectionLocation location = (CollectionLocation) pagerAdapter.getItem(nextPosition);
-            location.setCurrentCollection(collection);
+            CollectionLocation locationFrag = (CollectionLocation) pagerAdapter.getItem(nextPosition);
+            locationFrag.setCurrentCollection(collection);
         } else if(nextPosition == 2) {
-            CollectionSpecies species = (CollectionSpecies) pagerAdapter.getItem(nextPosition);
-            species.setCurrentCollection(collection);
+            CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(nextPosition);
+            speciesFrag.setCurrentCollection(collection);
         }
         pager.setCurrentItem(nextPosition);
     }
@@ -92,12 +93,27 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
-            Message.showMessage(this,"get species results back in Activity");
-            List<SpeciesCollected> newData = data.getExtras().getParcelableArrayList(SpeciesDataTable.SAVEDSPECIESDATA);
-            int group_id = data.getExtras().getInt(SpeciesDataTable.CURRENT_GROUP_ID);
-            CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(2);
-            speciesFrag.updateCollection(newData,group_id);
+        switch (requestCode) {
+            case sAdapter.STATIC_INTEGER_VALUE:
+                if(resultCode == RESULT_OK){
+                    List<SpeciesCollected> newData = data.getExtras().getParcelableArrayList(SpeciesDataTable.SAVEDSPECIESDATA);
+                    int group_id = data.getExtras().getInt(SpeciesDataTable.CURRENT_GROUP_ID);
+                    updateCurrentCollection(newData,group_id);
+                    CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(2);
+                    speciesFrag.setCurrentCollection(currentCollection);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateCurrentCollection(List<SpeciesCollected> newSpeciesData, int group_id) {
+        for(Species s : currentCollection.getSpecies()) {
+            if (s.getGroup_ID() == group_id) {
+                // then we just update this species data
+                s.setSpecies_Data(newSpeciesData);
+            }
         }
     }
 }

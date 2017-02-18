@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.Activity.SpeciesDataTable;
+import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
 import edu.drury.mcs.wildlife.R;
 
 import static android.content.ContentValues.TAG;
@@ -30,11 +31,12 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
     private LayoutInflater inflater;
     private List<Species> data;
     private CollectionObj currentCollection;
+    private CollectionSpecies parentFragment;
 
-    public sAdapter(Context context, List<Species> data) {
+    public sAdapter(Context context, List<Species> data, CollectionSpecies speciesFrag) {
         this.context = context;
         this.data = data;
-        this.currentCollection = currentCollection;
+        this.parentFragment = speciesFrag;
         inflater = LayoutInflater.from(context);
     }
 
@@ -78,17 +80,37 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
         @Override
         public void onClick(View v) {
             int groupID = data.get(this.getAdapterPosition()).getGroup_ID();
-            String scientificName = data.get(this.getAdapterPosition()).getScientificName();
-            String commonName = data.get(this.getAdapterPosition()).getCommonName();
+            currentCollection = parentFragment.getCurrentCollection();
+            Species currentSpecies = getClickedSpeciesData(groupID,currentCollection);
+            Message.showMessage(context, currentSpecies.getCommonName() + " has " + Integer.toString(currentSpecies.getSpecies_Data().size()) + " collected Species");
 
-            Species currentSpecies = new Species(commonName,scientificName,groupID);
             Intent intent = new Intent(context, SpeciesDataTable.class);
             Bundle sBundle = new Bundle();
 
             sBundle.putParcelable(EXTRA_CURRENTSPECIES,currentSpecies);
             intent.putExtras(sBundle);
-            Log.i(TAG,currentSpecies.getCommonName());
+
+            for(SpeciesCollected c : currentSpecies.getSpecies_Data()) {
+                Log.i(TAG,c.getCommonName());
+                Log.i(TAG,Integer.toString(c.getQuantity()));
+            }
+
             ((Activity)context).startActivityForResult(intent,STATIC_INTEGER_VALUE);
+        }
+
+        /*
+            get the user-clicked species obj from current collection (may or may not have any speciescollected data in it).
+         */
+        private Species getClickedSpeciesData(int group_id, CollectionObj currentCollection) {
+            Species result = new Species();
+
+            for (Species s : currentCollection.getSpecies()) {
+                if(s.getGroup_ID() == group_id) {
+                    result = s;
+                }
+            }
+
+            return result;
         }
     }
 }
