@@ -3,7 +3,6 @@ package edu.drury.mcs.wildlife.JavaClass;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,14 +84,18 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
             Message.showMessage(context, currentSpecies.getCommonName() + " has " + Integer.toString(currentSpecies.getSpecies_Data().size()) + " collected Species");
 
             Intent intent = new Intent(context, SpeciesDataTable.class);
-            Bundle sBundle = new Bundle();
+            intent.putExtra(EXTRA_CURRENTSPECIES,currentSpecies);
 
-            sBundle.putParcelable(EXTRA_CURRENTSPECIES,currentSpecies);
-            intent.putExtras(sBundle);
-
+            // NOTE: Log collected species data (quantity)
             for(SpeciesCollected c : currentSpecies.getSpecies_Data()) {
                 Log.i(TAG,c.getCommonName());
                 Log.i(TAG,Integer.toString(c.getQuantity()));
+            }
+
+            if(currentSpecies.getSpecies_Data() == null) {
+                Log.i(TAG,"species list is null");
+            } else if(currentSpecies.getSpecies_Data().isEmpty()){
+                Log.i(TAG, "species list is empty");
             }
 
             ((Activity)context).startActivityForResult(intent,STATIC_INTEGER_VALUE);

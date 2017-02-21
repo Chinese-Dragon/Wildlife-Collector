@@ -24,7 +24,7 @@
                 android:id="@+id/scientificName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="12dp"
+                android:paddingBottom="10dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
@@ -36,11 +36,10 @@
                 android:id="@+id/commonName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
                 android:paddingLeft="24dp"
                 android:paddingRight="16dp"
                 android:text="COMMON NAME"
-                android:textSize="14sp" />
+                android:textSize="18sp" />
 
 
             <ImageView
@@ -49,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:padding="4dp"
-                android:src="@drawable/circled_chevron_up" />
+                android:src="@drawable/circled_chevron_down" />
 
             <LinearLayout
                 android:id="@+id/lineardetail"

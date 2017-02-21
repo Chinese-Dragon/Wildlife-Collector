@@ -25,9 +25,13 @@ public class CollectionObj implements Parcelable{
     }
 
     public CollectionObj(Parcel input) {
+        // have to initilize list<> before copy value to it or we can call empty constructor to initialize all variables
+        this(); // call CollectionObj()
         this.collection_name = input.readString();
         this.date = input.readString();
         this.location = Location.CREATOR.createFromParcel(input);
+        // this.species = new ArrayList<>();
+        input.readTypedList(species, Species.CREATOR);
     }
 
     public List<Species> getSpecies() {
@@ -72,7 +76,7 @@ public class CollectionObj implements Parcelable{
         parcel.writeString(collection_name);
         parcel.writeString(date);
         location.writeToParcel(parcel, i);
-        parcel.writeList(species);
+        parcel.writeTypedList(species);
     }
 
     public static final Parcelable.Creator<CollectionObj> CREATOR

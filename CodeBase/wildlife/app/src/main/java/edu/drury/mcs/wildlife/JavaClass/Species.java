@@ -18,7 +18,10 @@ public class Species implements Parcelable{
     private List<SpeciesCollected> species_Data;
 
     public Species() {
-
+        this.commonName = "";
+        this.scientificName = "";
+        this.group_ID = 0;
+        this.species_Data = new ArrayList<>();
     }
 
     public Species(String common, String science, int ID) {
@@ -29,10 +32,12 @@ public class Species implements Parcelable{
     }
 
     public Species(Parcel input) {
+        this();
         this.commonName = input.readString();
         this.scientificName = input.readString();
         this.group_ID = input.readInt();
-
+//        this.species_Data = new ArrayList<>();
+        input.readTypedList(species_Data, SpeciesCollected.CREATOR);
     }
 
     public String getCommonName() {
@@ -40,27 +45,14 @@ public class Species implements Parcelable{
         return commonName;
     }
 
-    public void setCommonName(String commonName) {
-
-        this.commonName = commonName;
-    }
-
     public String getScientificName() {
 
         return scientificName;
     }
 
-    public void setScientificName(String scientificName) {
-
-        this.scientificName = scientificName;
-    }
 
     public int getGroup_ID() {
         return group_ID;
-    }
-
-    public void setGroup_ID(int group_ID) {
-        this.group_ID = group_ID;
     }
 
     public void setSpecies_Data(List<SpeciesCollected> species_Data) {
@@ -81,6 +73,7 @@ public class Species implements Parcelable{
         parcel.writeString(commonName);
         parcel.writeString(scientificName);
         parcel.writeInt(group_ID);
+        parcel.writeTypedList(species_Data);
     }
 
 

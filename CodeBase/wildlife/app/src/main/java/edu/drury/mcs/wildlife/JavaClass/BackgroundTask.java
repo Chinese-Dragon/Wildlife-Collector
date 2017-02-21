@@ -1,14 +1,13 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,29 +20,37 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     private URL url;
     private HttpURLConnection httpURLConnection;
     private InputStream inputStream;
-    private OutputStream outputStream;
     private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
     private StringBuilder stringBuilder;
     private String JSON_STRING;
     private Context context;
     private String get_species_url;
     private String get_groups_url;
-    private String result_json_string;
+    private AsyncTaskCompleteListener<String> taskCompleteListener;
+    private ProgressDialog progressDialog;
 
-    public BackgroundTask(Context context){
+    public BackgroundTask(Context context, AsyncTaskCompleteListener<String> listener){
         this.context = context;
+        this.taskCompleteListener = listener;
+        this.progressDialog = new ProgressDialog(context);
     }
 
     @Override
     protected void onPreExecute() {
+        // do not need to call super.onPreExecute() because it does nothing
         get_species_url = "https://wildlife-expo-yma004.c9users.io/species/";
         get_groups_url = "https://wildlife-expo-yma004.c9users.io/species/getGroups";
+
+        // this method will be running on UI thread
+        progressDialog.setMessage("\tLoading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     @Override
     protected String doInBackground(String... params) {
         String goal = params[0];
+        String result_json_string = "";
 
         if(goal.equals("getSpecies")) {
             String group_id = params[1];
@@ -61,7 +68,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
         }
 
-        return null;
+        // better to return a empty string than null
+        return result_json_string;
     }
 
     @Override
@@ -70,8 +78,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(String result_json_string) {
+        // this method will be running on UI thread
+        progressDialog.dismiss();
+        taskCompleteListener.onTaskComplete(result_json_string);
     }
 
     private BufferedReader getBufferedReader(String request_url) {

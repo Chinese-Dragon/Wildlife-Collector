@@ -1,14 +1,15 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,9 +42,34 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
 
     @Override
     public void onBindViewHolder(tViewHolder holder, int position) {
+        Log.i("onBindViewHolder"," is called");
         SpeciesCollected current = data.get(position);
         holder.scientificName.setText(current.getScientificName());
         holder.commonName.setText(current.getCommonName());
+        // problems with just if statement is that
+        // once we chaned edtix view and color
+        // when this holder is using by other data it won't eiter change back the edittext to 0
+        // or reset the background color to default
+        // so it shows messed content where there shouldnt be greenout but it did even if the data is still normal
+        // NOTE: Thus we need to add a else statement to reset its state
+        if(current.getQuantity() > 0) {
+            holder.quantity.setText(Integer.toString(current.getQuantity()));
+            holder.quantity_captured = current.getQuantity();
+            holder.card.setBackgroundColor(Color.parseColor("#f44242"));
+        } else {
+            holder.quantity.setText("0");
+            holder.quantity_captured = 0;
+            holder.card.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(tViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.linearLayoutDetail.setVisibility(View.GONE);
+        holder.toggle.setImageResource(R.drawable.circled_chevron_down);
+        Log.i("Message",holder.commonName.getText().toString() + " is detached from window");
     }
 
     @Override
@@ -51,6 +77,12 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         return data.size();
     }
 
+    public void swap(List<SpeciesCollected> newData) {
+        this.data.clear();
+        this.data.addAll(newData);
+        notifyDataSetChanged();
+        Log.i("SWAP"," is called ");
+    }
 
 
     class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -100,11 +132,13 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                 quantity_captured ++;
                 quantity.setText(Integer.toString(quantity_captured));
                 data.get(getAdapterPosition()).setQuantity(quantity_captured);
+
             } else  if (view == decrease){
                 if(quantity_captured > 0) {
                     quantity_captured --;
                     quantity.setText(Integer.toString(quantity_captured));
                     data.get(getAdapterPosition()).setQuantity(quantity_captured);
+
                 }
             }
         }
@@ -123,7 +157,6 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
 
         for(int i = 0; i < getItemCount(); i ++) {
             if(data.get(i).getQuantity() > 0) {
-
                 result.add(data.get(i));
             }
         }
