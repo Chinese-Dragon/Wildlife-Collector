@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
+import edu.drury.mcs.wildlife.DB.DBBackgroundTask;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
@@ -30,6 +31,7 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CollectionSpecies extends Fragment implements View.OnClickListener {
+    public static final String TASK_CREATE = "create";
     private View layout;
     private Button back,cancel,done;
     private RecyclerView sRecyclerView;
@@ -93,6 +95,15 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
             getActivity().finish();
         } else if (view == done) {
             // Save collection data
+            Log.i("OnSave", currentCollection.getCollection_name());
+            Log.i("OnSave", currentCollection.getDate());
+            Log.i("OnSave", currentCollection.getLocation().toString());
+
+            for(Species s : currentCollection.getSpecies()) {
+                Log.i("OnSave", s.getCommonName() + " has " + s.getSpecies_Data().size() +" species collected");
+            }
+
+            new DBBackgroundTask(getActivity(),currentCollection).execute(TASK_CREATE);
             Message.showMessage(getActivity(),"Successfully Saved Collection Data");
         }
     }

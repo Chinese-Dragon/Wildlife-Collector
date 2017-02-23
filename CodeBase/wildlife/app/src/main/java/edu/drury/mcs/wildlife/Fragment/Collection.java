@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
 import edu.drury.mcs.wildlife.R;
 
@@ -63,13 +64,10 @@ public class Collection extends Fragment {
     }
 
     //get testdata
-    private List<String> getData() {
-        List<String> data = new ArrayList<>();
-        int dataSize = 20;
+    private List<CollectionObj> getData() {
+        List<CollectionObj> data = new ArrayList<>();
 
-        for (int i = 0; i < dataSize; i++) {
-            data.add("Collection" + Integer.toString(i));
-        }
+
 
         return data;
     }

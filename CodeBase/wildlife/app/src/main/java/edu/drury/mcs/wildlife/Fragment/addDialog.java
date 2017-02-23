@@ -3,6 +3,7 @@ package edu.drury.mcs.wildlife.Fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,8 @@ public class AddDialog extends DialogFragment {
     private View dialog_view;
     private Button cancel, create;
     private EditText editText;
+    private Context context;
+
 
     @NonNull
     @Override

@@ -24,9 +24,9 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
     private Context context;
     private LayoutInflater inflater;
     private Collection cFragment;
-    List<String> testData;
+    List<CollectionObj> testData;
 
-    public collectionAdapter(Context context, List<String> data, Collection frag) {
+    public collectionAdapter(Context context, List<CollectionObj> data, Collection frag) {
         this.context = context;
         this.testData = data;
         this.cFragment = frag;
@@ -42,8 +42,8 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
 
     @Override
     public void onBindViewHolder(cViewHolder holder, int position) {
-        String current = testData.get(position);
-        holder.collectionName.setText(current);
+        CollectionObj current = testData.get(position);
+        holder.collectionName.setText(current.getCollection_name());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
         public boolean onMenuItemClick(MenuItem item) {
             String clickedCollection = "";
             if (item.getItemId() == R.id.action_delete) {
-                clickedCollection = testData.get(this.getAdapterPosition());
+                clickedCollection = testData.get(this.getAdapterPosition()).getCollection_name();
                 testData.remove(this.getAdapterPosition());
                 Message.showMessage(editOption.getContext(),clickedCollection + " is deleted");
                 notifyDataSetChanged();

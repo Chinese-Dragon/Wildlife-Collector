@@ -24,8 +24,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     private StringBuilder stringBuilder;
     private String JSON_STRING;
     private Context context;
-    private String get_species_url;
-    private String get_groups_url;
+    private String get_species_url = "https://wildlife-expo-yma004.c9users.io/species/";;
+    private String get_groups_url = "https://wildlife-expo-yma004.c9users.io/species/getGroups";
     private AsyncTaskCompleteListener<String> taskCompleteListener;
     private ProgressDialog progressDialog;
 
@@ -38,9 +38,6 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
         // do not need to call super.onPreExecute() because it does nothing
-        get_species_url = "https://wildlife-expo-yma004.c9users.io/species/";
-        get_groups_url = "https://wildlife-expo-yma004.c9users.io/species/getGroups";
-
         // this method will be running on UI thread
         progressDialog.setMessage("\tLoading...");
         progressDialog.setCancelable(false);
