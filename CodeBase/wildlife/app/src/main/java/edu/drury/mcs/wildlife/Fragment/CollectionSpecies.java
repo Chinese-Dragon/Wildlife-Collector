@@ -3,6 +3,7 @@ package edu.drury.mcs.wildlife.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
-import edu.drury.mcs.wildlife.DB.DBBackgroundTask;
+import edu.drury.mcs.wildlife.Activity.MainActivity;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
@@ -31,7 +32,7 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CollectionSpecies extends Fragment implements View.OnClickListener {
-    public static final String TASK_CREATE = "create";
+    public static final String SAVEDCOLLECTIONDATA = "edu.drury.mcs.wildlife.SAVEDCOLLECTIONDATA";
     private View layout;
     private Button back,cancel,done;
     private RecyclerView sRecyclerView;
@@ -103,8 +104,13 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
                 Log.i("OnSave", s.getCommonName() + " has " + s.getSpecies_Data().size() +" species collected");
             }
 
-            new DBBackgroundTask(getActivity(),currentCollection).execute(TASK_CREATE);
+            currentCollection.saveToDB(getActivity());
             Message.showMessage(getActivity(),"Successfully Saved Collection Data");
+
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(SAVEDCOLLECTIONDATA, currentCollection);
+            getActivity().setResult(MainActivity.RESULT_OK, resultIntent);
+            getActivity().finish();
         }
     }
 
@@ -140,7 +146,8 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
 
     public void setCurrentCollection(CollectionObj collection) {
         this.currentCollection = collection;
-        Log.i(TAG,"CurrentCollection Location" + Double.toString(currentCollection.getLocation().getLatitude()));
+        Log.i(TAG,"CurrentCollection Location " + Double.toString(currentCollection.getLocation().getLatitude())
+                + " , " + Double.toString(currentCollection.getLocation().getLongitude()));
         for(Species s: currentCollection.getSpecies()){
             Log.i(TAG,s.getCommonName()+" has "+ Integer.toString(s.getSpecies_Data().size()) + "species collected");
         }

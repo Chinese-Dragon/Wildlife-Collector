@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.MyLocation;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.R;
@@ -82,7 +83,22 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         } else if (view == cancel) {
             getActivity().finish();
         } else if (view == next) {
-            dataListener.onDataPass(currentCollection, 2);
+            String lt = latitude.getText().toString().trim();
+            String lnt = longitude.getText().toString().trim();
+
+            if(!lt.equals("") && !lnt.equals("")) {
+                Double lat = Double.parseDouble(lt);
+                Double lng = Double.parseDouble(lnt);
+                Location loc = new Location("");
+                loc.setLatitude(lat);
+                loc.setLongitude(lng);
+
+                currentCollection.setLocation(loc);
+                dataListener.onDataPass(currentCollection, 2);
+            } else {
+                Message.showMessage(getActivity(),"Location Info is required");
+            }
+
         } else if (view == getLocation) {
 
 
@@ -93,7 +109,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                     //coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
                     latitude.setText(Double.toString(location.getLatitude()));
                     longitude.setText(Double.toString(location.getLongitude()));
-                    currentCollection.setLocation(location);
+
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());

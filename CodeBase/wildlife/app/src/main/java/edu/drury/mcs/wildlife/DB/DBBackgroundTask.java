@@ -2,7 +2,9 @@ package edu.drury.mcs.wildlife.DB;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
@@ -44,6 +46,7 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
     @Override
     protected List<CollectionObj> doInBackground(String... params) {
         String method = params[0];
+        List<CollectionObj> result = new ArrayList<>();
 
         switch (method) {
             case "create":
@@ -55,11 +58,13 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
             case "update":
                 if(newCollection != null) {
                     // call update methid in wildlifeDB
+
                 }
                 break;
             case "read":
                 // call read all collection in wildlifeDB
-
+                Log.i("readTask", " I am in about to read all collection");
+                result = wildlifeDB.readAllCollection();
                 break;
             case "delete":
                 if(collection_name != null) {
@@ -70,7 +75,7 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
                 break;
         }
 
-        return null;
+        return result;
     }
 
     @Override

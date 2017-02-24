@@ -40,7 +40,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="Enter Latitude"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:inputType="numberDecimal" />
 
         <Space
             android:id="@+id/space2"
@@ -55,7 +56,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="Enter Longitude"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:inputType="numberDecimal" />
 
     </LinearLayout>
 

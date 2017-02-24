@@ -24,11 +24,11 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
     private Context context;
     private LayoutInflater inflater;
     private Collection cFragment;
-    List<CollectionObj> testData;
+    List<CollectionObj> collectionData;
 
     public collectionAdapter(Context context, List<CollectionObj> data, Collection frag) {
         this.context = context;
-        this.testData = data;
+        this.collectionData = data;
         this.cFragment = frag;
         this.inflater = LayoutInflater.from(context);
     }
@@ -42,13 +42,19 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
 
     @Override
     public void onBindViewHolder(cViewHolder holder, int position) {
-        CollectionObj current = testData.get(position);
+        CollectionObj current = collectionData.get(position);
         holder.collectionName.setText(current.getCollection_name());
     }
 
     @Override
     public int getItemCount() {
-        return testData.size();
+        return collectionData.size();
+    }
+
+
+    public void addNewData(CollectionObj newC) {
+        this.collectionData.add(0, newC);
+        notifyItemInserted(0);
     }
 
     class cViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
@@ -82,10 +88,10 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
         public boolean onMenuItemClick(MenuItem item) {
             String clickedCollection = "";
             if (item.getItemId() == R.id.action_delete) {
-                clickedCollection = testData.get(this.getAdapterPosition()).getCollection_name();
-                testData.remove(this.getAdapterPosition());
+                clickedCollection = collectionData.get(this.getAdapterPosition()).getCollection_name();
+                collectionData.remove(this.getAdapterPosition());
                 Message.showMessage(editOption.getContext(),clickedCollection + " is deleted");
-                notifyDataSetChanged();
+                notifyItemRemoved(this.getAdapterPosition());
             } else if (item.getItemId() == R.id.action_edit) {
                 // edit the collection
                 Message.showMessage(editOption.getContext(), "Edit collection");

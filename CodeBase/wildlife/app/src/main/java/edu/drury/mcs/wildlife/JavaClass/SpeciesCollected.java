@@ -12,6 +12,12 @@ public class SpeciesCollected implements Parcelable{
     private String scientificName;
     private String commonName;
 
+    public SpeciesCollected() {
+        this.commonName = "";
+        this.scientificName = "";
+        this.quantity = 0;
+    }
+
     public SpeciesCollected(String scientificName, String commonName) {
         this.scientificName = scientificName;
         this.commonName = commonName;
@@ -38,6 +44,14 @@ public class SpeciesCollected implements Parcelable{
 
     public String getCommonName() {
         return commonName;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
     @Override

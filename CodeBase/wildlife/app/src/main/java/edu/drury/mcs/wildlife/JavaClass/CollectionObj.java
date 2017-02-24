@@ -1,17 +1,25 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import edu.drury.mcs.wildlife.DB.DBBackgroundTask;
 
 /**
  * Created by yma004 on 2/4/17.
  */
 
 public class CollectionObj implements Parcelable{
+    private static final String TASK_CREATE = "create";
+    private static final String TASK_READALL = "read";
+    private static final String TASK_DELETE = "delete";
+    private static final String TASK_UPDATE = "update";
     private String collection_name;
     private String date;
     private Location location;
@@ -89,4 +97,27 @@ public class CollectionObj implements Parcelable{
             return new CollectionObj[size];
         }
     };
+
+
+
+    // methods for interacting with db
+    public void saveToDB(Context context) {
+        new DBBackgroundTask(context,this).execute(TASK_CREATE);
+    }
+
+    //DELETE
+    public void deleteFromDB(Context context) {
+
+    }
+
+    //READALL
+    public static List<CollectionObj> readAllCollections(Context context) throws ExecutionException, InterruptedException {
+        return new DBBackgroundTask(context).execute(TASK_READALL).get();
+    }
+
+    //UPDATE
+    public void updateToDB(Context context) {
+
+    }
+
 }

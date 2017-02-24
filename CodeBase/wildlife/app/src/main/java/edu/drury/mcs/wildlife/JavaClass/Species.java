@@ -88,4 +88,15 @@ public class Species implements Parcelable{
         }
     };
 
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public void setGroup_ID(int group_ID) {
+        this.group_ID = group_ID;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
+    }
 }

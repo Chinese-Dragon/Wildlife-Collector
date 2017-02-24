@@ -1,6 +1,7 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,13 +19,17 @@ import android.widget.EditText;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AddDialog extends DialogFragment {
     public static final String EXTRA_CURRENTCOLLECTION = "edu.drury.mcs.wildlife.CURRENTCOLLECTION";;
+    public final static int STATIC_INTEGER_VALUE = 100;
     private AlertDialog.Builder dialogBuilder;
     private LayoutInflater inflater;
     private View dialog_view;
@@ -31,6 +37,9 @@ public class AddDialog extends DialogFragment {
     private EditText editText;
     private Context context;
 
+    public AddDialog(Context context) {
+        this.context = context;
+    }
 
     @NonNull
     @Override
@@ -62,17 +71,21 @@ public class AddDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 CollectionObj currentCollection = new CollectionObj();
-                currentCollection.setCollection_name(editText.getText().toString());
+                String collection_name = editText.getText().toString().trim();
+                Log.i(TAG,collection_name);
+                if(!collection_name.equals("")) {
+                    currentCollection.setCollection_name(editText.getText().toString());
 
-                // Segue to CreateCollection activity
-                Intent intent = new Intent(getActivity(), CreateCollection.class);
+                    // Segue to CreateCollection activity
+                    Intent intent = new Intent(getActivity(), CreateCollection.class);
+                    intent.putExtra(EXTRA_CURRENTCOLLECTION, currentCollection);
 
-                Bundle cBundle = new Bundle();
-                cBundle.putParcelable(EXTRA_CURRENTCOLLECTION,currentCollection);
-                intent.putExtras(cBundle);
+                    AddDialog.this.getDialog().cancel();
+                    ((Activity) context).startActivityForResult(intent, STATIC_INTEGER_VALUE);
+                } else {
+                    Message.showMessage(context,"Collection Name is required");
+                }
 
-                AddDialog.this.getDialog().cancel();
-                startActivity(intent);
             }
         });
 

@@ -40,7 +40,7 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         // received collection we are working on from AddDialog.java
-        currentCollection = (CollectionObj) getIntent().getExtras().getParcelable(AddDialog.EXTRA_CURRENTCOLLECTION);
+        currentCollection = (CollectionObj) getIntent().getParcelableExtra(AddDialog.EXTRA_CURRENTCOLLECTION);
 
         // get references of pager and indicator from layout
         pager = (NonSwipeableViewPager) findViewById(R.id.pager);

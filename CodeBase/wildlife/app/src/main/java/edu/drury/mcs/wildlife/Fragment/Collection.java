@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
@@ -23,7 +22,7 @@ import edu.drury.mcs.wildlife.R;
 public class Collection extends Fragment {
 
     private RecyclerView cRecyclerView;
-    private RecyclerView.Adapter cAdapter;
+    private collectionAdapter cAdapter;
     private View layout;
     private FloatingActionButton addFab;
     private FloatingActionButton emailFab;
@@ -43,7 +42,7 @@ public class Collection extends Fragment {
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddDialog dialog = new AddDialog();
+                AddDialog dialog = new AddDialog(getActivity());
                 dialog.show(getActivity().getSupportFragmentManager(), "Add Collection");
             }
         });
@@ -57,19 +56,22 @@ public class Collection extends Fragment {
 
         //Initialize collection recycler view
         cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        cAdapter = new collectionAdapter(getActivity(),getData(),Collection.this);
+        try {
+            cAdapter = new collectionAdapter(getActivity(),CollectionObj.readAllCollections(getActivity()),Collection.this);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         cRecyclerView.setAdapter(cAdapter);
+
 
         return layout;
     }
 
-    //get testdata
-    private List<CollectionObj> getData() {
-        List<CollectionObj> data = new ArrayList<>();
 
-
-
-        return data;
+    public void addNewCollectionToList(CollectionObj newC) {
+        cAdapter.addNewData(newC);
     }
 
 }

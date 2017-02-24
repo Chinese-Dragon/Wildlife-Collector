@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.R;
 
@@ -87,7 +88,14 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
         if (view == cancel) {
             getActivity().finish();
         } else if (view == next) {
-            dataListener.onDataPass(currentCollection, 1);
+            String date = currentDate.getText().toString().trim();
+            if(!date.equals("")) {
+                currentCollection.setDate(date);
+                dataListener.onDataPass(currentCollection, 1);
+            }else {
+                Message.showMessage(getActivity(),"Date is required");
+            }
+
         } else if (view == getCurrentDate) {
 
         } else if (view == datePickerButton) {
@@ -99,7 +107,6 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
                         Calendar newDate = Calendar.getInstance();
                         newDate.set(year,month,day);
                         currentDate.setText(dateFormatter.format(newDate.getTime()));
-                        currentCollection.setDate(currentDate.getText().toString());
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 

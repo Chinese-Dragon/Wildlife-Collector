@@ -1,5 +1,6 @@
 package edu.drury.mcs.wildlife.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,11 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import edu.drury.mcs.wildlife.Fragment.AddDialog;
 import edu.drury.mcs.wildlife.Fragment.Collection;
+import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
+import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static final int RESULT_OK = 202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,7 @@ public class MainActivity extends AppCompatActivity
 
         //initialize fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.placeholder, new Collection()).commit();
+                .replace(R.id.placeholder, new Collection(),"collection_fragment").commit();
 
     }
 
@@ -97,5 +103,18 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == AddDialog.STATIC_INTEGER_VALUE && resultCode == RESULT_OK) {
+            //ready to pass new collection data to Collection fragment to add to list
+            Message.showMessage(this,"new added collection is here");
+            Collection cFrag = (Collection) getSupportFragmentManager().findFragmentByTag("collection_fragment");
+            CollectionObj newC = data.getParcelableExtra(CollectionSpecies.SAVEDCOLLECTIONDATA);
+            cFrag.addNewCollectionToList(newC);
+        }
     }
 }
