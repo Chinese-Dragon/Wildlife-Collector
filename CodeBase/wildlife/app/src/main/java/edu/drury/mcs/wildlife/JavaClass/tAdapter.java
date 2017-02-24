@@ -55,7 +55,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         if(current.getQuantity() > 0) {
             holder.quantity.setText(Integer.toString(current.getQuantity()));
             holder.quantity_captured = current.getQuantity();
-            holder.card.setBackgroundColor(Color.parseColor("#f44242"));
+            holder.card.setBackgroundColor(Color.parseColor("#a6d8a8"));
         } else {
             holder.quantity.setText("0");
             holder.quantity_captured = 0;
@@ -109,7 +109,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             quantity = (EditText) itemView.findViewById(R.id.quantity_captured);
             quantity.setText("0");
 
-            toggle.setOnClickListener(this);
+            card.setOnClickListener(this);
             increase.setOnClickListener(this);
             decrease.setOnClickListener(this);
 
@@ -118,7 +118,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
 
         @Override
         public void onClick(View view) {
-            if(view == toggle) {
+            if(view == card) {
                 if(linearLayoutDetail.getVisibility() == View.GONE){
                     ExpandAndCollapseViewUtil.expand(linearLayoutDetail, DURATION);
                     toggle.setImageResource(R.drawable.circled_chevron_down);

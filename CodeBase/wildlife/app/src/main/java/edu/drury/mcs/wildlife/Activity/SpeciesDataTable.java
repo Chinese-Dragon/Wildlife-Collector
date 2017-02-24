@@ -80,6 +80,7 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         int id = item.getItemId();
         if(id == android.R.id.home) {
             Message.showMessage(this,"Pressed back");
+            saveData();
             onBackPressed();
             return true;
         }
@@ -135,21 +136,24 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         if (view == cancel) {
             onBackPressed();
         } else if (view == save) {
-            List<SpeciesCollected> savedSpeciesData = tAdapter.getLatestItems();
-            tAdapter.notifyDataSetChanged();
-            for(SpeciesCollected s: savedSpeciesData) {
-                Message.showMessage(this,s.getCommonName());
-            }
-            Intent resultIntent = new Intent();
-            Bundle resultBundle = new Bundle();
-            resultBundle.putParcelableArrayList(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));
-            resultBundle.putInt(CURRENT_GROUP_ID,currentSpecies.getGroup_ID());
-            resultIntent.putExtras(resultBundle);
-            setResult(CreateCollection.RESULT_OK, resultIntent);
-            finish();
+            saveData();
         }
     }
 
+    private void saveData() {
+        List<SpeciesCollected> savedSpeciesData = tAdapter.getLatestItems();
+        tAdapter.notifyDataSetChanged();
+        for(SpeciesCollected s: savedSpeciesData) {
+            Message.showMessage(this,s.getCommonName());
+        }
+        Intent resultIntent = new Intent();
+        Bundle resultBundle = new Bundle();
+        resultBundle.putParcelableArrayList(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));
+        resultBundle.putInt(CURRENT_GROUP_ID,currentSpecies.getGroup_ID());
+        resultIntent.putExtras(resultBundle);
+        setResult(CreateCollection.RESULT_OK, resultIntent);
+        finish();
+    }
 
     @Override
     public void onTaskComplete(String jsonm_result_string) {
