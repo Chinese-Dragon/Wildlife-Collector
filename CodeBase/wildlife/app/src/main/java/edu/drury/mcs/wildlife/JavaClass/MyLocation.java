@@ -9,7 +9,10 @@ import java.util.TimerTask;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -35,6 +38,7 @@ public class MyLocation implements ActivityCompat.OnRequestPermissionsResultCall
     boolean gps_enabled = false;
     boolean network_enabled = false;
     private FragmentActivity current_activity;
+    private boolean isGPSOn;
 
     private static final int REQUEST_LOCATION = 0;
     private static String[] PERMISSIONS_LOCATION = {Manifest.permission.ACCESS_FINE_LOCATION};
@@ -45,20 +49,44 @@ public class MyLocation implements ActivityCompat.OnRequestPermissionsResultCall
         this.current_activity = current_activity;
     }
 
+    private void buildAlertMessageNoGps(final Context context) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        isGPSOn = true;
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public boolean getLocation(Context context, LocationResult result) {
         //I use LocationResult callback class to pass location value from MyLocation to user code.
         locationResult = result;
         if (lm == null)
             lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
+        if ( !lm.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            isGPSOn = false;
+            buildAlertMessageNoGps(context);
+        }
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Camera permission has not been granted.
+            // Location permission has not been granted.
 
             requestLocationPermission();
 
         } else {
 
-            // Camera permissions is already available, show the camera preview.
+            // Location permission is already available, get Location.
             //exceptions will be thrown if provider is not permitted.
             try {
                 gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
