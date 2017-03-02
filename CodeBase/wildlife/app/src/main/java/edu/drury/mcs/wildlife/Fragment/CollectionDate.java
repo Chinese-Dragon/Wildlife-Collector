@@ -67,8 +67,6 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
         datePickerButton = (Button) layout.findViewById(R.id.datePickerButton);
-        getCurrentDate = (RadioButton) layout.findViewById(R.id.currentDateChecked);
-        getCustomizedDate = (RadioButton) layout.findViewById(R.id.customDateChecked);
 
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
@@ -76,7 +74,6 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
 
         datePickerButton.setOnClickListener(this);
-        getCurrentDate.setOnClickListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
 
@@ -96,10 +93,7 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
                 Message.showMessage(getActivity(),"Date is required");
             }
 
-        } else if (view == getCurrentDate) {
-
-        } else if (view == datePickerButton) {
-            if(getCustomizedDate.isChecked()) {
+        }  else if (view == datePickerButton) {
                 Calendar calendar = Calendar.getInstance();
                 datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -111,7 +105,7 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
                 datePicker.show();
-            }
+
         }
     }
 
