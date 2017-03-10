@@ -2,6 +2,7 @@ package edu.drury.mcs.wildlife.Fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import java.util.concurrent.ExecutionException;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
 import edu.drury.mcs.wildlife.R;
 
@@ -20,12 +23,30 @@ import edu.drury.mcs.wildlife.R;
  * A simple {@link Fragment} subclass.
  */
 public class Collection extends Fragment {
-
+    public static final String EXTRA_MAIN_COLLECTION = "edu.drury.mcs.wildlife.EXTRA_MAIN_COLLECTION";
     private RecyclerView cRecyclerView;
     private collectionAdapter cAdapter;
     private View layout;
     private FloatingActionButton addFab;
     private FloatingActionButton emailFab;
+    private MainCollectionObj current_mainCollection;
+
+    public static final Collection newInstance(MainCollectionObj _mainCollection) {
+        Collection fragment = new Collection();
+        final Bundle args = new Bundle(1);
+        args.putParcelable(EXTRA_MAIN_COLLECTION, _mainCollection);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.current_mainCollection = getArguments().getParcelable(EXTRA_MAIN_COLLECTION);
+
+        // check if current_mainCollection is empty
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,17 +54,14 @@ public class Collection extends Fragment {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.fragment_collection,container,false);
 
-        // grab outlets from xml layout
         addFab = (FloatingActionButton) layout.findViewById(R.id.add_collection);
         emailFab = (FloatingActionButton) layout.findViewById(R.id.email_collection);
-        cRecyclerView = (RecyclerView) layout.findViewById(R.id.collection_recyclerview);
-
         //set up onclick events on Fabs
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AddDialog dialog = new AddDialog(getActivity());
-                dialog.show(getActivity().getSupportFragmentManager(), "Add Collection");
+                dialog.show(getActivity().getSupportFragmentManager(), "Add an Entry");
             }
         });
 
@@ -54,24 +72,33 @@ public class Collection extends Fragment {
             }
         });
 
-        //Initialize collection recycler view
-        cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        try {
-            cAdapter = new collectionAdapter(getActivity(),CollectionObj.readAllCollections(getActivity()),Collection.this);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        cRecyclerView.setAdapter(cAdapter);
-
+        setUpRecyclerView();
 
         return layout;
     }
 
 
     public void addNewCollectionToList(CollectionObj newC) {
+        current_mainCollection.add_collectionObj(newC);
         cAdapter.addNewData(newC);
+        //save new Entry to DB
+        newC.saveToDB(getActivity(),current_mainCollection);
+        Message.showMessage(getActivity(),"Successfully Saved Collection Data");
+    }
+
+    private void setUpRecyclerView() {
+        // grab outlets from xml layout
+
+        cRecyclerView = (RecyclerView) layout.findViewById(R.id.collection_recyclerview);
+
+        //Initialize collection recycler view
+        cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        try {
+            cAdapter = new collectionAdapter(getActivity(), CollectionObj.readAllCollections(getActivity(), current_mainCollection), Collection.this);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        cRecyclerView.setAdapter(cAdapter);
     }
 
 }

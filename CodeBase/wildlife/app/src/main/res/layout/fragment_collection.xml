@@ -9,35 +9,12 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:id="@+id/useless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/useless"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="My Collections"
-            android:layout_marginBottom="16dp"
-            android:textAppearance="@android:style/TextAppearance.Material.Headline" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/collection_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="20dp"
-            android:scrollbars="vertical"/>
-
-    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/collection_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -47,11 +24,9 @@
         app:fabSize="normal"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_above="@+id/email_collection"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_alignLeft="@+id/email_collection"
+        android:layout_alignStart="@+id/email_collection" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/email_collection"
@@ -59,9 +34,10 @@
         app:fabSize="normal"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin = "16dp" />
+
 
 </RelativeLayout>

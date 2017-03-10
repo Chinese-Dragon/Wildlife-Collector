@@ -11,32 +11,32 @@ import android.util.Log;
  */
 
 public class wildlifeDBHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "wildlife.db";
     private Context context;
 
-    public wildlifeDBHandler(Context context) {
+   public  wildlifeDBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i("info", " Create db");
+        try {
+            db.execSQL(MainCollectionTable.CREATE_TABLE_MAIN_COLLECTION);
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            db.execSQL(GroupMappingTable.CREATE_TABLE_GROUP_MAPPING_COLLECTION);
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         try {
             db.execSQL(CollectionTable.CREATE_TABLE_COLLECTION);
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            db.execSQL(SpeciesTable.CREATE_TABLE_SPECIES);
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            db.execSQL(HasSpeciesTable.CREATE_TABLE_HAS_SPECIES);
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,14 +46,15 @@ public class wildlifeDBHandler extends SQLiteOpenHelper {
         }catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int old_version, int new_version) {
         db.execSQL("DROP TABLE IF EXISTS " + CollectionTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SpeciesCollectedTable.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + SpeciesTable.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + HasSpeciesTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MainCollectionTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + GroupMappingTable.TABLE_NAME);
         onCreate(db);
         Log.i("onUpgrade", " onUpgrade is called");
     }

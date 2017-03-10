@@ -3,16 +3,19 @@ package edu.drury.mcs.wildlife.DB;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Species;
 import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by mark93 on 2/21/2017.
@@ -35,259 +38,132 @@ public class wildlifeDB {
 
 
     //CREATE a new wildlife collection
-    public void createNewCollection(CollectionObj newC) {
+    public void createNewCollection(CollectionObj newC, MainCollectionObj current_mainC) {
         this.db = dbHandler.getWritableDatabase();
-        long c_id;
-        long s_id;
+        ContentValues values = new ContentValues();
+        values.put(CollectionTable.C_NAME, newC.getCollection_name());
+        values.put(CollectionTable.C_DATE, newC.getDate());
+        values.put(CollectionTable.C_LAT, newC.getLocation().getLatitude());
+        values.put(CollectionTable.C_LNG, newC.getLocation().getLongitude());
 
-        c_id = insert_collection(db,newC.getCollection_name(), newC.getDate(), newC.getLocation().getLatitude(), newC.getLocation().getLongitude());
+        //find and add foreign key
+        String[] projection = {MainCollectionTable.MC_ID};
+        String selection = MainCollectionTable.MC_NAME + " = ?";
+        String[] selectionArgs = {current_mainC.getMain_collection_name()};
+        Cursor cursor = db.query(MainCollectionTable.TABLE_NAME, projection, selection, selectionArgs, null, null, null,null);
+        if(cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_ID));
+            values.put(CollectionTable.CMC_ID, id);
+        }
+        cursor.close();
+        long collection_id = db.insert(CollectionTable.TABLE_NAME, null, values);
 
-        // insert data to speciesTable, get all species_ids, and associate with hasSpecies Table
-        for (Species s : newC.getSpecies()) {
-            s_id = insert_species(db,s.getCommonName(),s.getScientificName(),s.getGroup_ID());
-            insert_hasSpecies(db, c_id, s_id);
-
-            for (SpeciesCollected sc : s.getSpecies_Data()) {
-                insert_speciesCollected(db, sc.getCommonName(), sc.getScientificName(), sc.getQuantity(), s_id);
+        // insert speciesCollectedTable
+        for(Species s: newC.getSpecies()) {
+            int group_id = s.getGroup_ID();
+            for(SpeciesCollected sc: s.getSpecies_Data()) {
+                ContentValues sc_values = new ContentValues();
+                sc_values.put(SpeciesCollectedTable.SC_CNAME, sc.getCommonName());
+                sc_values.put(SpeciesCollectedTable.SC_SNAME, sc.getScientificName());
+                sc_values.put(SpeciesCollectedTable.SC_QUANTITY, sc.getQuantity());
+                sc_values.put(SpeciesCollectedTable.SCC_ID, collection_id);
+                sc_values.put(SpeciesCollectedTable.SCGROUP_ID, group_id);
+                db.insert(SpeciesCollectedTable.TABLE_NAME, null, sc_values);
             }
         }
-
+        Log.i(TAG," Finish inserting single collection data");
         db.close();
     }
 
-    //READ ALl wildlife Collection
-    public List<CollectionObj> readAllCollection() {
-        List<CollectionObj> collectionList = new ArrayList<>();
+    public List<CollectionObj> getAllCollections(MainCollectionObj current_mainC) {
+        List<CollectionObj> results = new LinkedList<>();
         this.db = dbHandler.getReadableDatabase();
+        long main_collection_id = 0;
 
-        // define which colmn in table we want
-        String[] collectionProjection = {
-                CollectionTable.C_ID,
-                CollectionTable.C_NAME,
-                CollectionTable.C_DATE,
-                CollectionTable.C_LAT,
-                CollectionTable.C_LNG,
-        };
+        //find and add foreign key
+        String[] projection = {MainCollectionTable.MC_ID};
+        String selection = MainCollectionTable.MC_NAME + " = ?";
+        String[] selectionArgs = {current_mainC.getMain_collection_name()};
+        Cursor cursor = db.query(MainCollectionTable.TABLE_NAME, projection, selection, selectionArgs, null, null, null,null);
+        if(cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            main_collection_id = cursor.getLong(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_ID));
+        }
+        cursor.close();
 
-        //setup cursor to hold query results
-        Cursor cursor = db.query(
-            CollectionTable.TABLE_NAME,
-                collectionProjection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        // using cursor to check each row in collection
-        while (cursor.moveToNext()) {
-            // start contructing new collection from db
+        //handle collection table using main_collection_id
+        String[] c_proj = {CollectionTable.C_ID, CollectionTable.C_NAME, CollectionTable.C_DATE, CollectionTable.C_LAT, CollectionTable.C_LNG};
+        String c_selection = CollectionTable.CMC_ID + " = ?";
+        String[] c_selectionArgs = {Long.toString(main_collection_id)};
+        Cursor c_cursor = db.query(CollectionTable.TABLE_NAME, c_proj, c_selection, c_selectionArgs, null, null, null);
+        //start assemble each row to a collectionObj
+        while(c_cursor.moveToNext()) {
             CollectionObj collection = new CollectionObj();
-            Location loc = new Location("");
+            long c_id = c_cursor.getLong(c_cursor.getColumnIndexOrThrow(CollectionTable.C_ID));
 
-            long c_id = cursor.getLong( cursor.getColumnIndex(CollectionTable.C_ID));
-            collection.setCollection_name( cursor.getString(cursor.getColumnIndex(CollectionTable.C_NAME)) );
-            collection.setDate( cursor.getString(cursor.getColumnIndex(CollectionTable.C_DATE)) );
+            String name = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_NAME));
+            String c_date = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_DATE));
+            Double lat = c_cursor.getDouble(c_cursor.getColumnIndexOrThrow(CollectionTable.C_LAT));
+            Double lng = c_cursor.getDouble(c_cursor.getColumnIndexOrThrow(CollectionTable.C_LNG));
+            Location location = new Location("");
+            location.setLatitude(lat);
+            location.setLongitude(lng);
 
-            loc.setLatitude( cursor.getDouble(cursor.getColumnIndex(CollectionTable.C_LAT)) );
-            loc.setLongitude( cursor.getDouble(cursor.getColumnIndex(CollectionTable.C_LNG)) );
-            collection.setLocation(loc);
-
-            // to contruct list of species with known c_id
-            collection.setSpecies(constructSpeciesList(db, c_id));
-
-            collectionList.add(collection);
+            //need list of species data
+            results.add(new CollectionObj(name,c_date,location,getSpeciesList(db,c_id)));
         }
 
-        cursor.close();
         db.close();
-
-        return collectionList;
+        return results;
     }
 
-    //UPDATE certain wildlife Collection
+    private List<Species> getSpeciesList(SQLiteDatabase db, Long c_id) {
+        List<Species> data = new LinkedList<>();
 
+        String[] g_projection = {GroupMappingTable.GM_ID, GroupMappingTable.GM_CNAME, GroupMappingTable.GM_SNAME};
 
-    //DELETE certain wildlife Collection
+        Cursor g_cursor = db.query(GroupMappingTable.TABLE_NAME, g_projection, null,null,null,null,null,null);
+        while (g_cursor.moveToNext()) {
+            int group_id = g_cursor.getInt(g_cursor.getColumnIndexOrThrow(GroupMappingTable.GM_ID));
+            String c_name = g_cursor.getString(g_cursor.getColumnIndexOrThrow(GroupMappingTable.GM_CNAME));
+            String s_name = g_cursor.getString(g_cursor.getColumnIndexOrThrow(GroupMappingTable.GM_SNAME));
 
-
-    /*
-        Helper functions (CRUD) for collection Table
-     */
-    private long insert_collection(SQLiteDatabase db, String name, String date, Double lat, Double lng) {
-        long id = 0;
-        collection_table_values.clear();
-
-        // insert info to collection table first
-        collection_table_values.put(CollectionTable.C_NAME, name);
-        collection_table_values.put(CollectionTable.C_DATE, date);
-        collection_table_values.put(CollectionTable.C_LAT, lat);
-        collection_table_values.put(CollectionTable.C_LNG, lng);
-        try {
-            id = db.insert(CollectionTable.TABLE_NAME, null, collection_table_values);
-        } catch (SQLException e ) {
-            e.printStackTrace();
+            //need list of speciesCollected
+            data.add(new Species(s_name,s_name,group_id,getSpeciesCollectedList(db,c_id,group_id)));
         }
 
-        return id;
+        return data;
     }
 
+    private List<SpeciesCollected> getSpeciesCollectedList(SQLiteDatabase db, Long c_id, int group_id) {
+        List<SpeciesCollected> sc_data = new LinkedList<>();
 
-    /*
-        Helper functions (CRUD) for species Table
-     */
-    private long insert_species(SQLiteDatabase db, String common, String scientific, int group_id) {
-        long id = 0;
-        species_table_values.clear();
-
-        // insert info to species
-        species_table_values.put(SpeciesTable.S_CNAME, common);
-        species_table_values.put(SpeciesTable.S_SNAME, scientific);
-        species_table_values.put(SpeciesTable.S_GROUPID, group_id);
-        try{
-            id = db.insert(SpeciesTable.TABLE_NAME, null, species_table_values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return id;
-    }
-
-    private Species constructSingleSpecies(SQLiteDatabase db, long s_id) {
-        Species s = new Species();
-
-        String[] projection = {
-                SpeciesTable.S_ID,
-                SpeciesTable.S_CNAME,
-                SpeciesTable.S_SNAME,
-                SpeciesTable.S_GROUPID
-        };
-
-        String selection = SpeciesTable.S_ID + " = ?";
-        String[] selectionArg = {Long.toString(s_id)};
-
-        Cursor cursor = db.query(
-                SpeciesTable.TABLE_NAME,
-                projection,
-                selection,
-                selectionArg,
-                null,
-                null,
-                null
-        );
-
-        // should just retrn one row
-        while (cursor.moveToNext()) {
-            s.setCommonName( cursor.getString(cursor.getColumnIndex(SpeciesTable.S_CNAME)) );
-            s.setScientificName( cursor.getString(cursor.getColumnIndex(SpeciesTable.S_SNAME)) );
-            s.setGroup_ID( cursor.getInt(cursor.getColumnIndex(SpeciesTable.S_GROUPID)));
-            s.setSpecies_Data(constructSpeciesCollectedList(db, s_id));
-        }
-        cursor.close();
-
-        return s;
-    }
-
-
-    /*
-        Helper functions (CRUD) for speciesCollection Table
-     */
-    private void insert_speciesCollected(SQLiteDatabase db, String common, String scientific, int quantity, long s_id ) {
-        speciesCollected_table_values.clear();
-
-        speciesCollected_table_values.put(SpeciesCollectedTable.SC_CNAME, common);
-        speciesCollected_table_values.put(SpeciesCollectedTable.SC_SNAME, scientific);
-        speciesCollected_table_values.put(SpeciesCollectedTable.SC_QUANTITY, quantity);
-        speciesCollected_table_values.put(SpeciesCollectedTable.SCSPECIES_ID, s_id);
-        try {
-            db.insertOrThrow(SpeciesCollectedTable.TABLE_NAME, null, speciesCollected_table_values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private List<SpeciesCollected> constructSpeciesCollectedList(SQLiteDatabase db, long s_id) {
-        List<SpeciesCollected> scList = new ArrayList<>();
-
-        String[] projection = {
-            SpeciesCollectedTable.SC_CNAME,
+        String[] sc_projection = {
+                SpeciesCollectedTable.SC_CNAME,
                 SpeciesCollectedTable.SC_SNAME,
                 SpeciesCollectedTable.SC_QUANTITY
         };
 
-        String selection = SpeciesCollectedTable.SCSPECIES_ID + " = ?";
-        String[] selectionArgs = {Long.toString(s_id)};
+        String sc_selection = SpeciesCollectedTable.SCC_ID + " = ? AND " + SpeciesCollectedTable.SCGROUP_ID + " = ?";
+        String[] sc_selectionArgs = {Long.toString(c_id),Integer.toString(group_id)};
 
-        Cursor cursor = db.query(
-                SpeciesCollectedTable.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
+        Cursor sc_cursor = db.query(SpeciesCollectedTable.TABLE_NAME,
+                sc_projection,
+                sc_selection,
+                sc_selectionArgs,
                 null,
                 null,
-                null
-        );
-
-        // this should return 0 - N rows of data since normally species will have many collected species data
-        while (cursor.moveToNext()) {
-            SpeciesCollected sc = new SpeciesCollected();
-            sc.setCommonName( cursor.getString(cursor.getColumnIndex(SpeciesCollectedTable.SC_CNAME)) );
-            sc.setScientificName( cursor.getString(cursor.getColumnIndex(SpeciesCollectedTable.SC_SNAME)) );
-            sc.setQuantity( cursor.getInt(cursor.getColumnIndex(SpeciesCollectedTable.SC_QUANTITY)) );
-
-            scList.add(sc);
+                null);
+        while (sc_cursor.moveToNext()) {
+            String c_name = sc_cursor.getString(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_CNAME));
+            String s_name = sc_cursor.getString(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_SNAME));
+            int quantity = sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_QUANTITY));
+            sc_data.add(new SpeciesCollected(c_name,s_name,quantity));
         }
-        cursor.close();
+        sc_cursor.close();
 
-        return scList;
+        return sc_data;
     }
 
-
-    /*
-        Helper functions for hasSpecies Table
-     */
-    private void insert_hasSpecies(SQLiteDatabase db, long c_id, long s_id) {
-        has_species_table_values.clear();
-
-        has_species_table_values.put(HasSpeciesTable.FK_C_ID, c_id);
-        has_species_table_values.put(HasSpeciesTable.FK_S_ID, s_id);
-        try{
-            db.insert(HasSpeciesTable.TABLE_NAME, null, has_species_table_values);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private List<Species> constructSpeciesList(SQLiteDatabase db, long c_id) {
-        List<Species> sList = new ArrayList<>();
-
-        String[] hasSpeciesProjection = {
-                HasSpeciesTable.FK_S_ID
-        };
-
-        // filter -- where clause
-        String selection = HasSpeciesTable.FK_C_ID + " = ?";
-        String[] selectionArgs = {Long.toString(c_id)};
-
-        Cursor cursor = db.query(
-                HasSpeciesTable.TABLE_NAME,
-                hasSpeciesProjection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-
-        // now we should have result of all s_ids associate with c_id
-        while (cursor.moveToNext()) {
-            long s_id = cursor.getLong(cursor.getColumnIndex(HasSpeciesTable.FK_S_ID));
-            Species single_species = constructSingleSpecies(db, s_id);
-            sList.add(single_species);
-        }
-        cursor.close();
-
-        return sList;
-    }
 }

@@ -1,6 +1,11 @@
 package edu.drury.mcs.wildlife.Activity;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,10 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.concurrent.ExecutionException;
+
+import edu.drury.mcs.wildlife.DB.MainCollectionTable;
+import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
 import edu.drury.mcs.wildlife.Fragment.AddDialog;
 import edu.drury.mcs.wildlife.Fragment.Collection;
 import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.R;
 
@@ -43,8 +53,68 @@ public class MainActivity extends AppCompatActivity
 
 
         //initialize fragment
+        MainCollectionObj currentMainColellection = new MainCollectionObj("2017 Collection","yma004@drury.edu");
+        try {
+            new MainCollecton2DB(this,currentMainColellection).execute("create").get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.placeholder, new Collection(),"collection_fragment").commit();
+                .replace(R.id.placeholder, Collection.newInstance(currentMainColellection),"collection_fragment")
+                .commit();
+
+    }
+
+    private class MainCollecton2DB extends AsyncTask<String, Void, MainCollectionObj> {
+        private MainCollectionObj main_collection;
+        private SQLiteDatabase db;
+        private Context context;
+        public MainCollecton2DB(Context context, MainCollectionObj _main) {
+            this.main_collection = _main;
+            this.context =context;
+        }
+
+        @Override
+        protected MainCollectionObj doInBackground(String... params) {
+            String method = params[0];
+
+            switch (method) {
+                case "create":
+                    db = new wildlifeDBHandler(context).getWritableDatabase();
+
+                    String[] projections = {
+                            MainCollectionTable.MC_NAME
+                    };
+
+                    String selection = MainCollectionTable.MC_NAME + " = ?";
+                    String[] selectionArgs = {main_collection.getMain_collection_name()};
+
+                    Cursor cursor = db.query(
+                            MainCollectionTable.TABLE_NAME,
+                            projections,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            null
+                    );
+
+                    if(cursor.getCount() == 0){
+                        ContentValues values = new ContentValues();
+                        values.put(MainCollectionTable.MC_NAME, main_collection.getMain_collection_name());
+                        values.put(MainCollectionTable.MC_EMAIL, main_collection.getEmail());
+                        db.insert(MainCollectionTable.TABLE_NAME, null, values);
+                    }
+                    cursor.close();
+
+                    break;
+                default:
+                    break;
+            }
+
+            return null;
+        }
 
     }
 
@@ -117,4 +187,6 @@ public class MainActivity extends AppCompatActivity
             cFrag.addNewCollectionToList(newC);
         }
     }
+
+
 }

@@ -4,6 +4,9 @@ package edu.drury.mcs.wildlife.Fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,9 +19,12 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
 import edu.drury.mcs.wildlife.Activity.MainActivity;
+import edu.drury.mcs.wildlife.DB.GroupMappingTable;
+import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
@@ -68,7 +74,13 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
         // set collection initial species data
-        currentCollection.setSpecies(getData());
+        try {
+            currentCollection.setSpecies(getData());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ((CreateCollection) getActivity()).setCurrentCollection(currentCollection);
 
         back = (Button) layout.findViewById(R.id.back);
@@ -82,7 +94,8 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         //initilize and setup recycler view
         sRecyclerView = (RecyclerView) layout.findViewById(R.id.species_recyclerview);
         sRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        sAdapter = new sAdapter(getActivity(), getData(), this);
+        sAdapter = new sAdapter(getActivity(), currentCollection.getSpecies(), this);
+
         sRecyclerView.setAdapter(sAdapter);
 
         return layout;
@@ -104,9 +117,6 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
                 Log.i("OnSave", s.getCommonName() + " has " + s.getSpecies_Data().size() +" species collected");
             }
 
-            currentCollection.saveToDB(getActivity());
-            Message.showMessage(getActivity(),"Successfully Saved Collection Data");
-
             Intent resultIntent = new Intent();
             resultIntent.putExtra(SAVEDCOLLECTIONDATA, currentCollection);
             getActivity().setResult(MainActivity.RESULT_OK, resultIntent);
@@ -114,34 +124,40 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         }
     }
 
-    public List<Species> getData() {
-        List<Species> data = new ArrayList<>();
-        for (int i = 0; i < 5;i++) {
-            switch (i) {
-                case 0:
-                    data.add(new Species("Salamanders","Caudata", i));
-                    break;
-                case 1:
-                    data.add(new Species("Frogs","Anura",i));
-                    break;
-                case 2:
-                    data.add(new Species("Lizards","Lacertilia",i));
-                    break;
-                case 3:
-                    data.add(new Species("Snakes","Serpentes",i));
-                    break;
-                case 4:
-                    data.add(new Species("Turtles","Testudines",i));
-            }
-        }
-
-        return data;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         Log.i(TAG,"CollectionSpecies is Resumed");
+    }
+
+    public List<Species> getData() throws ExecutionException, InterruptedException {
+        return new getGroupInfoTask().execute().get();
+    }
+
+    private class getGroupInfoTask extends AsyncTask<Void, Void, List<Species>> {
+
+        @Override
+        protected List<Species> doInBackground(Void... voids) {
+            List<Species> data = new ArrayList<>();
+            SQLiteDatabase db = new wildlifeDBHandler(getActivity()).getReadableDatabase();
+
+            String[] projection = {
+                    GroupMappingTable.GM_ID,
+                    GroupMappingTable.GM_CNAME,
+                    GroupMappingTable.GM_SNAME
+            };
+
+            Cursor cursor = db.query(GroupMappingTable.TABLE_NAME,projection,null,null,null,null,null);
+            while (cursor.moveToNext()) {
+                int group_id = cursor.getInt(cursor.getColumnIndexOrThrow(GroupMappingTable.GM_ID));
+                String cName = cursor.getString(cursor.getColumnIndexOrThrow(GroupMappingTable.GM_CNAME));
+                String sName = cursor.getString(cursor.getColumnIndexOrThrow(GroupMappingTable.GM_SNAME));
+                data.add(new Species(cName, sName, group_id));
+            }
+
+            cursor.close();
+            return data;
+        }
     }
 
     public void setCurrentCollection(CollectionObj collection) {
@@ -152,7 +168,6 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
             Log.i(TAG,s.getCommonName()+" has "+ Integer.toString(s.getSpecies_Data().size()) + "species collected");
         }
     }
-
 
     public CollectionObj getCurrentCollection() {
         return currentCollection;

@@ -11,7 +11,6 @@ import java.util.List;
  */
 
 public class Species implements Parcelable{
-
     private String commonName;
     private String scientificName;
     private int group_ID;
@@ -29,6 +28,11 @@ public class Species implements Parcelable{
         this.scientificName = science;
         this.group_ID = ID;
         this.species_Data = new ArrayList<>();
+    }
+
+    public Species(String common, String science, int ID, List<SpeciesCollected> sc_list) {
+        this(common,science,ID);
+        this.species_Data = sc_list;
     }
 
     public Species(Parcel input) {

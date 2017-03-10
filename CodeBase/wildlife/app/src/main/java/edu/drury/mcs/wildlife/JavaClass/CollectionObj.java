@@ -30,6 +30,14 @@ public class CollectionObj implements Parcelable{
         this.date = "";
         this.location = new Location("");
         this.species = new ArrayList<>();
+
+    }
+
+    public CollectionObj(String _name, String _date, Location _location, List<Species> _list_species) {
+        this.collection_name = _name;
+        this.date = _date;
+        this.location = _location;
+        this.species = _list_species;
     }
 
     public CollectionObj(Parcel input) {
@@ -98,11 +106,9 @@ public class CollectionObj implements Parcelable{
         }
     };
 
-
-
     // methods for interacting with db
-    public void saveToDB(Context context) {
-        new DBBackgroundTask(context,this).execute(TASK_CREATE);
+    public void saveToDB(Context context, MainCollectionObj current_main_collection) {
+        new DBBackgroundTask(context, current_main_collection, this).execute(TASK_CREATE);
     }
 
     //DELETE
@@ -111,8 +117,8 @@ public class CollectionObj implements Parcelable{
     }
 
     //READALL
-    public static List<CollectionObj> readAllCollections(Context context) throws ExecutionException, InterruptedException {
-        return new DBBackgroundTask(context).execute(TASK_READALL).get();
+    public static List<CollectionObj> readAllCollections(Context context, MainCollectionObj current_main_collection) throws ExecutionException, InterruptedException {
+        return new DBBackgroundTask(context, current_main_collection).execute(TASK_READALL).get();
     }
 
     //UPDATE

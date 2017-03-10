@@ -24,6 +24,11 @@ public class SpeciesCollected implements Parcelable{
         this.quantity = 0;
     }
 
+    public SpeciesCollected(String scientificName, String commonName, int quantity) {
+        this(scientificName,commonName);
+        this.quantity = quantity;
+    }
+
     public SpeciesCollected(Parcel input) {
         this.quantity = input.readInt();
         this.scientificName = input.readString();

@@ -4,11 +4,7 @@ package edu.drury.mcs.wildlife.JavaClass;
  * Created by zjansen on 2/4/17.
  */
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,16 +18,15 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import edu.drury.mcs.wildlife.Activity.CreateCollection;
-import edu.drury.mcs.wildlife.Activity.MainActivity;
+import java.util.Timer;
+import java.util.TimerTask;
+
 //import edu.drury.mcs.wildlife.R;
 
-import static android.content.ContentValues.TAG;
-
 public class MyLocation implements ActivityCompat.OnRequestPermissionsResultCallback {
+
     Timer timer1;
     LocationManager lm;
     LocationResult locationResult;

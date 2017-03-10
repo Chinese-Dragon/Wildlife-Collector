@@ -6,7 +6,6 @@ package edu.drury.mcs.wildlife.DB;
 
 public class SpeciesCollectedTable {
     public static final String TABLE_NAME = "species_collected";
-
     // pk
     public static final String SC_ID = "species_collected_id";
 
@@ -15,7 +14,8 @@ public class SpeciesCollectedTable {
     public static final String SC_QUANTITY = "quantity";
 
     // foreign key
-    public static final String SCSPECIES_ID = "species_id";
+    public static final String SCGROUP_ID = "group_id";
+    public static final String SCC_ID = "collection_id";
 
     public static final String CREATE_TABLE_SPECIES_COLLECTED = "CREATE TABLE " + TABLE_NAME
             + " ("
@@ -23,7 +23,9 @@ public class SpeciesCollectedTable {
             + SC_CNAME + " VARCHAR(255) NOT NULL,"
             + SC_SNAME + " VARCHAR(255) NOT NULL,"
             + SC_QUANTITY + " INTEGER NOT NULL,"
-            + SCSPECIES_ID + " INTEGER NOT NULL,"
-            + "FOREIGN KEY (" + SCSPECIES_ID + ") REFERENCES " + SpeciesTable.TABLE_NAME + " (" + SpeciesTable.S_ID + ")"
+            + SCGROUP_ID + " INTEGER NOT NULL,"
+            + SCC_ID + " INTEGER NOT NULL,"
+            + "FOREIGN KEY (" + SCGROUP_ID + ") REFERENCES " + GroupMappingTable.TABLE_NAME + " (" + GroupMappingTable.GM_ID + "),"
+            + "FOREIGN KEY (" + SCC_ID + ") REFERENCES " + CollectionTable.TABLE_NAME + " (" + CollectionTable.C_ID + ")"
             + ");";
 }
