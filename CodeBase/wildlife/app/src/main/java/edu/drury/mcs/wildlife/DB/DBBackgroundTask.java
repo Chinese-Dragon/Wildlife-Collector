@@ -73,6 +73,8 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
             case "delete":
                 if(collection_name != null) {
                     // call delete in wildlifeDB
+                    wildlifeDB.deleteCollection(curent_main_collection, collection_name);
+                    Log.i("deleteTask", collection_name + " is deleted");
                 }
                 break;
             case "group":

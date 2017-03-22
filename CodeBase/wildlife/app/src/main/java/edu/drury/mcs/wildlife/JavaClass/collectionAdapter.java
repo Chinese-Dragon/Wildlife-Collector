@@ -3,6 +3,7 @@ package edu.drury.mcs.wildlife.JavaClass;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,11 +87,12 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            String clickedCollection = "";
             if (item.getItemId() == R.id.action_delete) {
-                clickedCollection = collectionData.get(this.getAdapterPosition()).getCollection_name();
+                CollectionObj clickedCollection = collectionData.get(this.getAdapterPosition());
                 collectionData.remove(this.getAdapterPosition());
-                Message.showMessage(editOption.getContext(),clickedCollection + " is deleted");
+                Log.i("readTask", " mainCurrentName " + cFragment.getCurrent_mainCollection().getMain_collection_name());
+                clickedCollection.deleteFromDB(context,cFragment.getCurrent_mainCollection());
+                Message.showMessage(editOption.getContext(), clickedCollection.getCollection_name() + " is deleted");
                 notifyItemRemoved(this.getAdapterPosition());
             } else if (item.getItemId() == R.id.action_edit) {
                 // edit the collection

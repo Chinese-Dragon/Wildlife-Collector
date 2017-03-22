@@ -76,12 +76,13 @@ public class wildlifeDB {
         db.close();
     }
 
+    // READ all collections related to the main collection
     public List<CollectionObj> getAllCollections(MainCollectionObj current_mainC) {
         List<CollectionObj> results = new LinkedList<>();
         this.db = dbHandler.getReadableDatabase();
         long main_collection_id = 0;
 
-        //find and add foreign key
+        //find main collection primary key
         String[] projection = {MainCollectionTable.MC_ID};
         String selection = MainCollectionTable.MC_NAME + " = ?";
         String[] selectionArgs = {current_mainC.getMain_collection_name()};
@@ -116,6 +117,52 @@ public class wildlifeDB {
 
         db.close();
         return results;
+    }
+
+    public void deleteCollection(MainCollectionObj current_mainC, String collection2Delete) {
+        Log.i("info", "I am in delete collection process");
+
+        this.db = dbHandler.getWritableDatabase();
+        long main_collection_id = 0;
+        long target_C_id = 0;
+
+        //find main collection primary key
+        String[] projection = {MainCollectionTable.MC_ID};
+        String selection = MainCollectionTable.MC_NAME + " = ?";
+        String[] selectionArgs = {current_mainC.getMain_collection_name()};
+        Cursor cursor = db.query(MainCollectionTable.TABLE_NAME, projection, selection, selectionArgs, null, null, null,null);
+        if(cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            main_collection_id = cursor.getLong(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_ID));
+        }
+        cursor.close();
+
+        // find target collection primary key
+        String[] projection2 = {CollectionTable.C_ID};
+        String selection2 = CollectionTable.C_NAME + " = ?";
+        String[] selectionArgs2 = {collection2Delete};
+        Cursor cursor2 = db.query(CollectionTable.TABLE_NAME, projection2, selection2, selectionArgs2, null, null, null,null);
+        if(cursor2.getCount() == 1) {
+            cursor2.moveToFirst();
+            target_C_id = cursor2.getLong(cursor2.getColumnIndexOrThrow(CollectionTable.C_ID));
+        }
+        cursor2.close();
+
+        Log.i("main collection id", Long.toString(main_collection_id));
+        Log.i("collection id", Long.toString(target_C_id));
+
+        //delete collection
+        String deleteCollection_selection = CollectionTable.C_ID + " LIKE ? AND " + CollectionTable.CMC_ID + " LIKE ?";
+        String[] deleteC_selectionArgs = {Long.toString(target_C_id), Long.toString(main_collection_id)};
+        db.delete(CollectionTable.TABLE_NAME, deleteCollection_selection, deleteC_selectionArgs);
+
+        //delete collection species of this collection
+        String deleteSpeciesCollected_selection = SpeciesCollectedTable.SCC_ID + " LIKE ?";
+        String[] deleteSC_selectionArgs = {Long.toString(target_C_id)};
+        db.delete(SpeciesCollectedTable.TABLE_NAME, deleteSpeciesCollected_selection, deleteSC_selectionArgs);
+
+        db.close();
+
     }
 
     private List<Species> getSpeciesList(SQLiteDatabase db, Long c_id) {

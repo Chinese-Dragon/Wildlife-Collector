@@ -101,4 +101,7 @@ public class Collection extends Fragment {
         cRecyclerView.setAdapter(cAdapter);
     }
 
+    public MainCollectionObj getCurrent_mainCollection() {
+        return current_mainCollection;
+    }
 }

@@ -112,8 +112,8 @@ public class CollectionObj implements Parcelable{
     }
 
     //DELETE
-    public void deleteFromDB(Context context) {
-
+    public void deleteFromDB(Context context, MainCollectionObj current_main_collection) {
+        new DBBackgroundTask(context, current_main_collection, this.getCollection_name()).execute(TASK_DELETE);
     }
 
     //READALL
