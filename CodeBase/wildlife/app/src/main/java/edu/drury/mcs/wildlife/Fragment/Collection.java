@@ -3,13 +3,15 @@ package edu.drury.mcs.wildlife.Fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.concurrent.ExecutionException;
 
@@ -19,6 +21,7 @@ import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
 import edu.drury.mcs.wildlife.R;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -27,6 +30,7 @@ public class Collection extends Fragment {
     private RecyclerView cRecyclerView;
     private collectionAdapter cAdapter;
     private View layout;
+    FloatingActionMenu FAM;
     private FloatingActionButton addFab;
     private FloatingActionButton emailFab;
     private MainCollectionObj current_mainCollection;
@@ -54,6 +58,7 @@ public class Collection extends Fragment {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.fragment_collection,container,false);
 
+        FAM = (FloatingActionMenu) layout.findViewById(R.id.material_design_android_floating_action_menu);
         addFab = (FloatingActionButton) layout.findViewById(R.id.add_collection);
         emailFab = (FloatingActionButton) layout.findViewById(R.id.email_collection);
         //set up onclick events on Fabs
@@ -62,6 +67,7 @@ public class Collection extends Fragment {
             public void onClick(View view) {
                 AddDialog dialog = new AddDialog(getActivity());
                 dialog.show(getActivity().getSupportFragmentManager(), "Add an Entry");
+                FAM.close(true);
             }
         });
 
