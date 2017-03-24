@@ -102,7 +102,7 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
                 a = jsonArray.getJSONObject(i);
                 scientific_name = a.getString("scientific_name");
                 common_name = a.getString("common_name");
-                SpeciesCollected s = new SpeciesCollected(scientific_name,common_name);
+                SpeciesCollected s = new SpeciesCollected(scientific_name, common_name);
 
                 if(storedData.get(s.getCommonName()) != null) {
                     // s is already is already collected and switch with ours
@@ -142,9 +142,16 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
 
     private void saveData() {
         List<SpeciesCollected> savedSpeciesData = tAdapter.getLatestItems();
-        tAdapter.notifyDataSetChanged();
+//        tAdapter.notifyDataSetChanged();
         for(SpeciesCollected s: savedSpeciesData) {
-            Message.showMessage(this,s.getCommonName());
+            Message.showMessage(this,"common name: " + s.getCommonName());
+            Message.showMessage(this,"band number: " + s.getBand_num());
+            Message.showMessage(this, "number captured: "+ Integer.toString(s.getQuantity()));
+            Message.showMessage(this, "number removied: "+ Integer.toString(s.getNum_removed()));
+            Message.showMessage(this, "disposition status: " + s.getStatus().toString());
+            Message.showMessage(this,"is blood taken: " + Boolean.toString(s.getIs_blood_taken()));
+            Message.showMessage(this,"is specimen retained: " + Boolean.toString(s.getVoucher_specimen_retained()));
+
         }
         Intent resultIntent = new Intent();
         Bundle resultBundle = new Bundle();

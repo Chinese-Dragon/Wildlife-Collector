@@ -4,14 +4,21 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -54,11 +61,42 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         // NOTE: Thus we need to add a else statement to reset its state
         if(current.getQuantity() > 0) {
             holder.quantity.setText(Integer.toString(current.getQuantity()));
+            holder.quantity_rm.setText(Integer.toString(current.getNum_removed()));
             holder.quantity_captured = current.getQuantity();
+            holder.quantity_removed = current.getNum_removed();
+
+            if(current.getVoucher_specimen_retained()) {
+                Message.showMessage(context, "update specimen radio button");
+                holder.specimen_yes.setChecked(true);
+//                holder.specimen_no.setChecked(false);
+            } else {
+                Message.showMessage(context, "update specimen blood radio button");
+                holder.specimen_no.setChecked(true);
+//                holder.specimen_yes.setChecked(false);
+            }
+
+            if(current.getIs_blood_taken()) {
+                Message.showMessage(context, "update blood radio button");
+                holder.blood_yes.setChecked(true);
+//                holder.blood_no.setChecked(false);
+            } else {
+                Message.showMessage(context, "update blood radio button");
+                holder.blood_no.setSelected(true);
+//                holder.blood_yes.setChecked(false);
+            }
+            holder.disposition_spinner.setSelection(holder.adapter.getPosition(current.getStatus().toString()));
+            holder.band_number.setText(current.getBand_num());
             holder.card.setBackgroundColor(Color.parseColor("#a6d8a8"));
         } else {
+            // reset view holder
             holder.quantity.setText("0");
+            holder.quantity_rm.setText("0");
             holder.quantity_captured = 0;
+            holder.quantity_removed = 0;
+            holder.radioGroup.clearCheck();
+            holder.band_number.setText("");
+            holder.disposition_spinner.setSelection(0);
+
             holder.card.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
 
@@ -85,16 +123,21 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
     }
 
 
-    class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnItemSelectedListener{
         static final int DURATION = 250;
         TextView commonName;
         TextView scientificName;
         ImageView toggle;
         CardView card;
         ViewGroup linearLayoutDetail;
-        ImageView increase,decrease;
-        EditText quantity;
+        ImageView increase,decrease, rm_increase, rm_decrease;
+        EditText quantity, quantity_rm, band_number;
+        RadioGroup radioGroup;
+        RadioButton specimen_yes, specimen_no, blood_yes, blood_no;
+        Spinner disposition_spinner;
+        int quantity_removed = 0;
         int quantity_captured = 0;
+        ArrayAdapter<CharSequence> adapter;
 
         public tViewHolder(View itemView) {
             super(itemView);
@@ -107,14 +150,56 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             increase = (ImageView) itemView.findViewById(R.id.increase);
             decrease = (ImageView) itemView.findViewById(R.id.decrease);
             quantity = (EditText) itemView.findViewById(R.id.quantity_captured);
-            quantity.setText("0");
+            rm_increase = (ImageView) itemView.findViewById(R.id.rm_increase);
+            rm_decrease = (ImageView) itemView.findViewById(R.id.rm_decrease);
+            quantity_rm = (EditText) itemView.findViewById(R.id.quantity_removed);
+            band_number = (EditText) itemView.findViewById(R.id.band_num);
+
+            // detect edittext change and then change corresponding data
+            band_number.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    if(editable.length() > 0) {
+                        data.get(getAdapterPosition()).setBand_num(band_number.getText().toString());
+                    }
+                }
+            });
+
+            radioGroup = (RadioGroup) itemView.findViewById(R.id.radio_group);
+            specimen_yes = (RadioButton) itemView.findViewById(R.id.specimen_yes);
+            specimen_no = (RadioButton) itemView.findViewById(R.id.specimen_no);
+            blood_yes = (RadioButton) itemView.findViewById(R.id.blood_yes);
+            blood_no = (RadioButton) itemView.findViewById(R.id.blood_no);
+            disposition_spinner = (Spinner) itemView.findViewById(R.id.disposition);
+            adapter = ArrayAdapter.createFromResource(context,R.array.disposition_array,
+                    android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            disposition_spinner.setAdapter(adapter);
 
             card.setOnClickListener(this);
             increase.setOnClickListener(this);
             decrease.setOnClickListener(this);
+            rm_increase.setOnClickListener(this);
+            rm_decrease.setOnClickListener(this);
+            specimen_yes.setOnClickListener(this);
+            specimen_no.setOnClickListener(this);
+            blood_yes.setOnClickListener(this);
+            blood_no.setOnClickListener(this);
 
             card.getPreventCornerOverlap();
         }
+
+
 
         @Override
         public void onClick(View view) {
@@ -138,8 +223,32 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                     quantity_captured --;
                     quantity.setText(Integer.toString(quantity_captured));
                     data.get(getAdapterPosition()).setQuantity(quantity_captured);
-
                 }
+            } else if (view == rm_increase) {
+                if (quantity_removed < quantity_captured) {
+                    quantity_removed ++;
+                    quantity_rm.setText(Integer.toString(quantity_removed));
+                    data.get(getAdapterPosition()).setNum_removed(quantity_removed);
+                    data.get(getAdapterPosition()).setNum_released(quantity_captured - quantity_removed);
+                } else {
+                    Message.showMessage(context, "Cannot remove more than captured");
+                }
+            } else if (view == rm_decrease) {
+                if (quantity_removed > 0) {
+                    quantity_removed --;
+                    quantity_rm.setText(Integer.toString(quantity_removed));
+                    data.get(getAdapterPosition()).setNum_removed(quantity_removed);
+                    data.get(getAdapterPosition()).setNum_released(quantity_captured - quantity_removed);
+                }
+            } else if (view == specimen_yes) {
+                Message.showMessage(context,"radio button clicked");
+                data.get(getAdapterPosition()).setVoucher_specimen_retained(true);
+            } else if (view == specimen_no) {
+                data.get(getAdapterPosition()).setVoucher_specimen_retained(false);
+            } else if (view == blood_yes) {
+                data.get(getAdapterPosition()).setIs_blood_taken(true);
+            } else if (view == blood_no) {
+                data.get(getAdapterPosition()).setIs_blood_taken(false);
             }
         }
 
@@ -150,7 +259,34 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             animation.setDuration(DURATION);
             toggle.startAnimation(animation);
         }
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            if (adapterView.getId() == disposition_spinner.getId()) {
+                String selection = (String) adapterView.getItemAtPosition(i);
+                switch (selection) {
+                    case "Released":
+                        data.get(getAdapterPosition()).setStatus(SpeciesCollected.Disposition.RELEASED);
+                        break;
+                    case "Held In Captivity":
+                        data.get(getAdapterPosition()).setStatus(SpeciesCollected.Disposition.HELD);
+                        break;
+                    case "Killed For Study Purpose":
+                        data.get(getAdapterPosition()).setStatus(SpeciesCollected.Disposition.KILLED);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
     }
+
+
 
     public List<SpeciesCollected> getLatestItems() {
         List<SpeciesCollected> result = new ArrayList<>();

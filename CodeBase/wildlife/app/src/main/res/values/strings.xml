@@ -12,4 +12,10 @@
     <string name="title_activity_create_collection">CreateCollection</string>
     <string name="title_activity_species_data_table">SpeciesDataTable</string>
 
+    <string-array name="disposition_array">
+        <item>Released</item>
+        <item>Held In Captivity</item>
+        <item>Killed For Study Purpose</item>
+    </string-array>
+
 </resources>

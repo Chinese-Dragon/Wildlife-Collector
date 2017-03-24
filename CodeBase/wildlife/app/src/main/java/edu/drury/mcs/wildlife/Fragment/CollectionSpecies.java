@@ -26,7 +26,6 @@ import edu.drury.mcs.wildlife.Activity.MainActivity;
 import edu.drury.mcs.wildlife.DB.GroupMappingTable;
 import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
-import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
 import edu.drury.mcs.wildlife.JavaClass.Species;
 import edu.drury.mcs.wildlife.JavaClass.sAdapter;
@@ -69,7 +68,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.collection_species_fragment, container, false);
 
-        Message.showMessage(getActivity(),"COllectionSPecies view is created");
+        Log.i("Info","COllectionSPecies view is created");
         Log.i(TAG,"CollectionSpecies onCreateVIew");
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
@@ -165,8 +164,19 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         Log.i(TAG,"CurrentCollection Location " + Double.toString(currentCollection.getLocation().getLatitude())
                 + " , " + Double.toString(currentCollection.getLocation().getLongitude()));
         for(Species s: currentCollection.getSpecies()){
-            Log.i(TAG,s.getCommonName()+" has "+ Integer.toString(s.getSpecies_Data().size()) + "species collected");
+            Log.i(TAG,s.getCommonName()+" has "+ Integer.toString(s.getSpecies_Data().size()) + " species collected");
+            if(s.getSpecies_Data().size() > 0) {
+                Log.i("Test","common name: " + s.getSpecies_Data().get(0).getCommonName());
+                Log.i("Test","band number: " + s.getSpecies_Data().get(0).getBand_num());
+                Log.i("Test", "number captured: "+ Integer.toString(s.getSpecies_Data().get(0).getQuantity()));
+                Log.i("Test", "number removied: "+ Integer.toString(s.getSpecies_Data().get(0).getNum_removed()));
+                Log.i("Test", "disposition status: " + s.getSpecies_Data().get(0).getStatus().toString());
+                Log.i("Test","is blood taken: " + Boolean.toString(s.getSpecies_Data().get(0).getIs_blood_taken()));
+                Log.i("Test","is specimen retained: " + Boolean.toString(s.getSpecies_Data().get(0).getVoucher_specimen_retained()));
+
+            }
         }
+
     }
 
     public CollectionObj getCurrentCollection() {

@@ -85,7 +85,6 @@ public class sAdapter extends RecyclerView.Adapter<sAdapter.sViewHolder> {
 
             Intent intent = new Intent(context, SpeciesDataTable.class);
             intent.putExtra(EXTRA_CURRENTSPECIES,currentSpecies);
-
             // NOTE: Log collected species data (quantity)
             for(SpeciesCollected c : currentSpecies.getSpecies_Data()) {
                 Log.i(TAG,c.getCommonName());

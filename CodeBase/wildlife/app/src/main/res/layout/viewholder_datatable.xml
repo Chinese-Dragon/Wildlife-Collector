@@ -8,12 +8,12 @@
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="6dp"
         card_view:cardCornerRadius="8dp"
-        card_view:cardElevation="4dp">
+        card_view:cardElevation="6dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,22 +24,24 @@
                 android:id="@+id/scientificName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingLeft="24dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="20dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
                 android:text="SCIENTIFIC NAME"
                 android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/commonName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="24dp"
+                android:paddingLeft="20dp"
                 android:paddingRight="16dp"
                 android:text="COMMON NAME"
-                android:textSize="18sp" />
+                android:textSize="16sp"
+                android:textStyle="italic" />
 
 
             <ImageView
@@ -47,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:contentDescription=""
                 android:padding="4dp"
                 android:src="@drawable/circled_chevron_down" />
 
@@ -54,49 +57,248 @@
                 android:id="@+id/lineardetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp"
-                android:visibility="gone"
                 android:gravity="center_horizontal"
-                android:weightSum="5">
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:visibility="gone">
 
-                <Space
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="7"
+                        android:text="Number Captured:"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/decrease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/decrease" />
 
 
-                <ImageView
-                    android:id="@+id/decrease"
-                    android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/quantity_captured"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:inputType="number"
+                        android:text="0"
+                        android:cursorVisible="false"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/increase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/increase" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/decrease"
-                    android:layout_weight="1"/>
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:gravity="center_vertical"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="7"
+                        android:text="Number Removed:"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/rm_decrease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/decrease" />
 
 
-                <EditText
-                    android:id="@+id/quantity_captured"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:inputType="number"
-                    android:gravity="center_horizontal"
-                    android:layout_weight="1"/>
+                    <EditText
+                        android:id="@+id/quantity_removed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:inputType="number"
+                        android:cursorVisible="false"
+                        android:text="0"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/increase"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/rm_increase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/increase" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/increase"
-                    android:layout_weight="1"/>
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:orientation="vertical"
+                    android:weightSum="1">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voucher Specimen retained ?"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingEnd="10dp"
+                        android:paddingRight="10dp">
+
+                        <RadioButton
+                            android:id="@+id/specimen_yes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:text="Yes" />
+
+                        <RadioButton
+                            android:id="@+id/specimen_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            android:text="No" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tissue/Blood Sample retained ?"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingEnd="10dp"
+                        android:paddingRight="10dp">
+
+                        <RadioButton
+                            android:id="@+id/blood_yes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:text="Yes" />
+
+                        <RadioButton
+                            android:id="@+id/blood_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            android:text="No" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Band Number:"
+                        android:textStyle="bold"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorSecondaryText"
+                        android:textSize="14sp"/>
+
+                    <EditText
+                        android:id="@+id/band_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:cursorVisible="false"
+                        android:inputType="text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingStart="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Disposition Status:"
+                        android:textStyle="bold"
+                        android:textSize="14sp"/>
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/disposition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
 
 
             </LinearLayout>
-
 
         </LinearLayout>
 
