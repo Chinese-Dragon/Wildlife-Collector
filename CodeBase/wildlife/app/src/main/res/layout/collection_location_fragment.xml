@@ -12,7 +12,7 @@
         android:id="@+id/getLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Location"
+        android:text="Get Latitude/Longitude"
         android:padding="15dp"
         android:layout_marginTop="10dp"
         android:background="#4CAF50"
@@ -58,6 +58,61 @@
             android:hint="Enter Longitude"
             android:textAlignment="center"
             android:inputType="numberDecimal" />
+
+        <Space
+            android:id="@+id/space3"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:layout_weight="1"
+            android:layout_below="@id/latitude"/>
+
+        <Space
+            android:id="@+id/space4"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:layout_weight="1"
+            android:layout_below="@id/latitude"/>
+
+        <Button
+            android:id="@+id/getUTMLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get UTM Coordinates"
+            android:padding="15dp"
+            android:layout_marginTop="10dp"
+            android:background="#4CAF50"
+            android:textColor="@color/colorText"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"/>
+
+        <EditText
+            android:id="@+id/UTMEast"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Enter UTM Easting"
+            android:textAlignment="center"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/UTMNorth"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Enter UTM Northing"
+            android:textAlignment="center"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/UTMZone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Enter UTM Zone"
+            android:textAlignment="center"
+            android:inputType="numberDecimal" />
+
+
 
     </LinearLayout>
 

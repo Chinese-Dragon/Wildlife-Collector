@@ -19,6 +19,7 @@ import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.MyLocation;
 import edu.drury.mcs.wildlife.JavaClass.OnDataPassListener;
+import edu.drury.mcs.wildlife.JavaClass.UTM;
 import edu.drury.mcs.wildlife.R;
 
 import static android.content.ContentValues.TAG;
@@ -28,11 +29,14 @@ import static android.content.ContentValues.TAG;
  */
 public class CollectionLocation extends Fragment implements View.OnClickListener {
     private View layout;
-    private Button back, cancel, next, getLocation;
+    private Button back, cancel, next, getLocation, getUTMLocation;
     private LocationManager locationManager;
     private EditText coordinates;
     private EditText latitude;
     private EditText longitude;
+    private EditText utmEasting;
+    private EditText utmNorthing;
+    private EditText utmZone;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
 
@@ -65,13 +69,18 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
         getLocation = (Button) layout.findViewById(R.id.getLocation);
+        getUTMLocation = (Button) layout.findViewById(R.id.getUTMLocation);
         latitude = (EditText) layout.findViewById(R.id.latitude);
         longitude = (EditText) layout.findViewById(R.id.longitude);
+        utmEasting = (EditText) layout.findViewById(R.id.UTMEast);
+        utmNorthing = (EditText) layout.findViewById(R.id.UTMNorth);
+        utmZone = (EditText) layout.findViewById(R.id.UTMZone);
 
         back.setOnClickListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
         getLocation.setOnClickListener(this);
+        getUTMLocation.setOnClickListener(this);
 
         return layout;
     }
@@ -85,8 +94,12 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         } else if (view == next) {
             String lt = latitude.getText().toString().trim();
             String lnt = longitude.getText().toString().trim();
+            String utmE = utmEasting.getText().toString().trim();
+            String utmN = utmEasting.getText().toString().trim();
+            String utmZ = utmEasting.getText().toString().trim();
 
-            if(!lt.equals("") && !lnt.equals("")) {
+
+            if((!lt.equals("") && !lnt.equals("")) || (!utmE.equals("") && (!utmN.equals("")) && !utmZ.equals(""))) {
                 Double lat = Double.parseDouble(lt);
                 Double lng = Double.parseDouble(lnt);
                 Location loc = new Location("");
@@ -110,6 +123,21 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                     latitude.setText(Double.toString(location.getLatitude()));
                     longitude.setText(Double.toString(location.getLongitude()));
 
+                }
+            };
+            MyLocation myLocation = new MyLocation(getActivity());
+            myLocation.getLocation(getActivity(), locationResult);
+
+        } else if (view == getUTMLocation) {
+
+            MyLocation.LocationResult locationResult = new MyLocation.LocationResult(){
+                @Override
+                public void gotLocation(Location location) {
+                    UTM utmCoord = new UTM(location.getLatitude(), location.getLongitude());
+
+                    utmEasting.setText(Double.toString(utmCoord.getEasting()));
+                    utmNorthing.setText(Double.toString(utmCoord.getNorthing()));
+                    utmZone.setText(Double.toString(utmCoord.getZone()));
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());
