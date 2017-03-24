@@ -3,6 +3,9 @@ package edu.drury.mcs.wildlife.JavaClass;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by yma004 on 2/4/17.
  */
@@ -11,6 +14,24 @@ public class SpeciesCollected implements Parcelable{
 
     public static enum Disposition {
         RELEASED, HELD, KILLED
+    }
+
+    public static final Map<Disposition, Integer> disposition_map = createMap();
+    private static Map<Disposition, Integer> createMap() {
+        Map<Disposition, Integer> map = new HashMap<>();
+        map.put(Disposition.RELEASED, 1);
+        map.put(Disposition.HELD, 2);
+        map.put(Disposition.KILLED, 3);
+        return map;
+    }
+
+    public static final Map<Integer, Disposition> disposition_map_reverse = createMapReverse();
+    private static Map<Integer, Disposition> createMapReverse() {
+        Map<Integer, Disposition> map = new HashMap<>();
+        map.put(1, Disposition.RELEASED);
+        map.put(2, Disposition.HELD);
+        map.put(3 ,Disposition.KILLED);
+        return map;
     }
 
     private int quantity;
@@ -44,6 +65,17 @@ public class SpeciesCollected implements Parcelable{
     public SpeciesCollected(String scientificName, String commonName, int quantity) {
         this(scientificName,commonName);
         this.quantity = quantity;
+    }
+
+    public SpeciesCollected(String s_name, String c_name, int quantity, int num_rm, int num_rl, String band_num, boolean vs_retained, boolean blood_taken, Disposition status) {
+        this(s_name, c_name, quantity);
+        this.num_removed = num_rm;
+        this.num_released = num_rl;
+        this.band_num = band_num;
+        this.voucher_specimen_retained = vs_retained;
+        this.is_blood_taken = blood_taken;
+        this.status = status;
+
     }
 
     public SpeciesCollected(Parcel input) {

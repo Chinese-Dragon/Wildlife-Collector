@@ -12,7 +12,7 @@ public class SpeciesCollectedTable {
     public static final String SC_CNAME = "common_name";
     public static final String SC_SNAME = "scientific_name";
     public static final String SC_QUANTITY = "quantity";
-    public static final String SC_NUM_REMOVED = "number_removed ";
+    public static final String SC_NUM_REMOVED = "number_removed";
     public static final String SC_NUM_RELEASED = "number_released";
     public static final String SC_BAND_NUM = "band_number";
     public static final String SC_VS_RETAINED = "is_vouched_speciment_retained";

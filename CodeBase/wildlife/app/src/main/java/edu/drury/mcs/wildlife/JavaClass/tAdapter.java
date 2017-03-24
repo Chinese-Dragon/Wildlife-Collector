@@ -15,6 +15,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -94,6 +95,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             holder.quantity_captured = 0;
             holder.quantity_removed = 0;
             holder.radioGroup.clearCheck();
+            holder.radioGroup2.clearCheck();
             holder.band_number.setText("");
             holder.disposition_spinner.setSelection(0);
 
@@ -130,9 +132,9 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         ImageView toggle;
         CardView card;
         ViewGroup linearLayoutDetail;
-        ImageView increase,decrease, rm_increase, rm_decrease;
+        ImageButton increase,decrease, rm_increase, rm_decrease;
         EditText quantity, quantity_rm, band_number;
-        RadioGroup radioGroup;
+        RadioGroup radioGroup, radioGroup2;
         RadioButton specimen_yes, specimen_no, blood_yes, blood_no;
         Spinner disposition_spinner;
         int quantity_removed = 0;
@@ -147,11 +149,11 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             toggle = (ImageView) itemView.findViewById(R.id.toggle);
             card = (CardView) itemView.findViewById(R.id.card);
             linearLayoutDetail = (ViewGroup) itemView.findViewById(R.id.lineardetail);
-            increase = (ImageView) itemView.findViewById(R.id.increase);
-            decrease = (ImageView) itemView.findViewById(R.id.decrease);
+            increase = (ImageButton) itemView.findViewById(R.id.increase);
+            decrease = (ImageButton) itemView.findViewById(R.id.decrease);
             quantity = (EditText) itemView.findViewById(R.id.quantity_captured);
-            rm_increase = (ImageView) itemView.findViewById(R.id.rm_increase);
-            rm_decrease = (ImageView) itemView.findViewById(R.id.rm_decrease);
+            rm_increase = (ImageButton) itemView.findViewById(R.id.rm_increase);
+            rm_decrease = (ImageButton) itemView.findViewById(R.id.rm_decrease);
             quantity_rm = (EditText) itemView.findViewById(R.id.quantity_removed);
             band_number = (EditText) itemView.findViewById(R.id.band_num);
 
@@ -176,6 +178,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             });
 
             radioGroup = (RadioGroup) itemView.findViewById(R.id.radio_group);
+            radioGroup2 = (RadioGroup) itemView.findViewById(R.id.radio_group_2);
             specimen_yes = (RadioButton) itemView.findViewById(R.id.specimen_yes);
             specimen_no = (RadioButton) itemView.findViewById(R.id.specimen_no);
             blood_yes = (RadioButton) itemView.findViewById(R.id.blood_yes);

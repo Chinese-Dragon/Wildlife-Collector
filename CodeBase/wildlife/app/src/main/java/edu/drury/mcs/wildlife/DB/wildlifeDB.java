@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
+import android.widget.GridLayout;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,12 @@ public class wildlifeDB {
                 sc_values.put(SpeciesCollectedTable.SC_CNAME, sc.getCommonName());
                 sc_values.put(SpeciesCollectedTable.SC_SNAME, sc.getScientificName());
                 sc_values.put(SpeciesCollectedTable.SC_QUANTITY, sc.getQuantity());
+                sc_values.put(SpeciesCollectedTable.SC_NUM_REMOVED, sc.getNum_removed());
+                sc_values.put(SpeciesCollectedTable.SC_NUM_RELEASED, sc.getNum_released());
+                sc_values.put(SpeciesCollectedTable.SC_BAND_NUM , sc.getBand_num());
+                sc_values.put(SpeciesCollectedTable.SC_VS_RETAINED, sc.getVoucher_specimen_retained() ? 1:0);
+                sc_values.put(SpeciesCollectedTable.SC_BLOOD_TAKEN, sc.getIs_blood_taken() ? 1:0);
+                sc_values.put(SpeciesCollectedTable.SC_STATUS, SpeciesCollected.disposition_map.get(sc.getStatus()));
                 sc_values.put(SpeciesCollectedTable.SCC_ID, collection_id);
                 sc_values.put(SpeciesCollectedTable.SCGROUP_ID, group_id);
                 db.insert(SpeciesCollectedTable.TABLE_NAME, null, sc_values);
@@ -189,7 +196,13 @@ public class wildlifeDB {
         String[] sc_projection = {
                 SpeciesCollectedTable.SC_CNAME,
                 SpeciesCollectedTable.SC_SNAME,
-                SpeciesCollectedTable.SC_QUANTITY
+                SpeciesCollectedTable.SC_QUANTITY,
+                SpeciesCollectedTable.SC_NUM_REMOVED,
+                SpeciesCollectedTable.SC_NUM_RELEASED,
+                SpeciesCollectedTable.SC_BAND_NUM,
+                SpeciesCollectedTable.SC_VS_RETAINED,
+                SpeciesCollectedTable.SC_BLOOD_TAKEN,
+                SpeciesCollectedTable.SC_STATUS
         };
 
         String sc_selection = SpeciesCollectedTable.SCC_ID + " = ? AND " + SpeciesCollectedTable.SCGROUP_ID + " = ?";
@@ -206,7 +219,16 @@ public class wildlifeDB {
             String c_name = sc_cursor.getString(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_CNAME));
             String s_name = sc_cursor.getString(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_SNAME));
             int quantity = sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_QUANTITY));
-            sc_data.add(new SpeciesCollected(c_name,s_name,quantity));
+            int num_removed = sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_NUM_REMOVED));
+            int num_released = sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_NUM_RELEASED));
+            String band_num = sc_cursor.getString(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_BAND_NUM));
+            boolean vs_retained = ((sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_VS_RETAINED))) == 1);
+            boolean blood_taken = ((sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_BLOOD_TAKEN))) == 1);
+            SpeciesCollected.Disposition status = SpeciesCollected.disposition_map_reverse.get(
+                    sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_STATUS))
+            );
+
+            sc_data.add(new SpeciesCollected(c_name,s_name,quantity, num_removed, num_released, band_num, vs_retained, blood_taken, status));
         }
         sc_cursor.close();
 
