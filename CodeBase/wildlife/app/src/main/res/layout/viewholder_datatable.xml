@@ -203,7 +203,6 @@
                             android:id="@+id/specimen_no"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="false"
                             android:text="No" />
 
                     </RadioGroup>
@@ -247,7 +246,6 @@
                             android:id="@+id/blood_no"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="false"
                             android:text="No" />
                     </RadioGroup>
                 </LinearLayout>

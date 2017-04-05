@@ -67,22 +67,22 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             holder.quantity_removed = current.getNum_removed();
 
             if(current.getVoucher_specimen_retained()) {
-                Message.showMessage(context, "update specimen radio button");
+                Message.showMessage(context, "update specimen: is specimen");
                 holder.specimen_yes.setChecked(true);
 //                holder.specimen_no.setChecked(false);
             } else {
-                Message.showMessage(context, "update specimen blood radio button");
+                Message.showMessage(context, "update specimen: no specimen");
                 holder.specimen_no.setChecked(true);
 //                holder.specimen_yes.setChecked(false);
             }
 
             if(current.getIs_blood_taken()) {
-                Message.showMessage(context, "update blood radio button");
+                Message.showMessage(context, "update blood radio button: is taken");
                 holder.blood_yes.setChecked(true);
 //                holder.blood_no.setChecked(false);
             } else {
-                Message.showMessage(context, "update blood radio button");
-                holder.blood_no.setSelected(true);
+                Message.showMessage(context, "update blood radio button: not taken");
+                holder.blood_no.setChecked(true);
 //                holder.blood_yes.setChecked(false);
             }
             holder.disposition_spinner.setSelection(holder.adapter.getPosition(current.getStatus().toString()));

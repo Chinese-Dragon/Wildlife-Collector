@@ -4,6 +4,7 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/collection_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -37,9 +38,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:text="created on :"
-                    android:layout_weight="1"/>
+                    android:text="created on :" />
 
                 <TextView
                     android:id="@+id/collection_date"
@@ -68,6 +69,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -84,7 +86,7 @@
                     android:layout_alignParentStart="true" />
 
                 <TextView
-                    android:id="@+id/address"
+                    android:id="@+id/collection_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -96,47 +98,117 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:weightSum="10">
+                    android:weightSum="11">
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
 
                     <TextView
+                        android:id="@+id/frog_quantity"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_weight="0.5"
                         android:gravity="center"
-                        android:text="0"/>
+                        android:text="0"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/frog"/>
+                        android:layout_weight="0.5"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/frog" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
 
                     <TextView
+                        android:id="@+id/snake_quantity"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_weight="0.5"
                         android:gravity="center"
-                        android:text="0"/>
+                        android:text="0"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/snake"/>
+                        android:layout_weight="0.5"
+                        android:scaleType="center"
+                        android:src="@drawable/snake" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
 
                     <TextView
+                        android:id="@+id/turtle_quantity"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_weight="0.5"
                         android:gravity="center"
-
-                        android:text="0"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/turtle"/>
+                        android:text="0"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:scaleType=""
-                        android:src="@drawable/salamander"/>
+                        android:layout_weight="0.5"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/turtle" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/salamander_quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/salamander" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/lizard_quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/lizard" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
 
 
                 </LinearLayout>
@@ -147,12 +219,6 @@
 
 
         </LinearLayout>
-
-
-
-
-
-
 
 
     </android.support.v7.widget.CardView>
