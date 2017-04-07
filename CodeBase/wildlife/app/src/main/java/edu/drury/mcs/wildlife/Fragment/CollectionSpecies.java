@@ -111,6 +111,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
             Log.i("OnSave", currentCollection.getCollection_name());
             Log.i("OnSave", currentCollection.getDate());
             Log.i("OnSave", currentCollection.getLocation().toString());
+            Log.i("onSave", Integer.toString(currentCollection.getSpecies().size()));
 
             for(Species s : currentCollection.getSpecies()) {
                 Log.i("OnSave", s.getCommonName() + " has " + s.getSpecies_Data().size() +" species collected");
@@ -152,6 +153,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
                 String cName = cursor.getString(cursor.getColumnIndexOrThrow(GroupMappingTable.GM_CNAME));
                 String sName = cursor.getString(cursor.getColumnIndexOrThrow(GroupMappingTable.GM_SNAME));
                 data.add(new Species(cName, sName, group_id));
+                Log.i("Species", cName);
             }
 
             cursor.close();

@@ -36,7 +36,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     private EditText longitude;
     private EditText utmEasting;
     private EditText utmNorthing;
-    private EditText utmZone;
+    private EditText utmZoneAndLetter;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
 
@@ -74,7 +74,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         longitude = (EditText) layout.findViewById(R.id.longitude);
         utmEasting = (EditText) layout.findViewById(R.id.UTMEast);
         utmNorthing = (EditText) layout.findViewById(R.id.UTMNorth);
-        utmZone = (EditText) layout.findViewById(R.id.UTMZone);
+        utmZoneAndLetter = (EditText) layout.findViewById(R.id.UTMZoneAndLetter);
 
         back.setOnClickListener(this);
         cancel.setOnClickListener(this);
@@ -95,11 +95,11 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
             String lt = latitude.getText().toString().trim();
             String lnt = longitude.getText().toString().trim();
             String utmE = utmEasting.getText().toString().trim();
-            String utmN = utmEasting.getText().toString().trim();
-            String utmZ = utmEasting.getText().toString().trim();
+            String utmN = utmNorthing.getText().toString().trim();
+            String utmZ = utmZoneAndLetter.getText().toString().trim();
 
 
-            if((!lt.equals("") && !lnt.equals("")) || (!utmE.equals("") && (!utmN.equals("")) && !utmZ.equals(""))) {
+            if(!lt.equals("") && !lnt.equals("")) {
                 Double lat = Double.parseDouble(lt);
                 Double lng = Double.parseDouble(lnt);
                 Location loc = new Location("");
@@ -108,6 +108,10 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
 
                 currentCollection.setLocation(loc);
                 dataListener.onDataPass(currentCollection, 2);
+
+            } else if(!utmE.equals("") && (!utmN.equals("")) && !utmZ.equals("")) {
+
+
             } else {
                 Message.showMessage(getActivity(),"Location Info is required");
             }
@@ -137,7 +141,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
 
                     utmEasting.setText(Double.toString(utmCoord.getEasting()));
                     utmNorthing.setText(Double.toString(utmCoord.getNorthing()));
-                    utmZone.setText(Double.toString(utmCoord.getZone()));
+                    utmZoneAndLetter.setText(Integer.toString(utmCoord.getZone()) + Character.toString(utmCoord.getLetter()));
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());

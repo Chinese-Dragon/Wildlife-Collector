@@ -156,9 +156,6 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 clickedCollection.deleteFromDB(context,cFragment.getCurrent_mainCollection());
                 Message.showMessage(editOption.getContext(), clickedCollection.getCollection_name() + " is deleted");
                 notifyItemRemoved(this.getAdapterPosition());
-            } else if (item.getItemId() == R.id.action_edit) {
-                // edit the collection
-                Message.showMessage(editOption.getContext(), "Edit collection");
             }
 
             return true;
