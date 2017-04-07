@@ -110,7 +110,8 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                 dataListener.onDataPass(currentCollection, 2);
 
             } else if(!utmE.equals("") && (!utmN.equals("")) && !utmZ.equals("")) {
-
+                currentCollection.setLocationUTM(utmZoneAndLetter + " " + utmEasting + " " + utmNorthing);
+                dataListener.onDataPass(currentCollection, 2);
 
             } else {
                 Message.showMessage(getActivity(),"Location Info is required");

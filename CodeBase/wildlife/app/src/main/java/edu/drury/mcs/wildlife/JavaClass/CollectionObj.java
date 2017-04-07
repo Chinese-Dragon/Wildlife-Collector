@@ -24,20 +24,24 @@ public class CollectionObj implements Parcelable{
     private String date;
     private Location location;
     private List<Species> species;
+    private String locationUTM;
 
     public CollectionObj() {
         this.collection_name = "";
         this.date = "";
         this.location = new Location("");
         this.species = new ArrayList<>();
+        this.locationUTM = "";
 
     }
 
-    public CollectionObj(String _name, String _date, Location _location, List<Species> _list_species) {
+    public CollectionObj(String _name, String _date, Location _location, String locationUTM, List<Species> _list_species) {
         this.collection_name = _name;
         this.date = _date;
         this.location = _location;
         this.species = _list_species;
+        this.locationUTM = locationUTM;
+
     }
 
     public CollectionObj(Parcel input) {
@@ -46,8 +50,11 @@ public class CollectionObj implements Parcelable{
         this.collection_name = input.readString();
         this.date = input.readString();
         this.location = Location.CREATOR.createFromParcel(input);
+
         // this.species = new ArrayList<>();
         input.readTypedList(species, Species.CREATOR);
+
+        this.locationUTM = input.readString();
     }
 
     public List<Species> getSpecies() {
@@ -78,6 +85,14 @@ public class CollectionObj implements Parcelable{
         this.location = location;
     }
 
+    public void setLocationUTM(String locationUTM) {
+        this.locationUTM = locationUTM;
+    }
+
+    public String getLocationUTM() {
+        return locationUTM;
+    }
+
     public void setSpecies(List<Species> species) {
         this.species = species;
     }
@@ -93,6 +108,7 @@ public class CollectionObj implements Parcelable{
         parcel.writeString(date);
         location.writeToParcel(parcel, i);
         parcel.writeTypedList(species);
+        parcel.writeString(locationUTM);
     }
 
     public static final Parcelable.Creator<CollectionObj> CREATOR

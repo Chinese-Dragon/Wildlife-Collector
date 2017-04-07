@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
-import android.widget.GridLayout;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +45,7 @@ public class wildlifeDB {
         values.put(CollectionTable.C_DATE, newC.getDate());
         values.put(CollectionTable.C_LAT, newC.getLocation().getLatitude());
         values.put(CollectionTable.C_LNG, newC.getLocation().getLongitude());
+        values.put(CollectionTable.C_UTM, newC.getLocationUTM());
 
         //find and add foreign key
         String[] projection = {MainCollectionTable.MC_ID};
@@ -117,9 +117,11 @@ public class wildlifeDB {
             Location location = new Location("");
             location.setLatitude(lat);
             location.setLongitude(lng);
+            String utmLocation = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_UTM));
+
 
             //need list of species data
-            results.add(new CollectionObj(name,c_date,location,getSpeciesList(db,c_id)));
+            results.add(new CollectionObj(name,c_date,location,utmLocation,getSpeciesList(db,c_id)));
         }
 
         db.close();

@@ -1,8 +1,11 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import edu.drury.mcs.wildlife.Activity.ViewCollectionEntry;
 import edu.drury.mcs.wildlife.Fragment.Collection;
 import edu.drury.mcs.wildlife.R;
 
@@ -26,7 +30,7 @@ import edu.drury.mcs.wildlife.R;
  */
 
 public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cViewHolder> {
-
+    public static final String EXTRA_VIEW = "edu.drury.mcs.wildlife.EXTRA_VIEW";
     private Context context;
     private LayoutInflater inflater;
     private Collection cFragment;
@@ -135,6 +139,7 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
 
             editOption.setOnClickListener(this);
             collectionName.setOnClickListener(this);
+            card.setOnClickListener(this);
         }
 
         @Override
@@ -144,6 +149,15 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 popup.inflate(R.menu.collection_edit_options);
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
+            } else if(view == card){
+                Intent intent = new Intent(context, ViewCollectionEntry.class);
+                Bundle bundle = new Bundle();
+
+                CollectionObj currentCollection = collectionData.get(getAdapterPosition());
+
+                bundle.putParcelable(EXTRA_VIEW ,currentCollection);
+
+                ((Activity) context).startActivity(intent);
             }
         }
 

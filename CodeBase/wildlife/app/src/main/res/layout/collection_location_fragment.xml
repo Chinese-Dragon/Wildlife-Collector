@@ -49,12 +49,6 @@
             android:inputType="number|numberSigned|numberDecimal"
             android:textAlignment="center" />
 
-        <Space
-            android:id="@+id/space3"
-            android:layout_width="match_parent"
-            android:layout_height="100px"
-            android:layout_below="@id/latitude"/>
-
 
         <Button
             android:id="@+id/getUTMLocation"

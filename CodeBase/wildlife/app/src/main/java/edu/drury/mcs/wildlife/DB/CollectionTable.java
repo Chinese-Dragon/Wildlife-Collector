@@ -15,6 +15,7 @@ public class CollectionTable {
    public static final String C_DATE = "date";
    public static final String C_LAT = "lat";
    public static final String C_LNG = "lng";
+   public static final String C_UTM = "utm";
    public static final String CMC_ID = "main_collection_id";
 
 
@@ -26,6 +27,7 @@ public class CollectionTable {
             + C_DATE + " VARCHAR(255) NOT NULL,"
             + C_LAT + " REAL,"
             + C_LNG + " REAL,"
+            + C_UTM + " VARCHAR(255),"
             + CMC_ID + " INTEGER NOT NULL,"
             + "FOREIGN KEY (" + CMC_ID + ") REFERENCES " + MainCollectionTable.TABLE_NAME + " (" + MainCollectionTable.MC_ID + ")"
             + ");";
