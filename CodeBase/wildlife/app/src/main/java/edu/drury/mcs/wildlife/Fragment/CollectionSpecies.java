@@ -1,7 +1,6 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -49,11 +48,11 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Activity a;
+        CreateCollection a;
 
-        if(context instanceof Activity) {
-            a = (Activity) context;
-
+        if(context instanceof CreateCollection) {
+            a = (CreateCollection) context;
+            a.setActionBarTitle("Collect data");
             try {
                 dataListener = (OnDataPassListener) a;
             } catch (ClassCastException e) {

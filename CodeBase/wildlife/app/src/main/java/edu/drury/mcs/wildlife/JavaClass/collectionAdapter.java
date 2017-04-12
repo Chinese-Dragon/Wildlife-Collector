@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +30,8 @@ import edu.drury.mcs.wildlife.R;
 
 public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cViewHolder> {
     public static final String EXTRA_VIEW = "edu.drury.mcs.wildlife.EXTRA_VIEW";
+    public static final String EXTRA_POSITION = "edu.drury.mcs.wildlife.EXTRA_POSITION";
+    public static final int STATIC_INTEGER_VALUE = 420;
     private Context context;
     private LayoutInflater inflater;
     private Collection cFragment;
@@ -117,6 +118,11 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
         notifyItemInserted(0);
     }
 
+    public void updateRow(CollectionObj updatedC, int position) {
+        this.collectionData.set(position, updatedC);
+        notifyItemChanged(position);
+    }
+
     class cViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
         TextView collectionName, collection_date, collection_address, frog_quantity, snake_quantity, turtle_quantity, lizard_quantity, salamander_quantity;
         ImageView editOption;
@@ -140,6 +146,7 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
             editOption.setOnClickListener(this);
             collectionName.setOnClickListener(this);
             card.setOnClickListener(this);
+
         }
 
         @Override
@@ -151,13 +158,10 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 popup.show();
             } else if(view == card){
                 Intent intent = new Intent(context, ViewCollectionEntry.class);
-                Bundle bundle = new Bundle();
-
                 CollectionObj currentCollection = collectionData.get(getAdapterPosition());
-
-                bundle.putParcelable(EXTRA_VIEW ,currentCollection);
-
-                ((Activity) context).startActivity(intent);
+                intent.putExtra(EXTRA_VIEW, currentCollection);
+                intent.putExtra(EXTRA_POSITION, getAdapterPosition());
+                ((Activity) context).startActivityForResult(intent, STATIC_INTEGER_VALUE);
             }
         }
 
@@ -167,7 +171,7 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 CollectionObj clickedCollection = collectionData.get(this.getAdapterPosition());
                 collectionData.remove(this.getAdapterPosition());
                 Log.i("readTask", " mainCurrentName " + cFragment.getCurrent_mainCollection().getMain_collection_name());
-                clickedCollection.deleteFromDB(context,cFragment.getCurrent_mainCollection());
+                clickedCollection.deleteFromDB(context);
                 Message.showMessage(editOption.getContext(), clickedCollection.getCollection_name() + " is deleted");
                 notifyItemRemoved(this.getAdapterPosition());
             }

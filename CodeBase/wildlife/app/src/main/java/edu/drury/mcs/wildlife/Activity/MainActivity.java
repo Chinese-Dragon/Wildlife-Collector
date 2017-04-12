@@ -26,6 +26,7 @@ import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
+import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
 import edu.drury.mcs.wildlife.R;
 
 public class MainActivity extends AppCompatActivity
@@ -107,7 +108,6 @@ public class MainActivity extends AppCompatActivity
                         db.insert(MainCollectionTable.TABLE_NAME, null, values);
                     }
                     cursor.close();
-
                     break;
                 default:
                     break;
@@ -185,6 +185,8 @@ public class MainActivity extends AppCompatActivity
             Collection cFrag = (Collection) getSupportFragmentManager().findFragmentByTag("collection_fragment");
             CollectionObj newC = data.getParcelableExtra(CollectionSpecies.SAVEDCOLLECTIONDATA);
             cFrag.addNewCollectionToList(newC);
+        } else if (requestCode == collectionAdapter.STATIC_INTEGER_VALUE && resultCode == RESULT_OK) {
+
         }
     }
 

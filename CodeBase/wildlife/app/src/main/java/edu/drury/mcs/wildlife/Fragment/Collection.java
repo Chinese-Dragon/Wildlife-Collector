@@ -88,9 +88,21 @@ public class Collection extends Fragment {
         current_mainCollection.add_collectionObj(newC);
         cAdapter.addNewData(newC);
         //save new Entry to DB
-        newC.saveToDB(getActivity(),current_mainCollection);
-        Message.showMessage(getActivity(),"Successfully Saved Collection Data");
+        newC.saveToDB(getActivity(), current_mainCollection);
+        Message.showMessage(getActivity(),"Successfully Saved Entry Data");
     }
+
+    // update both our current maincollection ragarding to element inside change.
+    // update adapter data to correctly display our updated data
+    public void updateCollectionList(CollectionObj updatedC, int position) {
+        current_mainCollection.update_collectionObj(updatedC, position);
+        cAdapter.updateRow(updatedC, position);
+
+        // update modified collection
+        updatedC.updateToDB(getActivity());
+        Message.showMessage(getActivity(), "Successfuly Updated Entry Data");
+    }
+
 
     private void setUpRecyclerView() {
         // grab outlets from xml layout

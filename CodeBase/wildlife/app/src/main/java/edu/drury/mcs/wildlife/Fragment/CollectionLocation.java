@@ -1,7 +1,6 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -39,16 +38,16 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     private EditText utmZoneAndLetter;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
-
+    private Location currentLoc = new Location("");
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Activity a;
+        CreateCollection a;
 
-        if(context instanceof Activity) {
-            a = (Activity) context;
-
+        if(context instanceof CreateCollection) {
+            a = (CreateCollection) context;
+            a.setActionBarTitle("Set Location");
             try {
                 dataListener = (OnDataPassListener) a;
             } catch (ClassCastException e) {
@@ -110,7 +109,14 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                 dataListener.onDataPass(currentCollection, 2);
 
             } else if(!utmE.equals("") && (!utmN.equals("")) && !utmZ.equals("")) {
-                currentCollection.setLocationUTM(utmZoneAndLetter + " " + utmEasting + " " + utmNorthing);
+                if(currentLoc != null) {
+                    currentCollection.setLocation(currentLoc);
+                }
+
+
+                currentCollection.setLocationUTM(utmZoneAndLetter.getText().toString() + " "
+                        + utmEasting.getText().toString() + " "
+                        + utmNorthing.getText().toString());
                 dataListener.onDataPass(currentCollection, 2);
 
             } else {
@@ -127,7 +133,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                     //coordinates.setText(Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
                     latitude.setText(Double.toString(location.getLatitude()));
                     longitude.setText(Double.toString(location.getLongitude()));
-
+                    currentLoc = location;
                 }
             };
             MyLocation myLocation = new MyLocation(getActivity());
@@ -139,6 +145,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
                 @Override
                 public void gotLocation(Location location) {
                     UTM utmCoord = new UTM(location.getLatitude(), location.getLongitude());
+                    currentLoc = location;
 
                     utmEasting.setText(Double.toString(utmCoord.getEasting()));
                     utmNorthing.setText(Double.toString(utmCoord.getNorthing()));

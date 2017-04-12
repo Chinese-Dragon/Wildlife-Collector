@@ -18,5 +18,8 @@
         <item>Killed For Study Purpose</item>
     </string-array>
     <string name="title_activity_view_collection_entry">ViewCollectionEntry</string>
+    <string name="save_data">save</string>
+    <string name="edit_entry">edit</string>
+
 
 </resources>

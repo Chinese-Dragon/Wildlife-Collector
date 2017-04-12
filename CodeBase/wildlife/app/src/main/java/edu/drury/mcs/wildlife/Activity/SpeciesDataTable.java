@@ -8,8 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,13 +26,12 @@ import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.JavaClass.tAdapter;
 import edu.drury.mcs.wildlife.R;
 
-public class SpeciesDataTable extends AppCompatActivity implements View.OnClickListener, AsyncTaskCompleteListener<String> {
+public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String> {
     public static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
     public static final String CURRENT_GROUP_ID = "edu.drury.mcs.wildlife.CURRENT_GROUP_ID";
     private RecyclerView tRecyclerView;
     private tAdapter tAdapter;
     private Species currentSpecies;
-    private Button cancel,save;
     private List<SpeciesCollected> data = new ArrayList<>();
     private String method = "getSpecies";
 
@@ -48,8 +45,8 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(currentSpecies.getCommonName());
-        getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.delete_48);
 
         // send request and get callback through onTaskComplete
         new BackgroundTask(this, this).execute(method, Integer.toString(currentSpecies.getGroup_ID()));
@@ -58,20 +55,11 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         tRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         tAdapter = new tAdapter(this, data);
         tRecyclerView.setAdapter(tAdapter);
-
-        //buttons
-        cancel = (Button) findViewById(R.id.cancel);
-        save = (Button) findViewById(R.id.done);
-
-        cancel.setOnClickListener(this);
-        save.setOnClickListener(this);
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.save, menu);
         return true;
     }
 
@@ -79,12 +67,13 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == android.R.id.home) {
-            Message.showMessage(this,"Pressed back");
-            saveData();
+            Message.showMessage(this,"Closed");
             onBackPressed();
             return true;
+        } else if(id == R.id.save){
+            saveData();
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -128,16 +117,6 @@ public class SpeciesDataTable extends AppCompatActivity implements View.OnClickL
         }
 
         return table;
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (view == cancel) {
-            onBackPressed();
-        } else if (view == save) {
-            saveData();
-        }
     }
 
     private void saveData() {

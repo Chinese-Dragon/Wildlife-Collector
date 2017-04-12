@@ -25,6 +25,7 @@ public class CollectionObj implements Parcelable{
     private Location location;
     private List<Species> species;
     private String locationUTM;
+    private long id = 0;
 
     public CollectionObj() {
         this.collection_name = "";
@@ -32,16 +33,15 @@ public class CollectionObj implements Parcelable{
         this.location = new Location("");
         this.species = new ArrayList<>();
         this.locationUTM = "";
-
     }
 
-    public CollectionObj(String _name, String _date, Location _location, String locationUTM, List<Species> _list_species) {
+    public CollectionObj(long _id, String _name, String _date, Location _location, String locationUTM, List<Species> _list_species) {
+        this.id = _id;
         this.collection_name = _name;
         this.date = _date;
         this.location = _location;
         this.species = _list_species;
         this.locationUTM = locationUTM;
-
     }
 
     public CollectionObj(Parcel input) {
@@ -50,11 +50,10 @@ public class CollectionObj implements Parcelable{
         this.collection_name = input.readString();
         this.date = input.readString();
         this.location = Location.CREATOR.createFromParcel(input);
-
         // this.species = new ArrayList<>();
         input.readTypedList(species, Species.CREATOR);
-
         this.locationUTM = input.readString();
+        this.id = input.readLong();
     }
 
     public List<Species> getSpecies() {
@@ -97,6 +96,14 @@ public class CollectionObj implements Parcelable{
         this.species = species;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -109,6 +116,7 @@ public class CollectionObj implements Parcelable{
         location.writeToParcel(parcel, i);
         parcel.writeTypedList(species);
         parcel.writeString(locationUTM);
+        parcel.writeLong(id);
     }
 
     public static final Parcelable.Creator<CollectionObj> CREATOR
@@ -123,13 +131,14 @@ public class CollectionObj implements Parcelable{
     };
 
     // methods for interacting with db
+    //CREATE
     public void saveToDB(Context context, MainCollectionObj current_main_collection) {
         new DBBackgroundTask(context, current_main_collection, this).execute(TASK_CREATE);
     }
 
     //DELETE
-    public void deleteFromDB(Context context, MainCollectionObj current_main_collection) {
-        new DBBackgroundTask(context, current_main_collection, this.getCollection_name()).execute(TASK_DELETE);
+    public void deleteFromDB(Context context) {
+        new DBBackgroundTask(context, this).execute(TASK_DELETE);
     }
 
     //READALL
@@ -139,7 +148,7 @@ public class CollectionObj implements Parcelable{
 
     //UPDATE
     public void updateToDB(Context context) {
-
+        new DBBackgroundTask(context, this).execute(TASK_UPDATE);
     }
 
 }

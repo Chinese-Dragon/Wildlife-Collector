@@ -67,6 +67,10 @@ public class MainCollectionObj implements Parcelable{
         this.collections.add(newEntry);
     }
 
+    public void update_collectionObj(CollectionObj updatedC, int position) {
+        this.collections.set(position, updatedC);
+    }
+
     @Override
     public int describeContents() {
         return 0;

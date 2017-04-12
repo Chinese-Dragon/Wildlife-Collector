@@ -6,13 +6,13 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/colorHalfTransparent"
-        android:weightSum="4">
+        android:weightSum="4"
+        android:id="@+id/linearLayout">
 
         <Button
             android:id="@+id/cancel"
@@ -44,46 +44,55 @@
             android:layout_margin="5dp"
             android:background="@color/colorAccent" />
 
-
     </LinearLayout>
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true">s
+        android:layout_height="match_parent"
+        android:layout_above="@id/linearLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/ddd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Selected Date"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/currentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2017-08-23"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:typeface="sans" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 
-        />
-    </RadioGroup>
 
-    <Button
-        android:id="@+id/datePickerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pick a date"
-        android:padding="15dp"
-        android:layout_weight="2"
-        android:background="#4CAF50"
-        android:textColor="@color/colorText"
-        android:layout_below="@+id/radioGroup"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp" />
 
-    <TextView
-        android:id="@+id/currentDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
-        android:layout_below="@+id/datePickerButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="152dp"
-        android:textSize="50sp"
-        android:textAlignment="center"/>
+
 </RelativeLayout>

@@ -10,6 +10,8 @@ import java.util.List;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
 
+import static edu.drury.mcs.wildlife.R.id.collection_name;
+
 /**
  * Created by mark93 on 2/21/2017.
  */
@@ -18,7 +20,6 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
     private Context context;
     private MainCollectionObj curent_main_collection;
     private CollectionObj newCollection;
-    private String collection_name;
     private wildlifeDB wildlifeDB;
 
     // READ ALL
@@ -28,17 +29,19 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
         this.wildlifeDB = new wildlifeDB(context);
     }
 
-    // CREATE (INSERT NEW) or UPDATE WITH NEW DATA
+    // CREATE (INSERT NEW)
     public DBBackgroundTask(Context context, MainCollectionObj _mainCollection, CollectionObj collection) {
         this(context, _mainCollection);
         this.newCollection = collection;
     }
 
-    // DELETE SINGLE
-    public DBBackgroundTask(Context context, MainCollectionObj _mainCollection, String collectionName) {
-        this(context,_mainCollection);
-        this.collection_name = collectionName;
+    // UPDATE or DELETE
+    public DBBackgroundTask(Context context, CollectionObj collection) {
+        this.context = context;
+        this.newCollection = collection;
+        this.wildlifeDB = new wildlifeDB(context);
     }
+
 
 
     @Override
@@ -62,7 +65,7 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
             case "update":
                 if(newCollection != null) {
                     // call update methid in wildlifeDB
-
+                    wildlifeDB.updateCollection(newCollection);
                 }
                 break;
             case "read":
@@ -71,9 +74,9 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
                 result = wildlifeDB.getAllCollections(curent_main_collection);
                 break;
             case "delete":
-                if(collection_name != null) {
+                if(newCollection != null) {
                     // call delete in wildlifeDB
-                    wildlifeDB.deleteCollection(curent_main_collection, collection_name);
+                    wildlifeDB.deleteCollection(newCollection);
                     Log.i("deleteTask", collection_name + " is deleted");
                 }
                 break;

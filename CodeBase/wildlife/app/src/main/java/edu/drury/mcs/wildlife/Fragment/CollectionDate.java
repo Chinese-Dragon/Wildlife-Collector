@@ -1,22 +1,23 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.CalendarView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import edu.drury.mcs.wildlife.Activity.CreateCollection;
@@ -30,7 +31,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class    CollectionDate extends Fragment implements View.OnClickListener {
+public class    CollectionDate extends Fragment implements View.OnClickListener, CalendarView.OnDateChangeListener {
     private View layout;
     private Button next,cancel,datePickerButton;
     private TextView currentDate;
@@ -39,15 +40,16 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
     private SimpleDateFormat dateFormatter;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
+    private CalendarView calendarView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Activity a;
+        CreateCollection a;
 
-        if(context instanceof Activity) {
-            a = (Activity) context;
-
+        if(context instanceof CreateCollection) {
+            a = (CreateCollection) context;
+            a.setActionBarTitle("Set Date");
             try {
                 dataListener = (OnDataPassListener) a;
             } catch (ClassCastException e) {
@@ -66,14 +68,16 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
         // deal with buttons
         cancel = (Button) layout.findViewById(R.id.cancel);
         next = (Button) layout.findViewById(R.id.next);
-        datePickerButton = (Button) layout.findViewById(R.id.datePickerButton);
 
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
+        calendarView = (CalendarView) layout.findViewById(R.id.calendarView);
         currentDate = (TextView) layout.findViewById(R.id.currentDate);
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        currentDate.setText(dateFormatter.format(new GregorianCalendar().getTime()));
 
-        datePickerButton.setOnClickListener(this);
+
+        calendarView.setOnDateChangeListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
 
@@ -92,20 +96,6 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
             }else {
                 Message.showMessage(getActivity(),"Date is required");
             }
-
-        }  else if (view == datePickerButton) {
-                Calendar calendar = Calendar.getInstance();
-                datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        Calendar newDate = Calendar.getInstance();
-                        newDate.set(year,month,day);
-                        currentDate.setText(dateFormatter.format(newDate.getTime()));
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-
-                datePicker.show();
-
         }
     }
 
@@ -113,5 +103,14 @@ public class    CollectionDate extends Fragment implements View.OnClickListener 
     public void onResume() {
         super.onResume();
         Log.i(TAG,"CollectionDate is Resumed");
+    }
+
+    @Override
+    public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        currentDate.setText(dateFormatter.format(calendar.getTime()));
     }
 }

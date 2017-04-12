@@ -36,7 +36,6 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Build Collection");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         // received collection we are working on from AddDialog.java
@@ -115,5 +114,9 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
                 s.setSpecies_Data(newSpeciesData);
             }
         }
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

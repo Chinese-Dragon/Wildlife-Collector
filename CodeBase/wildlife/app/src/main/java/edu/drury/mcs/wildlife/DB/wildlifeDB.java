@@ -101,15 +101,14 @@ public class wildlifeDB {
         cursor.close();
 
         //handle collection table using main_collection_id
-        String[] c_proj = {CollectionTable.C_ID, CollectionTable.C_NAME, CollectionTable.C_DATE, CollectionTable.C_LAT, CollectionTable.C_LNG};
+        String[] c_proj = {CollectionTable.C_ID, CollectionTable.C_NAME, CollectionTable.C_DATE, CollectionTable.C_LAT, CollectionTable.C_LNG, CollectionTable.C_UTM};
         String c_selection = CollectionTable.CMC_ID + " = ?";
         String[] c_selectionArgs = {Long.toString(main_collection_id)};
         Cursor c_cursor = db.query(CollectionTable.TABLE_NAME, c_proj, c_selection, c_selectionArgs, null, null, null);
+
         //start assemble each row to a collectionObj
         while(c_cursor.moveToNext()) {
-            CollectionObj collection = new CollectionObj();
             long c_id = c_cursor.getLong(c_cursor.getColumnIndexOrThrow(CollectionTable.C_ID));
-
             String name = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_NAME));
             String c_date = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_DATE));
             Double lat = c_cursor.getDouble(c_cursor.getColumnIndexOrThrow(CollectionTable.C_LAT));
@@ -119,50 +118,24 @@ public class wildlifeDB {
             location.setLongitude(lng);
             String utmLocation = c_cursor.getString(c_cursor.getColumnIndexOrThrow(CollectionTable.C_UTM));
 
-
             //need list of species data
-            results.add(new CollectionObj(name,c_date,location,utmLocation,getSpeciesList(db,c_id)));
+            results.add(new CollectionObj(c_id , name, c_date, location, utmLocation, getSpeciesList(db, c_id)));
         }
 
         db.close();
         return results;
     }
 
-    public void deleteCollection(MainCollectionObj current_mainC, String collection2Delete) {
+    // DELETE
+    public void deleteCollection(CollectionObj collection2Delete) {
         Log.i("info", "I am in delete collection process");
 
         this.db = dbHandler.getWritableDatabase();
-        long main_collection_id = 0;
-        long target_C_id = 0;
-
-        //find main collection primary key
-        String[] projection = {MainCollectionTable.MC_ID};
-        String selection = MainCollectionTable.MC_NAME + " = ?";
-        String[] selectionArgs = {current_mainC.getMain_collection_name()};
-        Cursor cursor = db.query(MainCollectionTable.TABLE_NAME, projection, selection, selectionArgs, null, null, null,null);
-        if(cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            main_collection_id = cursor.getLong(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_ID));
-        }
-        cursor.close();
-
-        // find target collection primary key
-        String[] projection2 = {CollectionTable.C_ID};
-        String selection2 = CollectionTable.C_NAME + " = ?";
-        String[] selectionArgs2 = {collection2Delete};
-        Cursor cursor2 = db.query(CollectionTable.TABLE_NAME, projection2, selection2, selectionArgs2, null, null, null,null);
-        if(cursor2.getCount() == 1) {
-            cursor2.moveToFirst();
-            target_C_id = cursor2.getLong(cursor2.getColumnIndexOrThrow(CollectionTable.C_ID));
-        }
-        cursor2.close();
-
-        Log.i("main collection id", Long.toString(main_collection_id));
-        Log.i("collection id", Long.toString(target_C_id));
+        long target_C_id = collection2Delete.getId();
 
         //delete collection
-        String deleteCollection_selection = CollectionTable.C_ID + " LIKE ? AND " + CollectionTable.CMC_ID + " LIKE ?";
-        String[] deleteC_selectionArgs = {Long.toString(target_C_id), Long.toString(main_collection_id)};
+        String deleteCollection_selection = CollectionTable.C_ID + " LIKE ?";
+        String[] deleteC_selectionArgs = {Long.toString(target_C_id)};
         db.delete(CollectionTable.TABLE_NAME, deleteCollection_selection, deleteC_selectionArgs);
 
         //delete collection species of this collection
@@ -172,6 +145,50 @@ public class wildlifeDB {
 
         db.close();
 
+    }
+
+    // UPDATE
+    public void updateCollection(CollectionObj updatedC) {
+        Log.i("info", "I am in update collection process");
+        this.db = dbHandler.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        // new values for columns
+        values.put(CollectionTable.C_NAME, updatedC.getCollection_name());
+        values.put(CollectionTable.C_DATE, updatedC.getDate());
+        values.put(CollectionTable.C_LAT, updatedC.getLocation().getLatitude());
+        values.put(CollectionTable.C_LNG, updatedC.getLocation().getLongitude());
+        values.put(CollectionTable.C_UTM, updatedC.getLocationUTM());
+
+        // select
+        String selection = CollectionTable.C_ID + " LIKE ?";
+        String[] selectionArgs = {Long.toString(updatedC.getId())};
+
+        // update
+        db.update(CollectionTable.TABLE_NAME, values, selection, selectionArgs);
+
+        // update collected_species by different group
+        for (Species s: updatedC.getSpecies()) {
+            int group_id = s.getGroup_ID();
+            for(SpeciesCollected sc: s.getSpecies_Data()) {
+                ContentValues sc_values = new ContentValues();
+                sc_values.put(SpeciesCollectedTable.SC_CNAME, sc.getCommonName());
+                sc_values.put(SpeciesCollectedTable.SC_SNAME, sc.getScientificName());
+                sc_values.put(SpeciesCollectedTable.SC_QUANTITY, sc.getQuantity());
+                sc_values.put(SpeciesCollectedTable.SC_NUM_REMOVED, sc.getNum_removed());
+                sc_values.put(SpeciesCollectedTable.SC_NUM_RELEASED, sc.getNum_released());
+                sc_values.put(SpeciesCollectedTable.SC_BAND_NUM , sc.getBand_num());
+                sc_values.put(SpeciesCollectedTable.SC_VS_RETAINED, sc.getVoucher_specimen_retained() ? 1:0);
+                sc_values.put(SpeciesCollectedTable.SC_BLOOD_TAKEN, sc.getIs_blood_taken() ? 1:0);
+                sc_values.put(SpeciesCollectedTable.SC_STATUS, SpeciesCollected.disposition_map.get(sc.getStatus()));
+
+                String selection_sc = SpeciesCollectedTable.SCC_ID + " LIKE ? AND "
+                        + SpeciesCollectedTable.SCGROUP_ID + " LIKE ?";
+                String[] selection_scArgs = {Long.toString(updatedC.getId()), Integer.toString(group_id)};
+                db.update(SpeciesCollectedTable.TABLE_NAME, sc_values, selection_sc, selection_scArgs);
+            }
+        }
+        db.close();
     }
 
     private List<Species> getSpeciesList(SQLiteDatabase db, Long c_id) {
@@ -186,7 +203,7 @@ public class wildlifeDB {
             String s_name = g_cursor.getString(g_cursor.getColumnIndexOrThrow(GroupMappingTable.GM_SNAME));
 
             //need list of speciesCollected
-            data.add(new Species(s_name,s_name,group_id,getSpeciesCollectedList(db,c_id,group_id)));
+            data.add(new Species(s_name, c_name, group_id, getSpeciesCollectedList(db, c_id, group_id)));
         }
 
         return data;
@@ -236,5 +253,6 @@ public class wildlifeDB {
 
         return sc_data;
     }
+
 
 }
