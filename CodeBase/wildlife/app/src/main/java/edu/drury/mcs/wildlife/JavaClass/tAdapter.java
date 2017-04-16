@@ -189,6 +189,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             disposition_spinner.setAdapter(adapter);
 
+            disposition_spinner.setOnItemSelectedListener(this);
             card.setOnClickListener(this);
             increase.setOnClickListener(this);
             decrease.setOnClickListener(this);
@@ -198,7 +199,6 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             specimen_no.setOnClickListener(this);
             blood_yes.setOnClickListener(this);
             blood_no.setOnClickListener(this);
-
             card.getPreventCornerOverlap();
         }
 
@@ -222,7 +222,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                 data.get(getAdapterPosition()).setQuantity(quantity_captured);
 
             } else  if (view == decrease){
-                if(quantity_captured > 0) {
+                if(quantity_captured > 0 && quantity_captured > quantity_removed) {
                     quantity_captured --;
                     quantity.setText(Integer.toString(quantity_captured));
                     data.get(getAdapterPosition()).setQuantity(quantity_captured);
@@ -275,6 +275,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                         data.get(getAdapterPosition()).setStatus(SpeciesCollected.Disposition.HELD);
                         break;
                     case "Killed For Study Purpose":
+                        Message.showMessage(context, "Killed");
                         data.get(getAdapterPosition()).setStatus(SpeciesCollected.Disposition.KILLED);
                         break;
                     default:

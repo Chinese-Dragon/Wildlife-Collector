@@ -178,15 +178,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Collection cFrag = (Collection) getSupportFragmentManager().findFragmentByTag("collection_fragment");
 
         if(requestCode == AddDialog.STATIC_INTEGER_VALUE && resultCode == RESULT_OK) {
             //ready to pass new collection data to Collection fragment to add to list
             Message.showMessage(this,"new added collection is here");
-            Collection cFrag = (Collection) getSupportFragmentManager().findFragmentByTag("collection_fragment");
+
             CollectionObj newC = data.getParcelableExtra(CollectionSpecies.SAVEDCOLLECTIONDATA);
             cFrag.addNewCollectionToList(newC);
         } else if (requestCode == collectionAdapter.STATIC_INTEGER_VALUE && resultCode == RESULT_OK) {
-
+            // receive updated collection(entry)
+            Message.showMessage(this,"Updated collection is here");
+            CollectionObj updateC = data.getParcelableExtra(ViewAndUpdateCollectionEntry.UPDATEDCOLLECTIONDATA);
+            int adapterPosition = data.getIntExtra(ViewAndUpdateCollectionEntry.CURRENTADAPTERPOSITION, -1);
+            cFrag.updateCollectionList(updateC, adapterPosition);
         }
     }
 

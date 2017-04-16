@@ -50,8 +50,10 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name_collection"
-        android:layout_toLeftOf="@id/create"
-        android:text="CANCEL" />
+        android:text="CANCEL"
+        android:layout_alignBaseline="@+id/create"
+        android:layout_alignBottom="@+id/create"
+        android:layout_toLeftOf="@+id/create"
+        android:layout_toStartOf="@+id/create" />
 
 </RelativeLayout>

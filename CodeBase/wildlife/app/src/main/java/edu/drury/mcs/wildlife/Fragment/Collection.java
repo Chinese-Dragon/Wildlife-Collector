@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
@@ -92,15 +93,19 @@ public class Collection extends Fragment {
         Message.showMessage(getActivity(),"Successfully Saved Entry Data");
     }
 
+
     // update both our current maincollection ragarding to element inside change.
     // update adapter data to correctly display our updated data
     public void updateCollectionList(CollectionObj updatedC, int position) {
         current_mainCollection.update_collectionObj(updatedC, position);
+        CollectionObj old = cAdapter.getSingleData(position);
         cAdapter.updateRow(updatedC, position);
 
-        // update modified collection
-        updatedC.updateToDB(getActivity());
+        // update with the modified collection
+        updatedC.updateToDB(getActivity(), old, current_mainCollection);
         Message.showMessage(getActivity(), "Successfuly Updated Entry Data");
+
+        Message.showMessage(getActivity(), Integer.toString(current_mainCollection.getCollections().size()));
     }
 
 
@@ -111,12 +116,24 @@ public class Collection extends Fragment {
 
         //Initialize collection recycler view
         cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        cAdapter = new collectionAdapter(getActivity(), getAdapterData(), Collection.this);
+
+        cRecyclerView.setAdapter(cAdapter);
+    }
+
+    private List<CollectionObj> getAdapterData() {
+        List<CollectionObj> result = null;
         try {
-            cAdapter = new collectionAdapter(getActivity(), CollectionObj.readAllCollections(getActivity(), current_mainCollection), Collection.this);
-        } catch (ExecutionException | InterruptedException e) {
+            result = CollectionObj.readAllCollections(getActivity(), current_mainCollection);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        cRecyclerView.setAdapter(cAdapter);
+
+        current_mainCollection.setCollections(result);
+        return result;
     }
 
     public MainCollectionObj getCurrent_mainCollection() {

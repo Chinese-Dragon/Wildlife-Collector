@@ -147,8 +147,8 @@ public class CollectionObj implements Parcelable{
     }
 
     //UPDATE
-    public void updateToDB(Context context) {
-        new DBBackgroundTask(context, this).execute(TASK_UPDATE);
+    public void updateToDB(Context context, CollectionObj old, MainCollectionObj mainCollection) {
+        new DBBackgroundTask(context, old ,this, mainCollection).execute(TASK_UPDATE);
     }
 
 }

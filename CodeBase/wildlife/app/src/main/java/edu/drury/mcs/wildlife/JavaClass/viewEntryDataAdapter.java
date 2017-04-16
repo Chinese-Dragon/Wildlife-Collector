@@ -1,6 +1,7 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import edu.drury.mcs.wildlife.Fragment.updateSCDialog;
 import edu.drury.mcs.wildlife.R;
 
 /**
@@ -29,6 +31,24 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
         this.group_id = _group_id;
     }
 
+    public void removeItem(int position) {
+//        // remove from sqlite
+//        data.get(position).deleteFromDB(context);
+
+        // remove from adapter
+        data.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void updateItem(SpeciesCollected updateSC, int adapterPosition) {
+        //update old item with updated one
+        data.set(adapterPosition, updateSC);
+        notifyItemChanged(adapterPosition);
+    }
+
+    public List<SpeciesCollected> getCurrentAdapterData() {
+        return this.data;
+    }
 
     @Override
     public viewEntryDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -91,13 +111,15 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
         }
     }
 
-    class viewEntryDataViewHolder extends RecyclerView.ViewHolder {
+    class viewEntryDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView species_image;
         private TextView num_capture, num_release, num_remove, band_num,scientific_name, specimen, blood, status;
         private View divider;
+        private View sc_view;
 
         public viewEntryDataViewHolder(View itemView) {
             super(itemView);
+            sc_view = itemView.findViewById(R.id.sc_view);
             species_image = (ImageView) itemView.findViewById(R.id.species_image);
             num_capture = (TextView) itemView.findViewById(R.id.num_capture);
             num_release = (TextView) itemView.findViewById(R.id.num_release);
@@ -108,6 +130,18 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
             status = (TextView) itemView.findViewById(R.id.status);
             band_num = (TextView) itemView.findViewById(R.id.band_num);
             divider = itemView.findViewById(R.id.divider);
+
+            sc_view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(view == sc_view) {
+                updateSCDialog dialog = new updateSCDialog(context, data.get(getAdapterPosition()),group_id, getAdapterPosition());
+                dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "Update an Collected Species");
+//                updateSCDialog dialog = new AddDialog(getActivity());
+//                dialog.show(getActivity().getSupportFragmentManager(), "Add an Entry");
+            }
         }
     }
 }

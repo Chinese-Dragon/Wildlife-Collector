@@ -55,7 +55,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.ViewCollectionEntry"
+            android:name=".Activity.ViewAndUpdateCollectionEntry"
             android:label="@string/title_activity_view_collection_entry"
             android:parentActivityName=".Activity.MainActivity"
             android:screenOrientation="portrait"

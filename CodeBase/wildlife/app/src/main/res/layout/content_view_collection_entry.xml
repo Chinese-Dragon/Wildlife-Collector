@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="edu.drury.mcs.wildlife.Activity.ViewCollectionEntry"
-    tools:showIn="@layout/activity_view_collection_entry">
+    tools:context="edu.drury.mcs.wildlife.Activity.ViewAndUpdateCollectionEntry"
+    tools:showIn="@layout/activity_view_update_collection_entry">
 
 </android.support.constraint.ConstraintLayout>

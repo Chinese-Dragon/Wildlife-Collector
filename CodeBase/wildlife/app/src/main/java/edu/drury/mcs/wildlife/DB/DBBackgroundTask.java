@@ -19,6 +19,7 @@ import static edu.drury.mcs.wildlife.R.id.collection_name;
 public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>> {
     private Context context;
     private MainCollectionObj curent_main_collection;
+    private CollectionObj oldCollection;
     private CollectionObj newCollection;
     private wildlifeDB wildlifeDB;
 
@@ -35,10 +36,19 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
         this.newCollection = collection;
     }
 
-    // UPDATE or DELETE
+    // DELETE
     public DBBackgroundTask(Context context, CollectionObj collection) {
         this.context = context;
         this.newCollection = collection;
+        this.wildlifeDB = new wildlifeDB(context);
+    }
+
+    // update
+    public DBBackgroundTask(Context context, CollectionObj old, CollectionObj newC, MainCollectionObj mainCollection) {
+        this.context = context;
+        this.oldCollection = old;
+        this.newCollection = newC;
+        this.curent_main_collection = mainCollection;
         this.wildlifeDB = new wildlifeDB(context);
     }
 
@@ -59,24 +69,28 @@ public class DBBackgroundTask extends AsyncTask<String,Void,List<CollectionObj>>
                 if(newCollection != null) {
                     // call create method in wildlifeDB
                     wildlifeDB.createNewCollection(newCollection, curent_main_collection);
+                    wildlifeDB.closeDBConnection();
                 }
 
                 break;
             case "update":
-                if(newCollection != null) {
+                if(newCollection != null && curent_main_collection != null) {
                     // call update methid in wildlifeDB
-                    wildlifeDB.updateCollection(newCollection);
+                    wildlifeDB.updateCollection(oldCollection, newCollection, curent_main_collection);
+                    wildlifeDB.closeDBConnection();
                 }
                 break;
             case "read":
                 // call read all collection in wildlifeDB
                 Log.i("readTask", " I am in about to read all collection");
                 result = wildlifeDB.getAllCollections(curent_main_collection);
+                wildlifeDB.closeDBConnection();
                 break;
             case "delete":
                 if(newCollection != null) {
                     // call delete in wildlifeDB
                     wildlifeDB.deleteCollection(newCollection);
+                    wildlifeDB.closeDBConnection();
                     Log.i("deleteTask", collection_name + " is deleted");
                 }
                 break;

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import edu.drury.mcs.wildlife.Activity.ViewCollectionEntry;
+import edu.drury.mcs.wildlife.Activity.ViewAndUpdateCollectionEntry;
 import edu.drury.mcs.wildlife.Fragment.Collection;
 import edu.drury.mcs.wildlife.R;
 
@@ -121,6 +121,11 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
     public void updateRow(CollectionObj updatedC, int position) {
         this.collectionData.set(position, updatedC);
         notifyItemChanged(position);
+        Message.showMessage(context, "updated " + updatedC.getCollection_name());
+    }
+
+    public CollectionObj getSingleData(int position) {
+        return this.collectionData.get(position);
     }
 
     class cViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
@@ -157,7 +162,7 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
             } else if(view == card){
-                Intent intent = new Intent(context, ViewCollectionEntry.class);
+                Intent intent = new Intent(context, ViewAndUpdateCollectionEntry.class);
                 CollectionObj currentCollection = collectionData.get(getAdapterPosition());
                 intent.putExtra(EXTRA_VIEW, currentCollection);
                 intent.putExtra(EXTRA_POSITION, getAdapterPosition());

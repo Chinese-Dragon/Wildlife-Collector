@@ -4,6 +4,7 @@
     <item
         android:title="@string/save_data"
         android:id="@+id/save"
+        android:icon="@drawable/checkmark_48"
         app:showAsAction="ifRoom" />
 
     <item

@@ -16,6 +16,7 @@
         <item>Released</item>
         <item>Held In Captivity</item>
         <item>Killed For Study Purpose</item>
+
     </string-array>
     <string name="title_activity_view_collection_entry">ViewCollectionEntry</string>
     <string name="save_data">save</string>

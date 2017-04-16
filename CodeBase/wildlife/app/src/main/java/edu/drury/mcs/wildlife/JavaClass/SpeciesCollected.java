@@ -12,6 +12,9 @@ import java.util.Map;
 
 public class SpeciesCollected implements Parcelable{
 
+    private static final String TASK_CREATE = "create";
+    private static final String TASK_DELETE = "delete";
+
     public static enum Disposition {
         RELEASED, HELD, KILLED
     }
@@ -43,6 +46,7 @@ public class SpeciesCollected implements Parcelable{
     private boolean voucher_specimen_retained;
     private boolean is_blood_taken;
     private Disposition status;
+    private long id;
 
     public SpeciesCollected() {
         this.commonName = "";
@@ -67,8 +71,9 @@ public class SpeciesCollected implements Parcelable{
         this.quantity = quantity;
     }
 
-    public SpeciesCollected(String s_name, String c_name, int quantity, int num_rm, int num_rl, String band_num, boolean vs_retained, boolean blood_taken, Disposition status) {
+    public SpeciesCollected(long _id, String s_name, String c_name, int quantity, int num_rm, int num_rl, String band_num, boolean vs_retained, boolean blood_taken, Disposition status) {
         this(s_name, c_name, quantity);
+        this.id = _id;
         this.num_removed = num_rm;
         this.num_released = num_rl;
         this.band_num = band_num;
@@ -89,14 +94,9 @@ public class SpeciesCollected implements Parcelable{
         this.voucher_specimen_retained = input.readByte() != 0;
         this.is_blood_taken = input.readByte() != 0;
 
-        String status_string = input.readString();
-        if (status_string == Disposition.HELD.toString()) {
-            this.status = Disposition.HELD;
-        } else if (status_string == Disposition.RELEASED.toString()) {
-            this.status = Disposition.RELEASED;
-        } else if (status_string == Disposition.KILLED.toString()) {
-            this.status = Disposition.KILLED;
-        }
+        this.status = (Disposition) input.readSerializable();
+
+        this.id = input.readLong();
 
     }
 
@@ -110,8 +110,16 @@ public class SpeciesCollected implements Parcelable{
         parcel.writeString(band_num);
         parcel.writeByte((byte) (voucher_specimen_retained ? 1 : 0));
         parcel.writeByte((byte) (is_blood_taken ? 1:0));
-        parcel.writeString(status.toString());
+        parcel.writeSerializable(status);
+        parcel.writeLong(id);
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public int getQuantity() {
@@ -203,7 +211,6 @@ public class SpeciesCollected implements Parcelable{
             return new SpeciesCollected[size];
         }
     };
-
 
 
 }
