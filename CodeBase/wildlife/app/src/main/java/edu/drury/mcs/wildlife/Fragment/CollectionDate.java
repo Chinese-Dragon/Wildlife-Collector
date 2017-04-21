@@ -11,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -31,7 +34,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class    CollectionDate extends Fragment implements View.OnClickListener, CalendarView.OnDateChangeListener {
+public class    CollectionDate extends Fragment implements View.OnClickListener, OnDateSelectedListener{
     private View layout;
     private Button next,cancel,datePickerButton;
     private TextView currentDate;
@@ -40,7 +43,7 @@ public class    CollectionDate extends Fragment implements View.OnClickListener,
     private SimpleDateFormat dateFormatter;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
-    private CalendarView calendarView;
+    private MaterialCalendarView calendarView;
 
     @Override
     public void onAttach(Context context) {
@@ -71,13 +74,14 @@ public class    CollectionDate extends Fragment implements View.OnClickListener,
 
         currentCollection = ((CreateCollection) getActivity()).getCurrentCollection();
 
-        calendarView = (CalendarView) layout.findViewById(R.id.calendarView);
+        calendarView = (MaterialCalendarView) layout.findViewById(R.id.calendarView);
         currentDate = (TextView) layout.findViewById(R.id.currentDate);
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
-        currentDate.setText(dateFormatter.format(new GregorianCalendar().getTime()));
+        Date current = new GregorianCalendar().getTime();
+        currentDate.setText(dateFormatter.format(current));
+        calendarView.setSelectedDate(current);
 
-
-        calendarView.setOnDateChangeListener(this);
+        calendarView.setOnDateChangedListener(this);
         cancel.setOnClickListener(this);
         next.setOnClickListener(this);
 
@@ -106,11 +110,18 @@ public class    CollectionDate extends Fragment implements View.OnClickListener,
     }
 
     @Override
-    public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        currentDate.setText(dateFormatter.format(calendar.getTime()));
+    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        if(selected) {
+            currentDate.setText(dateFormatter.format(date.getDate()));
+        }
     }
+
+//    @Override
+//    public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
+//        Calendar calendar = new GregorianCalendar();
+//        calendar.set(Calendar.YEAR, year);
+//        calendar.set(Calendar.MONTH, month);
+//        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//        currentDate.setText(dateFormatter.format(calendar.getTime()));
+//    }
 }

@@ -35,6 +35,7 @@ public class Collection extends Fragment {
     private FloatingActionButton addFab;
     private FloatingActionButton emailFab;
     private MainCollectionObj current_mainCollection;
+    private List<CollectionObj> adapterData;
 
     public static final Collection newInstance(MainCollectionObj _mainCollection) {
         Collection fragment = new Collection();
@@ -49,7 +50,8 @@ public class Collection extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.current_mainCollection = getArguments().getParcelable(EXTRA_MAIN_COLLECTION);
-
+        adapterData = getAdapterData();
+        this.current_mainCollection.setCollections(adapterData);
         // check if current_mainCollection is empty
     }
 
@@ -86,8 +88,11 @@ public class Collection extends Fragment {
 
 
     public void addNewCollectionToList(CollectionObj newC) {
-        current_mainCollection.add_collectionObj(newC);
-        cAdapter.addNewData(newC);
+
+        // add new data to internal data instance (which updates adapter data and maincollection data as well because they reference the same data list (adapterData))
+        adapterData.add(newC);
+        cAdapter.notifyItemInserted(adapterData.size() - 1);
+
         //save new Entry to DB
         newC.saveToDB(getActivity(), current_mainCollection);
         Message.showMessage(getActivity(),"Successfully Saved Entry Data");
@@ -97,9 +102,11 @@ public class Collection extends Fragment {
     // update both our current maincollection ragarding to element inside change.
     // update adapter data to correctly display our updated data
     public void updateCollectionList(CollectionObj updatedC, int position) {
-        current_mainCollection.update_collectionObj(updatedC, position);
-        CollectionObj old = cAdapter.getSingleData(position);
-        cAdapter.updateRow(updatedC, position);
+        CollectionObj old = adapterData.get(position);
+
+        // update internal data (which updates adapter data and maincollection data as well because they reference the same data list (adapterData))
+        adapterData.set(position, updatedC);
+        cAdapter.notifyItemChanged(position);
 
         // update with the modified collection
         updatedC.updateToDB(getActivity(), old, current_mainCollection);
@@ -117,9 +124,10 @@ public class Collection extends Fragment {
         //Initialize collection recycler view
         cRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        cAdapter = new collectionAdapter(getActivity(), getAdapterData(), Collection.this);
+        cAdapter = new collectionAdapter(getActivity(), adapterData, Collection.this);
 
         cRecyclerView.setAdapter(cAdapter);
+
     }
 
     private List<CollectionObj> getAdapterData() {
@@ -132,7 +140,6 @@ public class Collection extends Fragment {
             e.printStackTrace();
         }
 
-        current_mainCollection.setCollections(result);
         return result;
     }
 

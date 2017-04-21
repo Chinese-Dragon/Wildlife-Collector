@@ -17,11 +17,13 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -34,9 +36,12 @@ import edu.drury.mcs.wildlife.JavaClass.collectionAdapter;
 import edu.drury.mcs.wildlife.JavaClass.viewEntryDataAdapter;
 import edu.drury.mcs.wildlife.R;
 
-public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements OnDataReturnListener {
+public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements OnDataReturnListener, View.OnClickListener {
     public static final String UPDATEDCOLLECTIONDATA = "edu.drury.mcs.wildlife.UPDATEDCOLLECTIONDATA";
     public static final String CURRENTADAPTERPOSITION = "edu.drury.mcs.wildlife.CURRENTADAPTERPOSITION";
+    public final static String EXTRA_CURRENTSPECIES = "edu.drury.mcs.wildlife.CURRENTSPECIES";
+    public final static int STATIC_INTEGER_VALUE = 826;
+    public static final int RESULT_OK = 202;
     private int adapterPosition;
     private CollectionObj currentCollection;
     private EditText entry_name, entry_date;
@@ -44,6 +49,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
     private RecyclerView salamander_recyclerview, turtle_recyclerview, lizard_recyclerview, frog_recyclerview, snake_recyclerview;
     private viewEntryDataAdapter salamander_adapter, turtle_adapter, lizard_adapter, frog_adapter, snake_adapter;
     private ItemTouchHelper sa_touchHelper, tu_touchHelper, li_touchHelper, fr_touchHelper, sn_touchHelper;
+    private ImageButton addFrog, addSalamander, addLizard, addTurtle, addSnake;
 
 
     @Override
@@ -129,6 +135,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
 
         setUpDatePicker();
         setUpRecyclerviews();
+        setUpButtons();
     }
 
     private void setUpRecyclerviews() {
@@ -291,6 +298,56 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
                 break;
             default:
                 break;
+        }
+    }
+
+    public void setUpButtons() {
+        addFrog = (ImageButton) findViewById(R.id.add_frog);
+        addLizard = (ImageButton) findViewById(R.id.add_lizard);
+        addSalamander = (ImageButton) findViewById(R.id.add_salamander);
+        addTurtle = (ImageButton) findViewById(R.id.add_turtle);
+        addSnake = (ImageButton) findViewById(R.id.add_snake);
+
+        addFrog.setOnClickListener(this);
+        addLizard.setOnClickListener(this);
+        addSalamander.setOnClickListener(this);
+        addTurtle.setOnClickListener(this);
+        addSnake.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        Species s = null;
+        if(view == addFrog) {
+            s = new Species("Frog", "Anura", 2);
+        } else if(view == addLizard) {
+            s = new Species("Lizard", "Lacertilia", 3);
+        } else if(view == addSalamander) {
+            s = new Species("Salamander", "Caudata", 1);
+        } else if (view == addTurtle) {
+            s = new Species("Turtle","Testudines", 5);
+        } else if (view == addSnake) {
+            s = new Species("Snake", "Serpentes", 4);
+        }
+
+        Intent intent = new Intent(this, UpdateSpeciesDataTable.class);
+        intent.putExtra(EXTRA_CURRENTSPECIES, s);
+        startActivityForResult(intent, STATIC_INTEGER_VALUE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == STATIC_INTEGER_VALUE && resultCode == RESULT_OK) {
+            //ready to pass new collection data to Collection fragment to add to list
+            Message.showMessage(this,"new added animals are here");
+
+            List<SpeciesCollected> newAddedSCs = data.getParcelableExtra(UpdateSpeciesDataTable.SAVEDSPECIESDATA);
+            int group_id = data.getIntExtra(UpdateSpeciesDataTable.CURRENT_GROUP_ID, -1);
+
+
         }
     }
 }

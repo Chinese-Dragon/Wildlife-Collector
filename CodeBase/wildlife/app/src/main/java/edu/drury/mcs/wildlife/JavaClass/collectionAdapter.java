@@ -112,22 +112,6 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
         return collectionData.size();
     }
 
-
-    public void addNewData(CollectionObj newC) {
-        this.collectionData.add(0, newC);
-        notifyItemInserted(0);
-    }
-
-    public void updateRow(CollectionObj updatedC, int position) {
-        this.collectionData.set(position, updatedC);
-        notifyItemChanged(position);
-        Message.showMessage(context, "updated " + updatedC.getCollection_name());
-    }
-
-    public CollectionObj getSingleData(int position) {
-        return this.collectionData.get(position);
-    }
-
     class cViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
         TextView collectionName, collection_date, collection_address, frog_quantity, snake_quantity, turtle_quantity, lizard_quantity, salamander_quantity;
         ImageView editOption;
