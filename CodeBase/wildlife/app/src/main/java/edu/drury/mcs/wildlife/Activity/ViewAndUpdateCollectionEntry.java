@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -50,6 +51,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
     private viewEntryDataAdapter salamander_adapter, turtle_adapter, lizard_adapter, frog_adapter, snake_adapter;
     private ItemTouchHelper sa_touchHelper, tu_touchHelper, li_touchHelper, fr_touchHelper, sn_touchHelper;
     private ImageButton addFrog, addSalamander, addLizard, addTurtle, addSnake;
+    private View salamander_divider, lizard_divider, frog_divider, turtle_divider, snake_divider;
 
 
     @Override
@@ -105,6 +107,11 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
         entry_name = (EditText) findViewById(R.id.entry_name);
         entry_date = (EditText) findViewById(R.id.entry_date);
         entry_location = (TextView) findViewById(R.id.entry_location);
+        salamander_divider  = findViewById(R.id.salamander_divider);
+        frog_divider = findViewById(R.id.frog_divider);
+        snake_divider = findViewById(R.id.snake_divider);
+        turtle_divider = findViewById(R.id.turtle_divider);
+        lizard_divider = findViewById(R.id.lizard_divider);
 
         entry_name.setText(currentCollection.getCollection_name());
         entry_date.setText(currentCollection.getDate());
@@ -157,22 +164,38 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
                 case 1:
                     salamander_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
                     sa_touchHelper = new ItemTouchHelper(getTouchHelper(salamander_adapter));
+                    if(s.getSpecies_Data().isEmpty()) {
+                        salamander_divider.setVisibility(View.GONE);
+                    }
                     break;
                 case 2:
                     frog_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
                     fr_touchHelper = new ItemTouchHelper(getTouchHelper(frog_adapter));
+                    if(s.getSpecies_Data().isEmpty()) {
+                        frog_divider.setVisibility(View.GONE);
+                    }
+
                     break;
                 case 3:
                     lizard_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
                     li_touchHelper = new ItemTouchHelper(getTouchHelper(lizard_adapter));
+                    if(s.getSpecies_Data().isEmpty()) {
+                        lizard_divider.setVisibility(View.GONE);
+                    }
                     break;
                 case 4:
                     snake_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
                     sn_touchHelper = new ItemTouchHelper(getTouchHelper(snake_adapter));
+                    if(s.getSpecies_Data().isEmpty()) {
+                        snake_divider.setVisibility(View.GONE);
+                    }
                     break;
                 case 5:
                     turtle_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
                     tu_touchHelper = new ItemTouchHelper(getTouchHelper(turtle_adapter));
+                    if(s.getSpecies_Data().isEmpty()) {
+                        turtle_divider.setVisibility(View.GONE);
+                    }
                     break;
                 default:
                     break;
@@ -320,20 +343,30 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
     public void onClick(View view) {
         Species s = null;
         if(view == addFrog) {
-            s = new Species("Frog", "Anura", 2);
+            s = getSpecies(2);
         } else if(view == addLizard) {
-            s = new Species("Lizard", "Lacertilia", 3);
+            s = getSpecies(3);
         } else if(view == addSalamander) {
-            s = new Species("Salamander", "Caudata", 1);
+            s = getSpecies(1);
         } else if (view == addTurtle) {
-            s = new Species("Turtle","Testudines", 5);
+            s = getSpecies(5);
         } else if (view == addSnake) {
-            s = new Species("Snake", "Serpentes", 4);
+            s = getSpecies(4);
         }
 
         Intent intent = new Intent(this, UpdateSpeciesDataTable.class);
         intent.putExtra(EXTRA_CURRENTSPECIES, s);
         startActivityForResult(intent, STATIC_INTEGER_VALUE);
+    }
+
+    public Species getSpecies(int group_id) {
+        for(Species s : currentCollection.getSpecies()) {
+            if(s.getGroup_ID() == group_id) {
+                return s;
+            }
+        }
+
+        return new Species();
     }
 
     @Override
@@ -344,10 +377,38 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
             //ready to pass new collection data to Collection fragment to add to list
             Message.showMessage(this,"new added animals are here");
 
-            List<SpeciesCollected> newAddedSCs = data.getParcelableExtra(UpdateSpeciesDataTable.SAVEDSPECIESDATA);
+            List<SpeciesCollected> newAddedSCs = data.getParcelableArrayListExtra(UpdateSpeciesDataTable.SAVEDSPECIESDATA);
             int group_id = data.getIntExtra(UpdateSpeciesDataTable.CURRENT_GROUP_ID, -1);
 
+            Message.showMessage(this, "Added " + Integer.toString(newAddedSCs.size()));
+            Message.showMessage(this, "Group Id " + Integer.toString(group_id));
+            for (Species s : currentCollection.getSpecies()) {
+                if(s.getGroup_ID() == group_id) {
+                    //it should change all the reference in collection and in adapter
+                    int old_size = s.getSpecies_Data().size();
+                    s.getSpecies_Data().addAll(newAddedSCs);
 
+                    //need to update corresponding recyclerview
+                    switch (group_id) {
+                        case 1:
+                            salamander_adapter.notifyItemRangeInserted(old_size, newAddedSCs.size());
+                            break;
+                        case 2:
+                            frog_adapter.notifyItemRangeInserted(old_size, newAddedSCs.size());
+                            break;
+                        case 3:
+                            lizard_adapter.notifyItemRangeInserted(old_size, newAddedSCs.size());
+                            break;
+                        case 4:
+                            snake_adapter.notifyItemRangeInserted(old_size, newAddedSCs.size());
+                            break;
+                        case 5:
+                            turtle_adapter.notifyItemRangeInserted(old_size, newAddedSCs.size());
+                            break;
+                        default:break;
+                    }
+                }
+            }
         }
     }
 }

@@ -59,21 +59,6 @@
 
                     </android.support.design.widget.TextInputLayout>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/entry_name"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text="Entry Name"-->
-                        <!--android:textColor="@color/colorPrimaryText"-->
-                        <!--android:layout_centerVertical="true"-->
-                        <!--android:layout_toRightOf="@id/label" />-->
-
-                    <!--<View-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="0.5dp"-->
-                        <!--android:background="@android:color/darker_gray"-->
-                        <!--android:layout_toRightOf="@id/label"-->
-                        <!--android:layout_alignBottom="@id/label"/>-->
 
                 </RelativeLayout>
 
@@ -103,22 +88,6 @@
                             android:hint="Entry Date" />
 
                     </android.support.design.widget.TextInputLayout>
-
-                    <!--<TextView-->
-                        <!--android:id="@+id/entry_date"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_centerVertical="true"-->
-                        <!--android:layout_toRightOf="@id/date_image"-->
-                        <!--android:text="Entry Name"-->
-                        <!--android:textColor="@color/colorPrimaryText" />-->
-
-                    <!--<View-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="0.5dp"-->
-                        <!--android:layout_alignBottom="@id/date_image"-->
-                        <!--android:layout_toRightOf="@id/date_image"-->
-                        <!--android:background="@android:color/darker_gray" />-->
 
                 </RelativeLayout>
 
@@ -193,6 +162,7 @@
 
 
                 <View
+                    android:id="@+id/salamander_divider"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />
@@ -201,7 +171,7 @@
                     android:id="@+id/salamander_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
 
@@ -251,6 +221,7 @@
                 </RelativeLayout>
 
                 <View
+                    android:id="@+id/frog_divider"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />
@@ -310,6 +281,7 @@
                 </RelativeLayout>
 
                 <View
+                    android:id="@+id/lizard_divider"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />
@@ -368,7 +340,9 @@
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>
+
                 <View
+                    android:id="@+id/snake_divider"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />
@@ -430,6 +404,7 @@
                 </RelativeLayout>
 
                 <View
+                    android:id="@+id/turtle_divider"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@android:color/darker_gray" />

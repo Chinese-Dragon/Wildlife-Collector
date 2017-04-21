@@ -247,7 +247,7 @@ public class wildlifeDB {
                     sc_cursor.getInt(sc_cursor.getColumnIndexOrThrow(SpeciesCollectedTable.SC_STATUS))
             );
 
-            sc_data.add(new SpeciesCollected(id ,c_name,s_name,quantity, num_removed, num_released, band_num, vs_retained, blood_taken, status));
+            sc_data.add(new SpeciesCollected(id ,s_name,c_name,quantity, num_removed, num_released, band_num, vs_retained, blood_taken, status));
         }
         sc_cursor.close();
 

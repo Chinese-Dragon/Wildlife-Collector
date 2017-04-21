@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.JavaClass.AsyncTaskCompleteListener;
@@ -82,6 +83,8 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
         String scientific_name;
         JSONObject a;
         JSONArray jsonArray;
+        Hashtable<String, SpeciesCollected> storedData = storeInHash(currentSpecies);
+
 
         try{
             jsonArray = new JSONArray(json_string);
@@ -91,7 +94,11 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
                 common_name = a.getString("common_name");
                 SpeciesCollected s = new SpeciesCollected(scientific_name, common_name);
 
-                data.add(s);
+                if(storedData.get(s.getCommonName()) == null) {
+                    // s is not in our current collection so add to speciesdata we want user to see and select
+                    data.add(s);
+                }
+                
             }
 
         } catch (JSONException e){
@@ -99,6 +106,17 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
         }
 
         return data;
+    }
+
+    // store collected species data into hashtable with common name as key
+    private Hashtable<String, SpeciesCollected> storeInHash(Species currentSpecies) {
+        Hashtable<String, SpeciesCollected> table = new Hashtable<>();
+
+        for(SpeciesCollected sc: currentSpecies.getSpecies_Data()) {
+            table.put(sc.getCommonName(), sc);
+        }
+
+        return table;
     }
 
     private void saveData() {
@@ -115,6 +133,7 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
 //
 //        }
 
+        Message.showMessage(this, Integer.toString(savedSpeciesData.size()));
         Intent resultIntent = new Intent();
         resultIntent.putExtra(SAVEDSPECIESDATA, ((ArrayList) savedSpeciesData));
         resultIntent.putExtra(CURRENT_GROUP_ID,currentSpecies.getGroup_ID());
