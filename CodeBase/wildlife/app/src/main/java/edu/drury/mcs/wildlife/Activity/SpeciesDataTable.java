@@ -2,9 +2,11 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +28,7 @@ import edu.drury.mcs.wildlife.JavaClass.sAdapter;
 import edu.drury.mcs.wildlife.JavaClass.tAdapter;
 import edu.drury.mcs.wildlife.R;
 
-public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String> {
+public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String>, SearchView.OnQueryTextListener {
     public static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
     public static final String CURRENT_GROUP_ID = "edu.drury.mcs.wildlife.CURRENT_GROUP_ID";
     private RecyclerView tRecyclerView;
@@ -60,6 +62,9 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.save, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -148,4 +153,24 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
         tAdapter.swap(data);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        newText = newText.toLowerCase();
+        List<SpeciesCollected> newList = new ArrayList<>();
+        for(SpeciesCollected sc: data) {
+            String s_name = sc.getScientificName().toLowerCase();
+            String c_name = sc.getCommonName().toLowerCase();
+            if(s_name.contains(newText) || c_name.contains(newText)) {
+                newList.add(sc);
+            }
+        }
+
+        tAdapter.setFilter(newList);
+        return true;
+    }
 }

@@ -2,11 +2,13 @@ package edu.drury.mcs.wildlife.JavaClass;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -32,9 +34,6 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
     }
 
     public void removeItem(int position) {
-//        // remove from sqlite
-//        data.get(position).deleteFromDB(context);
-
         // remove from adapter
         data.remove(position);
         notifyItemRemoved(position);
@@ -59,10 +58,7 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
     @Override
     public void onBindViewHolder(viewEntryDataViewHolder holder, int position) {
         SpeciesCollected sc = data.get(position);
-        int resource_id = getResourceId(group_id);
-        if (resource_id != -100) {
-            holder.species_image.setImageResource(resource_id);
-        }
+
         holder.scientific_name.setText(sc.getScientificName());
         holder.num_remove.setText(Integer.toString(sc.getNum_removed()));
         holder.num_capture.setText(Integer.toString(sc.getQuantity()));
@@ -94,33 +90,15 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
         return data.size();
     }
 
-    private int getResourceId(int _group_id) {
-        switch (_group_id) {
-            case 1:
-                return context.getResources().getIdentifier("salamander_big","drawable", context.getPackageName());
-            case 2:
-                return context.getResources().getIdentifier("frog","drawable", context.getPackageName());
-            case 3:
-                return context.getResources().getIdentifier("lizard_big","drawable", context.getPackageName());
-            case 4:
-                return context.getResources().getIdentifier("snake","drawable", context.getPackageName());
-            case 5:
-                return context.getResources().getIdentifier("turtle","drawable", context.getPackageName());
-            default:
-                return -100;
-        }
-    }
 
-    class viewEntryDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private ImageView species_image;
+    class viewEntryDataViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
         private TextView num_capture, num_release, num_remove, band_num,scientific_name, specimen, blood, status;
         private View divider;
-        private View sc_view;
+        private ImageButton edit;
 
         public viewEntryDataViewHolder(View itemView) {
             super(itemView);
-            sc_view = itemView.findViewById(R.id.sc_view);
-            species_image = (ImageView) itemView.findViewById(R.id.species_image);
+            edit = (ImageButton) itemView.findViewById(R.id.edit);
             num_capture = (TextView) itemView.findViewById(R.id.num_capture);
             num_release = (TextView) itemView.findViewById(R.id.num_release);
             num_remove = (TextView) itemView.findViewById(R.id.num_remove);
@@ -130,18 +108,27 @@ public class viewEntryDataAdapter extends RecyclerView.Adapter<viewEntryDataAdap
             status = (TextView) itemView.findViewById(R.id.status);
             band_num = (TextView) itemView.findViewById(R.id.band_num);
             divider = itemView.findViewById(R.id.divider);
-
-            sc_view.setOnClickListener(this);
+            edit.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if(view == sc_view) {
+            if(edit.getId() == view.getId()) {
+                PopupMenu popup = new PopupMenu(view.getContext(), view);
+                popup.inflate(R.menu.sc_edit_options);
+                popup.setOnMenuItemClickListener(this);
+                popup.show();
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if(item.getItemId() == R.id.action_edit) {
                 updateSCDialog dialog = new updateSCDialog(context, data.get(getAdapterPosition()),group_id, getAdapterPosition());
                 dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "Update an Collected Species");
-//                updateSCDialog dialog = new AddDialog(getActivity());
-//                dialog.show(getActivity().getSupportFragmentManager(), "Add an Entry");
             }
+
+            return true;
         }
     }
 }

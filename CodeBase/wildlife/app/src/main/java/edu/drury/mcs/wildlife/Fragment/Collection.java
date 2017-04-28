@@ -106,7 +106,7 @@ public class Collection extends Fragment {
 
         // update internal data (which updates adapter data and maincollection data as well because they reference the same data list (adapterData))
         adapterData.set(position, updatedC);
-        cAdapter.notifyItemChanged(position);
+        cAdapter.notifyDataSetChanged();
 
         // update with the modified collection
         updatedC.updateToDB(getActivity(), old, current_mainCollection);

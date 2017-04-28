@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,8 +19,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.hudomju.swipe.OnItemClickListener;
+import com.hudomju.swipe.SwipeToDismissTouchListener;
+import com.hudomju.swipe.adapter.RecyclerViewAdapter;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
+import edu.drury.mcs.wildlife.JavaClass.FixSwipeableItemClickListener;
 import edu.drury.mcs.wildlife.JavaClass.Message;
 import edu.drury.mcs.wildlife.JavaClass.OnDataReturnListener;
 import edu.drury.mcs.wildlife.JavaClass.Species;
@@ -49,9 +52,10 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
     private TextView entry_location;
     private RecyclerView salamander_recyclerview, turtle_recyclerview, lizard_recyclerview, frog_recyclerview, snake_recyclerview;
     private viewEntryDataAdapter salamander_adapter, turtle_adapter, lizard_adapter, frog_adapter, snake_adapter;
-    private ItemTouchHelper sa_touchHelper, tu_touchHelper, li_touchHelper, fr_touchHelper, sn_touchHelper;
+//    private ItemTouchHelper sa_touchHelper, tu_touchHelper, li_touchHelper, fr_touchHelper, sn_touchHelper;
     private ImageButton addFrog, addSalamander, addLizard, addTurtle, addSnake;
     private View salamander_divider, lizard_divider, frog_divider, turtle_divider, snake_divider;
+    private SwipeToDismissTouchListener<RecyclerViewAdapter> salamander_touchListenser, lizard_touchListenser, frog_touchListenser, turtle_touchListenser, snake_touchListenser;
 
 
     @Override
@@ -75,7 +79,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save, menu);
+        getMenuInflater().inflate(R.menu.update, menu);
         return true;
     }
 
@@ -86,7 +90,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
                 Message.showMessage(this,"Closed");
                 onBackPressed();
                 return true;
-            case R.id.save:
+            case R.id.update:
                 // call save data and finish activity
                 saveUpdateData();
                 return true;
@@ -163,14 +167,27 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
             switch (s.getGroup_ID()) {
                 case 1:
                     salamander_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
-                    sa_touchHelper = new ItemTouchHelper(getTouchHelper(salamander_adapter));
+                    salamander_recyclerview.setAdapter(salamander_adapter);
+//                    sa_touchHelper = new ItemTouchHelper(getTouchHelper(salamander_adapter));
+                    salamander_touchListenser = getTouchListener(salamander_recyclerview, salamander_adapter);
+                    salamander_recyclerview.setOnTouchListener(salamander_touchListenser);
+                    salamander_recyclerview.setOnScrollListener((RecyclerView.OnScrollListener) salamander_touchListenser.makeScrollListener());
+                    salamander_recyclerview.addOnItemTouchListener(getSwipeableItemClickListener(salamander_touchListenser));
+
                     if(s.getSpecies_Data().isEmpty()) {
                         salamander_divider.setVisibility(View.GONE);
                     }
+
                     break;
                 case 2:
                     frog_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
-                    fr_touchHelper = new ItemTouchHelper(getTouchHelper(frog_adapter));
+                    frog_recyclerview.setAdapter(frog_adapter);
+//                    fr_touchHelper = new ItemTouchHelper(getTouchHelper(frog_adapter));
+                    frog_touchListenser = getTouchListener(frog_recyclerview, frog_adapter);
+                    frog_recyclerview.setOnTouchListener(frog_touchListenser);
+                    frog_recyclerview.setOnScrollListener((RecyclerView.OnScrollListener) frog_touchListenser.makeScrollListener());
+                    frog_recyclerview.addOnItemTouchListener(getSwipeableItemClickListener(frog_touchListenser));
+
                     if(s.getSpecies_Data().isEmpty()) {
                         frog_divider.setVisibility(View.GONE);
                     }
@@ -178,63 +195,107 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
                     break;
                 case 3:
                     lizard_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
-                    li_touchHelper = new ItemTouchHelper(getTouchHelper(lizard_adapter));
+                    lizard_recyclerview.setAdapter(lizard_adapter);
+//                    li_touchHelper = new ItemTouchHelper(getTouchHelper(lizard_adapter));
+                    lizard_touchListenser = getTouchListener(lizard_recyclerview, lizard_adapter);
+                    lizard_recyclerview.setOnTouchListener(lizard_touchListenser);
+                    lizard_recyclerview.setOnScrollListener((RecyclerView.OnScrollListener) lizard_touchListenser.makeScrollListener());
+                    lizard_recyclerview.addOnItemTouchListener(getSwipeableItemClickListener(lizard_touchListenser));
+
                     if(s.getSpecies_Data().isEmpty()) {
                         lizard_divider.setVisibility(View.GONE);
                     }
+
                     break;
                 case 4:
                     snake_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
-                    sn_touchHelper = new ItemTouchHelper(getTouchHelper(snake_adapter));
+                    snake_recyclerview.setAdapter(snake_adapter);
+//                    sn_touchHelper = new ItemTouchHelper(getTouchHelper(snake_adapter));
+                    snake_touchListenser = getTouchListener(snake_recyclerview, snake_adapter);
+                    snake_recyclerview.setOnTouchListener(snake_touchListenser);
+                    snake_recyclerview.setOnScrollListener((RecyclerView.OnScrollListener) snake_touchListenser.makeScrollListener());
+                    snake_recyclerview.addOnItemTouchListener(getSwipeableItemClickListener(snake_touchListenser));
+
                     if(s.getSpecies_Data().isEmpty()) {
                         snake_divider.setVisibility(View.GONE);
                     }
                     break;
                 case 5:
                     turtle_adapter = new viewEntryDataAdapter(this, s.getSpecies_Data(), s.getGroup_ID());
-                    tu_touchHelper = new ItemTouchHelper(getTouchHelper(turtle_adapter));
+//                    tu_touchHelper = new ItemTouchHelper(getTouchHelper(turtle_adapter));
+                    turtle_recyclerview.setAdapter(turtle_adapter);
+                    turtle_touchListenser = getTouchListener(turtle_recyclerview, turtle_adapter);
+                    turtle_recyclerview.setOnTouchListener(turtle_touchListenser);
+                    turtle_recyclerview.setOnScrollListener((RecyclerView.OnScrollListener) turtle_touchListenser.makeScrollListener());
+                    turtle_recyclerview.addOnItemTouchListener(getSwipeableItemClickListener(turtle_touchListenser));
+
                     if(s.getSpecies_Data().isEmpty()) {
                         turtle_divider.setVisibility(View.GONE);
                     }
+
                     break;
                 default:
                     break;
             }
         }
 
-        salamander_recyclerview.setAdapter(salamander_adapter);
-        turtle_recyclerview.setAdapter(turtle_adapter);
-        lizard_recyclerview.setAdapter(lizard_adapter);
-        frog_recyclerview.setAdapter(frog_adapter);
-        snake_recyclerview.setAdapter(snake_adapter);
-
         //attach itemtouchhelper
-        sa_touchHelper.attachToRecyclerView(salamander_recyclerview);
-        tu_touchHelper.attachToRecyclerView(turtle_recyclerview);
-        li_touchHelper.attachToRecyclerView(lizard_recyclerview);
-        fr_touchHelper.attachToRecyclerView(frog_recyclerview);
-        sn_touchHelper.attachToRecyclerView(snake_recyclerview);
+//        sa_touchHelper.attachToRecyclerView(salamander_recyclerview);
+//        tu_touchHelper.attachToRecyclerView(turtle_recyclerview);
+//        li_touchHelper.attachToRecyclerView(lizard_recyclerview);
+//        fr_touchHelper.attachToRecyclerView(frog_recyclerview);
+//        sn_touchHelper.attachToRecyclerView(snake_recyclerview);
 
     }
 
-    private ItemTouchHelper.SimpleCallback getTouchHelper(final viewEntryDataAdapter adapter) {
-        Log.i("swipe", "I am in getTouchHelper");
-      ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+    private FixSwipeableItemClickListener getSwipeableItemClickListener(final SwipeToDismissTouchListener touchListener) {
+        Message.showMessage(this, "I am in getSwipeableItemClickListener");
+        return new FixSwipeableItemClickListener(this, new OnItemClickListener() {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+            public void onItemClick(View view, int position) {
+                if(view.getId() == R.id.txt_delete) {
+                    touchListener.processPendingDismisses();
+                } else if(view.getId() == R.id.txt_undo) {
+                    touchListener.undoPendingDismiss();
+                }
+            }
+        });
+    }
+
+    private SwipeToDismissTouchListener<RecyclerViewAdapter> getTouchListener(RecyclerView recyclerView, final viewEntryDataAdapter adapter) {
+        return new SwipeToDismissTouchListener<>(
+                new RecyclerViewAdapter(recyclerView), new SwipeToDismissTouchListener.DismissCallbacks<RecyclerViewAdapter>() {
+            @Override
+            public boolean canDismiss(int position) {
+                return true;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+            public void onDismiss(RecyclerViewAdapter recyclerView, int position) {
                 Log.i("swipe", "I am swiped at " + Integer.toString(position));
                 adapter.removeItem(position);
             }
-        };
-
-        return callback;
+        });
     }
+
+//    private ItemTouchHelper.SimpleCallback getTouchHelper(final viewEntryDataAdapter adapter) {
+//        Log.i("swipe", "I am in getTouchHelper");
+//      ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+//            @Override
+//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//                int position = viewHolder.getAdapterPosition();
+//
+//                adapter.removeItem(position);
+//            }
+//        };
+//
+//        return callback;
+//    }
 
     private void saveUpdateData() {
         // get curret data for name, date, location

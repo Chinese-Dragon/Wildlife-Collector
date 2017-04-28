@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -115,8 +114,6 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
     class cViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
         TextView collectionName, collection_date, collection_address, frog_quantity, snake_quantity, turtle_quantity, lizard_quantity, salamander_quantity;
         ImageView editOption;
-        CardView card;
-
 
         public cViewHolder(View itemView) {
             super(itemView);
@@ -130,11 +127,8 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
             turtle_quantity = (TextView) itemView.findViewById(R.id.turtle_quantity);
             lizard_quantity = (TextView) itemView.findViewById(R.id.lizard_quantity);
             salamander_quantity = (TextView) itemView.findViewById(R.id.salamander_quantity);
-            card = (CardView) itemView.findViewById(R.id.collection_card);
 
             editOption.setOnClickListener(this);
-            collectionName.setOnClickListener(this);
-            card.setOnClickListener(this);
 
         }
 
@@ -145,12 +139,6 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 popup.inflate(R.menu.collection_edit_options);
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
-            } else if(view == card){
-                Intent intent = new Intent(context, ViewAndUpdateCollectionEntry.class);
-                CollectionObj currentCollection = collectionData.get(getAdapterPosition());
-                intent.putExtra(EXTRA_VIEW, currentCollection);
-                intent.putExtra(EXTRA_POSITION, getAdapterPosition());
-                ((Activity) context).startActivityForResult(intent, STATIC_INTEGER_VALUE);
             }
         }
 
@@ -163,6 +151,12 @@ public class collectionAdapter extends RecyclerView.Adapter<collectionAdapter.cV
                 clickedCollection.deleteFromDB(context);
                 Message.showMessage(editOption.getContext(), clickedCollection.getCollection_name() + " is deleted");
                 notifyItemRemoved(this.getAdapterPosition());
+            } else if(item.getItemId() == R.id.action_edit) {
+                Intent intent = new Intent(context, ViewAndUpdateCollectionEntry.class);
+                CollectionObj currentCollection = collectionData.get(getAdapterPosition());
+                intent.putExtra(EXTRA_VIEW, currentCollection);
+                intent.putExtra(EXTRA_POSITION, getAdapterPosition());
+                ((Activity) context).startActivityForResult(intent, STATIC_INTEGER_VALUE);
             }
 
             return true;

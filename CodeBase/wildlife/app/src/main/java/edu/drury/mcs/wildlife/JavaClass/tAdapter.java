@@ -303,4 +303,10 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
 
         return result;
     }
+
+    public void setFilter(List<SpeciesCollected> newList) {
+        data = new ArrayList<>();
+        data.addAll(newList);
+        notifyDataSetChanged();
+    }
 }

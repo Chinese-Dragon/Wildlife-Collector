@@ -149,42 +149,9 @@ public class wildlifeDB {
     // UPDATE
     public void updateCollection(CollectionObj oldC, CollectionObj updatedC, MainCollectionObj mainCollection) {
         Log.i("info", "I am in update collection process");
-        this.db = dbHandler.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//        // new values for columns
-//        values.put(CollectionTable.C_NAME, updatedC.getCollection_name());
-//        values.put(CollectionTable.C_DATE, updatedC.getDate());
-//        values.put(CollectionTable.C_LAT, updatedC.getLocation().getLatitude());
-//        values.put(CollectionTable.C_LNG, updatedC.getLocation().getLongitude());
-//        values.put(CollectionTable.C_UTM, updatedC.getLocationUTM());
-//
-//        // select
-//        String selection = CollectionTable.C_ID + " LIKE ?";
-//        String[] selectionArgs = {Long.toString(updatedC.getId())};
-//
-//        // update
-//        db.update(CollectionTable.TABLE_NAME, values, selection, selectionArgs);
-//
-//        // update collected_species by different group
-//        for (Species s: updatedC.getSpecies()) {
-//            int group_id = s.getGroup_ID();
-//            for(SpeciesCollected sc: s.getSpecies_Data()) {
-//                ContentValues sc_values = new ContentValues();
-//                sc_values.put(SpeciesCollectedTable.SC_QUANTITY, sc.getQuantity());
-//                sc_values.put(SpeciesCollectedTable.SC_NUM_REMOVED, sc.getNum_removed());
-//                sc_values.put(SpeciesCollectedTable.SC_NUM_RELEASED, sc.getNum_released());
-//                sc_values.put(SpeciesCollectedTable.SC_BAND_NUM , sc.getBand_num());
-//                sc_values.put(SpeciesCollectedTable.SC_VS_RETAINED, sc.getVoucher_specimen_retained() ? 1:0);
-//                sc_values.put(SpeciesCollectedTable.SC_BLOOD_TAKEN, sc.getIs_blood_taken() ? 1:0);
-//                sc_values.put(SpeciesCollectedTable.SC_STATUS, SpeciesCollected.disposition_map.get(sc.getStatus()));
-//
-//                String selection_sc = SpeciesCollectedTable.SCC_ID + " LIKE ? AND "
-//                        + SpeciesCollectedTable.SCGROUP_ID + " LIKE ? AND " + SpeciesCollectedTable.SC_SNAME + " LIKE ?";
-//                String[] selection_scArgs = {Long.toString(updatedC.getId()), Integer.toString(group_id), sc.getScientificName()};
-//                db.update(SpeciesCollectedTable.TABLE_NAME, sc_values, selection_sc, selection_scArgs);
-//            }
-//        }
+        deleteCollection(oldC);
+        closeDBConnection();
+        createNewCollection(updatedC, mainCollection);
 
     }
 

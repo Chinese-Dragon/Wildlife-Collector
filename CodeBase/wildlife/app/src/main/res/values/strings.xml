@@ -20,7 +20,10 @@
     </string-array>
     <string name="title_activity_view_collection_entry">ViewCollectionEntry</string>
     <string name="save_data">save</string>
+    <string name="update_entry">update</string>
     <string name="edit_entry">edit</string>
+    <string name="deleted">deleted</string>
+    <string name="undo">UNDO</string>
 
 
 </resources>
