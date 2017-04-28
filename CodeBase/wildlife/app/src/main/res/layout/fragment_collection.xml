@@ -30,9 +30,8 @@
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="#da3c2f"
-        fab:menu_colorPressed="#dc4b3f"
-        fab:menu_colorRipple="#99d4d4d4"
+        fab:menu_colorNormal="@color/colorAccent"
+        fab:menu_colorRipple="@color/colorText"
         fab:menu_fab_size="normal"
         fab:menu_icon="@drawable/fab_add"
         fab:menu_labels_colorNormal="#333"
@@ -59,6 +58,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_add"
             fab:fab_label="Add New Entry"
+            fab:fab_colorNormal="@color/colorAccent"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
@@ -66,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_gmail"
+            fab:fab_colorNormal="@color/colorAccent"
             fab:fab_label="Email Data"
             fab:fab_size="mini" />
 
@@ -74,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_list"
+            fab:fab_colorNormal="@color/colorAccent"
             fab:fab_label="Collections"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>

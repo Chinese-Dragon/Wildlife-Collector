@@ -2,12 +2,17 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +30,9 @@ import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.JavaClass.tAdapter;
 import edu.drury.mcs.wildlife.R;
 
-public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String> {
-
+public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String>, SearchView.OnQueryTextListener
+{
+    private static int REQUEST = 100;
     public static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
     public static final String CURRENT_GROUP_ID = "edu.drury.mcs.wildlife.CURRENT_GROUP_ID";
     private RecyclerView tRecyclerView;
@@ -34,6 +40,8 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
     private Species currentSpecies;
     private List<SpeciesCollected> data = new ArrayList<>();
     private String method = "getSpecies";
+    private SearchView searchView;
+    private FloatingActionButton voice_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +63,26 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
         tRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         utAdapter = new tAdapter(this, data);
         tRecyclerView.setAdapter(utAdapter);
+
+        voice_search = (FloatingActionButton) findViewById(R.id.voice_search);
+        voice_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Please Speak Up");
+                startActivityForResult(i, REQUEST);
+                //                need to check if voice to text is available first
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.save, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -146,5 +169,37 @@ public class UpdateSpeciesDataTable extends AppCompatActivity implements AsyncTa
         data = getSpeciesData(jsonm_result_string, currentSpecies);
         //initilze and setup recycler view
         utAdapter.swap(data);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        newText = newText.toLowerCase();
+        List<SpeciesCollected> newList = new ArrayList<>();
+        for(SpeciesCollected sc: data) {
+            String s_name = sc.getScientificName().toLowerCase();
+            String c_name = sc.getCommonName().toLowerCase();
+            if(s_name.contains(newText) || c_name.contains(newText)) {
+                newList.add(sc);
+            }
+        }
+
+        utAdapter.setFilter(newList);
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            searchView.setQuery(spokenText, false);
+        }
     }
 }

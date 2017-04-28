@@ -2,6 +2,8 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +34,14 @@ import edu.drury.mcs.wildlife.R;
 public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskCompleteListener<String>, SearchView.OnQueryTextListener {
     public static final String SAVEDSPECIESDATA = "edu.drury.mcs.wildlife.SAVEDSPECIESDATA";
     public static final String CURRENT_GROUP_ID = "edu.drury.mcs.wildlife.CURRENT_GROUP_ID";
+    private static int REQUEST = 100;
     private RecyclerView tRecyclerView;
     private tAdapter tAdapter;
     private Species currentSpecies;
     private List<SpeciesCollected> data = new ArrayList<>();
     private String method = "getSpecies";
+    private FloatingActionButton voice_search;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +63,26 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
         tRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         tAdapter = new tAdapter(this, data);
         tRecyclerView.setAdapter(tAdapter);
+
+        voice_search = (FloatingActionButton) findViewById(R.id.voice_search);
+        voice_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Please Speak Up");
+                startActivityForResult(i, REQUEST);
+//                need to check if voice to text is available first
+            }
+        });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.save, menu);
         MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setOnQueryTextListener(this);
         return true;
     }
@@ -172,5 +191,16 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
 
         tAdapter.setFilter(newList);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            searchView.setQuery(spokenText, false);
+        }
     }
 }
