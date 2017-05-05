@@ -158,6 +158,35 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         }
     }
 
+    private Switch mySwitch;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mySwitch = (Switch) findViewById(R.id.mySwitch);
+
+        // set the switch to ON
+        mySwitch.setChecked(true);
+        // attach a listener to check for changes in state
+        mySwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                if (isChecked) {
+
+
+                } else {
+
+
+                }
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();

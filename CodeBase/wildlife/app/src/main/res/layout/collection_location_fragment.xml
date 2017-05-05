@@ -8,6 +8,50 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <Switch
+        android:id="@+id/mySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="26dp"
+        android:height="50dp"
+        android:text="@string/switch_text"
+        android:textSize="20sp"
+        android:switchMinWidth="50sp"
+        android:switchPadding="50sp"/>
+
+    <!--<Switch
+        android:id="@+id/mySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Notification"
+        android:textOff="No"
+        android:textOn="Yes"/>&lt;!&ndash; text to be displayed whenever current state is checked&ndash;&gt;-->
+
+    <!--<Switch
+        android:id="@+id/mySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:text="Play with the Switch"
+        android:textOff="No"
+        android:textOn="Yes"/>-->
+
+    <TextView
+        android:id="@+id/switchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mySwitch"
+        android:layout_marginTop="22dp"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <Button
         android:id="@+id/getLocation"
         android:layout_width="wrap_content"
@@ -17,7 +61,8 @@
         android:layout_marginTop="10dp"
         android:background="#4CAF50"
         android:textColor="@color/colorText"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/switchStatus"/>
 
     <Space
         android:id="@+id/space1"
