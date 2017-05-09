@@ -77,7 +77,9 @@ public class Collection extends Fragment {
         emailFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                EmailDialog emailDialog = new EmailDialog(getActivity());
+                emailDialog.show(getActivity().getSupportFragmentManager(), "Email an Entry");
+                FAM.close(true);
             }
         });
 
