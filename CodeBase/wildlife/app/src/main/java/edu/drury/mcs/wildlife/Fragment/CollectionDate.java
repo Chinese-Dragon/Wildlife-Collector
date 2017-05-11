@@ -52,7 +52,6 @@ public class    CollectionDate extends Fragment implements View.OnClickListener,
 
         if(context instanceof CreateCollection) {
             a = (CreateCollection) context;
-            a.setActionBarTitle("Set Date");
             try {
                 dataListener = (OnDataPassListener) a;
             } catch (ClassCastException e) {
@@ -116,12 +115,5 @@ public class    CollectionDate extends Fragment implements View.OnClickListener,
         }
     }
 
-//    @Override
-//    public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
-//        Calendar calendar = new GregorianCalendar();
-//        calendar.set(Calendar.YEAR, year);
-//        calendar.set(Calendar.MONTH, month);
-//        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//        currentDate.setText(dateFormatter.format(calendar.getTime()));
-//    }
+
 }

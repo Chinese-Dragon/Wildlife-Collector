@@ -38,6 +38,7 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
+
         // received collection we are working on from AddDialog.java
         currentCollection = (CollectionObj) getIntent().getParcelableExtra(AddDialog.EXTRA_CURRENTCOLLECTION);
 
@@ -52,6 +53,7 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         pager.setAdapter(pagerAdapter);
         indicator.setViewPager(pager);
 
+        setActionBarTitle("Select Date");
     }
 
     @Override
@@ -61,6 +63,11 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
 
         if (currentPage > 0) {
             pager.setCurrentItem(--currentPage);
+            if( currentPage == 0) {
+                setActionBarTitle("Set Date");
+            } else if (currentPage == 1) {
+                setActionBarTitle("Set Location");
+            }
         }
     }
 
@@ -81,9 +88,11 @@ public class CreateCollection extends AppCompatActivity implements OnDataPassLis
         if(nextPosition == 1) {
             CollectionLocation locationFrag = (CollectionLocation) pagerAdapter.getItem(nextPosition);
             locationFrag.setCurrentCollection(collection);
+            setActionBarTitle("Set Location");
         } else if(nextPosition == 2) {
             CollectionSpecies speciesFrag = (CollectionSpecies) pagerAdapter.getItem(nextPosition);
             speciesFrag.setCurrentCollection(collection);
+            setActionBarTitle("Set Data");
         }
         pager.setCurrentItem(nextPosition);
     }

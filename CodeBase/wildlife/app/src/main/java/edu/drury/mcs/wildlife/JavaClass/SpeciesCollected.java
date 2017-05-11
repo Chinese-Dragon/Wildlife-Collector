@@ -59,15 +59,17 @@ public class SpeciesCollected implements Parcelable{
         this.status = Disposition.HELD;
     }
 
-    public SpeciesCollected(String scientificName, String commonName) {
+    public SpeciesCollected(long id, String scientificName, String commonName) {
         this();
+        this.id = id;
         this.scientificName = scientificName;
         this.commonName = commonName;
-        this.quantity = 0;
     }
 
     public SpeciesCollected(String scientificName, String commonName, int quantity) {
-        this(scientificName,commonName);
+        this();
+        this.scientificName = scientificName;
+        this.commonName = commonName;
         this.quantity = quantity;
     }
 

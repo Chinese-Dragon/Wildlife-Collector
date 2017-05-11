@@ -2,30 +2,22 @@ package edu.drury.mcs.wildlife.JavaClass;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.drury.mcs.wildlife.DB.AnimalTable;
+import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
 
 /**
  * Created by mark93 on 2/16/2017.
  */
 
-public class BackgroundTask extends AsyncTask<String, Void, String> {
-    private URL url;
-    private HttpURLConnection httpURLConnection;
-    private InputStream inputStream;
-    private BufferedReader bufferedReader;
-    private StringBuilder stringBuilder;
-    private String JSON_STRING;
+public class BackgroundTask extends AsyncTask<String, Void, List<SpeciesCollected>> {
     private Context context;
-    private String get_species_url = "https://wildlife-expo-yma004.c9users.io/species/";;
-    private String get_groups_url = "https://wildlife-expo-yma004.c9users.io/species/getGroups";
     private AsyncTaskCompleteListener<String> taskCompleteListener;
     private ProgressDialog progressDialog;
 
@@ -45,28 +37,44 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected List<SpeciesCollected> doInBackground(String... params) {
         String goal = params[0];
-        String result_json_string = "";
+        List<SpeciesCollected> animalData = new ArrayList<>();
 
         if(goal.equals("getSpecies")) {
             String group_id = params[1];
-            try {
-                bufferedReader = getBufferedReader(get_species_url + group_id);
-                result_json_string = readJSONToString(bufferedReader);
+            SQLiteDatabase db = new wildlifeDBHandler(context).getReadableDatabase();
+            String[] projection = {
+                    AnimalTable.A_ID,
+                    AnimalTable.AGM_ID,
+                    AnimalTable.A_SNAME,
+                    AnimalTable.A_CNAME
+            };
 
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
+            String selecton = AnimalTable.AGM_ID + " = ?";
+            String[] selectionArgs = {group_id};
 
-                return result_json_string;
-            }catch (IOException e){
-                e.printStackTrace();
+            Cursor cursor = db.query(AnimalTable.TABLE_NAME,
+                    projection,
+                    selecton,
+                    selectionArgs,
+                    null,
+                    null,
+                    null);
+
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(AnimalTable.A_ID));
+                String c_name = cursor.getString(cursor.getColumnIndexOrThrow(AnimalTable.A_CNAME));
+                String s_name = cursor.getString(cursor.getColumnIndexOrThrow(AnimalTable.A_SNAME));
+                animalData.add(new SpeciesCollected(id, s_name, c_name));
             }
+
+            cursor.close();
+            db.close();
         }
 
         // better to return a empty string than null
-        return result_json_string;
+        return animalData;
     }
 
     @Override
@@ -75,41 +83,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String result_json_string) {
+    protected void onPostExecute(List<SpeciesCollected> data) {
         // this method will be running on UI thread
         progressDialog.dismiss();
-        taskCompleteListener.onTaskComplete(result_json_string);
-    }
-
-    private BufferedReader getBufferedReader(String request_url) {
-        BufferedReader reader = null;
-
-        try {
-            url = new URL(request_url);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            inputStream = httpURLConnection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return reader;
-    }
-
-    public String readJSONToString(BufferedReader reader) {
-        String result = "";
-
-        stringBuilder = new StringBuilder();
-        try {
-            while ((JSON_STRING = reader.readLine()) != null) {
-                stringBuilder.append(JSON_STRING + "\n");
-            }
-            result = stringBuilder.toString().trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result;
+        taskCompleteListener.onTaskComplete(data);
     }
 }

@@ -68,7 +68,9 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="20dp"
                     android:paddingStart="20dp"
-                    android:weightSum="10">
+                    android:weightSum="10"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -98,7 +100,8 @@
                         android:gravity="center_horizontal"
                         android:inputType="number"
                         android:text="0"
-                        android:cursorVisible="false"
+                        android:cursorVisible="true"
+                        android:imeOptions="actionDone"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -120,7 +123,9 @@
                     android:paddingLeft="20dp"
                     android:paddingStart="20dp"
                     android:gravity="center_vertical"
-                    android:weightSum="10">
+                    android:weightSum="10"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -149,7 +154,8 @@
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:inputType="number"
-                        android:cursorVisible="false"
+                        android:cursorVisible="true"
+                        android:imeOptions="actionDone"
                         android:text="0"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -256,7 +262,9 @@
                     android:paddingLeft="20dp"
                     android:paddingStart="20dp"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:focusableInTouchMode="true"
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -273,7 +281,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:cursorVisible="false"
+                        android:cursorVisible="true"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:textSize="14sp"
                         android:textStyle="bold" />

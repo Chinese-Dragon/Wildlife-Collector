@@ -24,6 +24,7 @@
     <string name="edit_entry">edit</string>
     <string name="deleted">deleted</string>
     <string name="undo">UNDO</string>
+    <string name="preference_file_key">edu.drury.mcs.wildlife.WILDLIFE_KEY</string>
 
 
 </resources>

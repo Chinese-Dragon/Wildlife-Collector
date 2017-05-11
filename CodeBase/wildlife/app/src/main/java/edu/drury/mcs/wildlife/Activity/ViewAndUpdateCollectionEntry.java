@@ -239,13 +239,6 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
             }
         }
 
-        //attach itemtouchhelper
-//        sa_touchHelper.attachToRecyclerView(salamander_recyclerview);
-//        tu_touchHelper.attachToRecyclerView(turtle_recyclerview);
-//        li_touchHelper.attachToRecyclerView(lizard_recyclerview);
-//        fr_touchHelper.attachToRecyclerView(frog_recyclerview);
-//        sn_touchHelper.attachToRecyclerView(snake_recyclerview);
-
     }
 
     private FixSwipeableItemClickListener getSwipeableItemClickListener(final SwipeToDismissTouchListener touchListener) {
@@ -278,24 +271,7 @@ public class ViewAndUpdateCollectionEntry extends AppCompatActivity implements O
         });
     }
 
-//    private ItemTouchHelper.SimpleCallback getTouchHelper(final viewEntryDataAdapter adapter) {
-//        Log.i("swipe", "I am in getTouchHelper");
-//      ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-//            @Override
-//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-//                int position = viewHolder.getAdapterPosition();
-//
-//                adapter.removeItem(position);
-//            }
-//        };
-//
-//        return callback;
-//    }
+
 
     private void saveUpdateData() {
         // get curret data for name, date, location

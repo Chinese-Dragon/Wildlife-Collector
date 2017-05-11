@@ -67,7 +67,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activity.MainActivity" />
         </activity>
-        <activity android:name=".Activity.UpdateSpeciesDataTable"></activity>
+        <activity android:name=".Activity.UpdateSpeciesDataTable" />
+        <activity android:name=".Activity.FirstMainCollectionPage"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -30,6 +30,8 @@ import static android.content.ContentValues.TAG;
 
 public class syncDBTask extends AsyncTask<Void, Void, Boolean>{
     public static final String CHECK = "edu.drury.mcs.wildlife.CHECK_UPDATE";
+    public static String TARGET1 = "https://wildlife-expo-yma004.c9users.io/getGroupData";
+    public static String TARGET2 = "https://wildlife-expo-yma004.c9users.io/getAnimalData";
     private Context context;
     private SQLiteDatabase db;
     private AlertDialog needInternet;
@@ -62,10 +64,15 @@ public class syncDBTask extends AsyncTask<Void, Void, Boolean>{
 
             //NOTE: CHECK FOR UPDATE FIRST *****************************
             boolean needUpdate = sharedPref.getBoolean(CHECK, true);
+
             if(needUpdate) {
                 //update tables if needed
                 try {
-                    updateTables(retrieveData());
+                    updateMappingTables(retrieveJsonData(TARGET1));
+                    updateAnimalTable(retrieveJsonData(TARGET2));
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean(CHECK, false);
+                    editor.apply();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -86,12 +93,12 @@ public class syncDBTask extends AsyncTask<Void, Void, Boolean>{
         Log.i(TAG,"Inializing db");
     }
 
-    private String retrieveData() {
-        String target = "https://wildlife-expo-yma004.c9users.io/getGroupData";
+    private String retrieveJsonData(String url) {
+
         String result_json_string = "";
 
         try {
-            bufferedReader = getBufferedReader(target);
+            bufferedReader = getBufferedReader(url);
             result_json_string = readJSONToString(bufferedReader);
 
             bufferedReader.close();
@@ -105,7 +112,26 @@ public class syncDBTask extends AsyncTask<Void, Void, Boolean>{
         return result_json_string;
     }
 
-    private void updateTables(String json_string) throws JSONException {
+    private void updateAnimalTable(String json_string) throws JSONException {
+        JSONArray jsonArray = new JSONArray(json_string);
+        String cName, sName = "";
+        int group_id = 0;
+
+        for (int i =0; i < jsonArray.length(); i ++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            cName = object.getString("common_name");
+            sName = object.getString("scientific_name");
+            group_id = object.getInt("group_id");
+
+            ContentValues values = new ContentValues();
+            values.put(AnimalTable.A_CNAME, cName);
+            values.put(AnimalTable.A_SNAME, sName);
+            values.put(AnimalTable.AGM_ID, group_id);
+            db.insertWithOnConflict(AnimalTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+    }
+
+    private void updateMappingTables(String json_string) throws JSONException {
         JSONArray jsonArray = new JSONArray(json_string);
         String cName, sName = "";
 
@@ -120,9 +146,7 @@ public class syncDBTask extends AsyncTask<Void, Void, Boolean>{
             values.put(GroupMappingTable.GM_SNAME, sName);
             db.insertWithOnConflict(GroupMappingTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
         }
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(CHECK, false);
-        editor.commit();
+
         Log.i("info", "finished updating group table");
     }
 

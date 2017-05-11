@@ -11,7 +11,7 @@ import android.util.Log;
  */
 
 public class wildlifeDBHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "wildlife.db";
     private Context context;
 
@@ -47,6 +47,12 @@ public class wildlifeDBHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
+        try {
+            db.execSQL(AnimalTable.CREATE_TABLE_GROUP_MAPPING_COLLECTION);
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -55,6 +61,7 @@ public class wildlifeDBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + SpeciesCollectedTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MainCollectionTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + GroupMappingTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + AnimalTable.TABLE_NAME);
         onCreate(db);
         Log.i("onUpgrade", " onUpgrade is called");
     }

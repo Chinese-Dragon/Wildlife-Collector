@@ -39,6 +39,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
     private Location currentLoc = new Location("");
+    private CreateCollection parent;
 
     @Override
     public void onAttach(Context context) {
@@ -46,10 +47,11 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
         CreateCollection a;
 
         if(context instanceof CreateCollection) {
+            parent = (CreateCollection) context;
             a = (CreateCollection) context;
-            a.setActionBarTitle("Set Location");
+
             try {
-                dataListener = (OnDataPassListener) a;
+                dataListener = a;
             } catch (ClassCastException e) {
                 throw new ClassCastException(a.toString() + " must implement OnDataPassListener interface");
             }
@@ -88,6 +90,7 @@ public class CollectionLocation extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         if (view == back) {
             CreateCollection.pager.setCurrentItem(0);
+            parent.setActionBarTitle("Set Date");
         } else if (view == cancel) {
             getActivity().finish();
         } else if (view == next) {

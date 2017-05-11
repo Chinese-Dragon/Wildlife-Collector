@@ -43,6 +43,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
     private RecyclerView.Adapter sAdapter;
     private CollectionObj currentCollection;
     private OnDataPassListener dataListener;
+    private CreateCollection parent;
 
 
     @Override
@@ -51,8 +52,9 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
         CreateCollection a;
 
         if(context instanceof CreateCollection) {
+            parent = (CreateCollection) context;
             a = (CreateCollection) context;
-            a.setActionBarTitle("Collect data");
+
             try {
                 dataListener = (OnDataPassListener) a;
             } catch (ClassCastException e) {
@@ -66,6 +68,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.collection_species_fragment, container, false);
+
 
         Log.i("Info","COllectionSPecies view is created");
         Log.i(TAG,"CollectionSpecies onCreateVIew");
@@ -103,6 +106,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         if (view == back) {
             CreateCollection.pager.setCurrentItem(1);
+            parent.setActionBarTitle("Set Location");
         } else if (view == cancel) {
             getActivity().finish();
         } else if (view == done) {
@@ -156,6 +160,7 @@ public class CollectionSpecies extends Fragment implements View.OnClickListener 
             }
 
             cursor.close();
+            db.close();
             return data;
         }
     }

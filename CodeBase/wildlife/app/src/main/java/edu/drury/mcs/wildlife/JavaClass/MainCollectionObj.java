@@ -1,10 +1,18 @@
 package edu.drury.mcs.wildlife.JavaClass;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.drury.mcs.wildlife.DB.MainCollectionTable;
+import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
 
 /**
  * Created by mark93 on 3/2/2017.
@@ -15,22 +23,25 @@ public class MainCollectionObj implements Parcelable{
     private String email;
     private List<CollectionObj> collections;
 
-    public MainCollectionObj(String _name) {
-        this.main_collection_name = _name;
-        this.collections = new ArrayList<>();
+    public MainCollectionObj(){
         this.email = "";
+        this.main_collection_name = "";
+        this.collections = new ArrayList<>();
+    }
+
+    public MainCollectionObj(String _name) {
+        this();
+        this.main_collection_name = _name;
     }
 
     public MainCollectionObj(String _name, String _email) {
-        this.main_collection_name = _name;
+        this(_name);
         this.email = _email;
-        this.collections = new ArrayList<>();
     }
 
     public MainCollectionObj(String _name, String _email, List<CollectionObj> _collections) {
-        this.main_collection_name = _name;
+        this(_name, _email);
         this.collections = _collections;
-        this.email = _email;
     }
 
     protected MainCollectionObj(Parcel in) {
@@ -71,6 +82,10 @@ public class MainCollectionObj implements Parcelable{
         this.collections.set(position, updatedC);
     }
 
+    public void saveToDB(Context context) {
+        new MainCollecton2DB(context,this).execute("create");
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -95,4 +110,55 @@ public class MainCollectionObj implements Parcelable{
             return new MainCollectionObj[size];
         }
     };
+
+    private class MainCollecton2DB extends AsyncTask<String, Void, MainCollectionObj> {
+        private MainCollectionObj main_collection;
+        private SQLiteDatabase db;
+        private Context context;
+        public MainCollecton2DB(Context context, MainCollectionObj _main) {
+            this.main_collection = _main;
+            this.context =context;
+        }
+
+        @Override
+        protected MainCollectionObj doInBackground(String... params) {
+            String method = params[0];
+
+            switch (method) {
+                case "create":
+                    db = new wildlifeDBHandler(context).getWritableDatabase();
+
+                    String[] projections = {
+                            MainCollectionTable.MC_NAME
+                    };
+
+                    String selection = MainCollectionTable.MC_NAME + " = ?";
+                    String[] selectionArgs = {main_collection.getMain_collection_name()};
+
+                    Cursor cursor = db.query(
+                            MainCollectionTable.TABLE_NAME,
+                            projections,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            null
+                    );
+
+                    if(cursor.getCount() == 0){
+                        ContentValues values = new ContentValues();
+                        values.put(MainCollectionTable.MC_NAME, main_collection.getMain_collection_name());
+                        values.put(MainCollectionTable.MC_EMAIL, main_collection.getEmail());
+                        db.insert(MainCollectionTable.TABLE_NAME, null, values);
+                    }
+                    cursor.close();
+                    break;
+                default:
+                    break;
+            }
+
+            return null;
+        }
+
+    }
 }

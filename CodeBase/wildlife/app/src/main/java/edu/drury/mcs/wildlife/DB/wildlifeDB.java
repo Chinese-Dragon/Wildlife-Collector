@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,6 +39,29 @@ public class wildlifeDB {
 
     public void closeDBConnection() {
         this.db.close();
+    }
+
+
+    public List<MainCollectionObj> getMainCollectionList() {
+        this.db = dbHandler.getReadableDatabase();
+        List<MainCollectionObj> mainCollectionObjList = new ArrayList<>();
+
+        String[] projection = {
+                MainCollectionTable.MC_NAME,
+                MainCollectionTable.MC_EMAIL
+        };
+
+        Cursor cursor = db.query(MainCollectionTable.TABLE_NAME, projection, null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_NAME));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow(MainCollectionTable.MC_EMAIL));
+            MainCollectionObj  main = new MainCollectionObj(name, email);
+            main.setCollections(getAllCollections(main));
+            mainCollectionObjList.add(main);
+        }
+
+        return mainCollectionObjList;
     }
 
     //CREATE a new wildlife collection

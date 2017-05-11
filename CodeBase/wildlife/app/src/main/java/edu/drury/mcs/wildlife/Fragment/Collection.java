@@ -1,6 +1,7 @@
 package edu.drury.mcs.wildlife.Fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,8 +15,8 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import edu.drury.mcs.wildlife.Activity.MainActivity;
 import edu.drury.mcs.wildlife.JavaClass.CollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.MainCollectionObj;
 import edu.drury.mcs.wildlife.JavaClass.Message;
@@ -34,8 +35,11 @@ public class Collection extends Fragment {
     FloatingActionMenu FAM;
     private FloatingActionButton addFab;
     private FloatingActionButton emailFab;
+    private FloatingActionButton showMainList;
     private MainCollectionObj current_mainCollection;
     private List<CollectionObj> adapterData;
+    private List<MainCollectionObj> main_list;
+    private MainActivity parent;
 
     public static final Collection newInstance(MainCollectionObj _mainCollection) {
         Collection fragment = new Collection();
@@ -47,12 +51,23 @@ public class Collection extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof MainActivity) {
+            parent = (MainActivity) context;
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.current_mainCollection = getArguments().getParcelable(EXTRA_MAIN_COLLECTION);
-        adapterData = getAdapterData();
-        this.current_mainCollection.setCollections(adapterData);
+        assert current_mainCollection != null;
+        adapterData = current_mainCollection.getCollections();
+//        this.current_mainCollection.setCollections(adapterData);
         // check if current_mainCollection is empty
+        main_list = parent.getMainCollectionList();
     }
 
     @Override
@@ -64,6 +79,8 @@ public class Collection extends Fragment {
         FAM = (FloatingActionMenu) layout.findViewById(R.id.material_design_android_floating_action_menu);
         addFab = (FloatingActionButton) layout.findViewById(R.id.add_collection);
         emailFab = (FloatingActionButton) layout.findViewById(R.id.email_collection);
+        showMainList = (FloatingActionButton) layout.findViewById(R.id.show_main_collections);
+
         //set up onclick events on Fabs
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +96,15 @@ public class Collection extends Fragment {
             public void onClick(View view) {
                 EmailDialog emailDialog = new EmailDialog(getActivity());
                 emailDialog.show(getActivity().getSupportFragmentManager(), "Email an Entry");
+                FAM.close(true);
+            }
+        });
+
+        showMainList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SwitchMainCollectionDialog dialog = new SwitchMainCollectionDialog(getActivity(), main_list);
+                dialog.show(getActivity().getSupportFragmentManager(), "Show All Main Collections");
                 FAM.close(true);
             }
         });
@@ -132,18 +158,18 @@ public class Collection extends Fragment {
 
     }
 
-    private List<CollectionObj> getAdapterData() {
-        List<CollectionObj> result = null;
-        try {
-            result = CollectionObj.readAllCollections(getActivity(), current_mainCollection);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
+//    private List<CollectionObj> getAdapterData() {
+//        List<CollectionObj> result = null;
+//        try {
+//            result = CollectionObj.readAllCollections(getActivity(), current_mainCollection);
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return result;
+//    }
 
     public MainCollectionObj getCurrent_mainCollection() {
         return current_mainCollection;

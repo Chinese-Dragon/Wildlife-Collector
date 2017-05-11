@@ -7,11 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.drury.mcs.wildlife.R;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by mark93 on 2/10/2017.
@@ -125,7 +130,7 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
     }
 
 
-    class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnItemSelectedListener{
+    class tViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener{
         static final int DURATION = 250;
         TextView commonName;
         TextView scientificName;
@@ -157,6 +162,62 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
             quantity_rm = (EditText) itemView.findViewById(R.id.quantity_removed);
             band_number = (EditText) itemView.findViewById(R.id.band_num);
 
+            quantity.setOnEditorActionListener(this);
+            quantity_rm.setOnEditorActionListener(this);
+            band_number.setOnEditorActionListener(this);
+
+            quantity.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    if(editable.length() > 0) {
+                        quantity_captured = Integer.parseInt(editable.toString());
+
+                        if(quantity_captured < quantity_removed) {
+                            Message.showMessage(context, "Cannot remove more than captured");
+                        }
+
+                        data.get(getAdapterPosition()).setQuantity( quantity_captured );
+                        data.get(getAdapterPosition()).setNum_released( quantity_captured - quantity_removed);
+                    }
+                }
+            });
+
+            quantity_rm.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    if(editable.length() > 0) {
+                        quantity_removed = Integer.parseInt(editable.toString());
+
+                        if(quantity_captured < quantity_removed) {
+                            Message.showMessage(context, "Cannot remove more than captured");
+                        }
+                        data.get(getAdapterPosition()).setNum_removed( quantity_removed );
+                        data.get(getAdapterPosition()).setNum_released( quantity_captured - quantity_removed);
+
+                    }
+                }
+            });
+
             // detect edittext change and then change corresponding data
             band_number.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -172,10 +233,12 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                 @Override
                 public void afterTextChanged(Editable editable) {
                     if(editable.length() > 0) {
-                        data.get(getAdapterPosition()).setBand_num(band_number.getText().toString());
+                        data.get(getAdapterPosition()).setBand_num(editable.toString());
                     }
                 }
             });
+
+
 
             radioGroup = (RadioGroup) itemView.findViewById(R.id.radio_group);
             radioGroup2 = (RadioGroup) itemView.findViewById(R.id.radio_group_2);
@@ -220,12 +283,16 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
                 quantity_captured ++;
                 quantity.setText(Integer.toString(quantity_captured));
                 data.get(getAdapterPosition()).setQuantity(quantity_captured);
+                data.get(getAdapterPosition()).setNum_released(quantity_captured - quantity_removed);
 
             } else  if (view == decrease){
                 if(quantity_captured > 0 && quantity_captured > quantity_removed) {
                     quantity_captured --;
                     quantity.setText(Integer.toString(quantity_captured));
                     data.get(getAdapterPosition()).setQuantity(quantity_captured);
+                    data.get(getAdapterPosition()).setNum_released(quantity_captured - quantity_removed);
+                } else {
+                    Message.showMessage(context, "Cannot remove more than captured");
                 }
             } else if (view == rm_increase) {
                 if (quantity_removed < quantity_captured) {
@@ -287,6 +354,25 @@ public class tAdapter extends RecyclerView.Adapter<tAdapter.tViewHolder>{
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
 
+        }
+
+        @Override
+        public boolean onEditorAction(TextView textView, int action_id, KeyEvent keyEvent) {
+            if(action_id == EditorInfo.IME_ACTION_DONE) {
+
+                // before we close the soft keyboard, we detect if numer is valid
+                if(quantity_captured < quantity_removed) {
+                    Message.showMessage(context, "Cannot remove more than captured");
+                } else {
+                    // hide soft keyboard
+                    textView.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) ( context.getSystemService(INPUT_METHOD_SERVICE));
+                    imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                }
+
+                return true;
+            }
+            return false;
         }
     }
 

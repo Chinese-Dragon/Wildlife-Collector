@@ -1,11 +1,7 @@
 package edu.drury.mcs.wildlife.Activity;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,10 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import edu.drury.mcs.wildlife.DB.MainCollectionTable;
-import edu.drury.mcs.wildlife.DB.wildlifeDBHandler;
+import edu.drury.mcs.wildlife.DB.wildlifeDB;
 import edu.drury.mcs.wildlife.Fragment.AddDialog;
 import edu.drury.mcs.wildlife.Fragment.Collection;
 import edu.drury.mcs.wildlife.Fragment.CollectionSpecies;
@@ -31,15 +28,65 @@ import edu.drury.mcs.wildlife.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static final String CURRENT_EMAIL = "edu.drury.mcs.wildlife.CURRENT_EMAIL";
     public static final int RESULT_OK = 202;
+    private List<MainCollectionObj> mainCollectionList;
+    private MainCollectionObj currentMainCollection;
+    private Toolbar toolbar;
+
+    // need a sharepreference to store which current main collection is displaying
+    // store as mainCollection email
+    // when user swtich anther main collection, we change shared perefence to the corresping email
+    // when enter from splash screen, we initialize the fragment using the current main collection
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mainCollectionList = new ArrayList<>();
+        currentMainCollection = new MainCollectionObj();
+        // get extra to see if it comes from splash or main screen
+        String caller = getIntent().getStringExtra("caller");
+
+        if(Objects.equals(caller, "firstmaincollectionscreen")) {
+            Message.showMessage(this, "I am from main screen");
+
+            // get email and name from extra
+            String email = getIntent().getStringExtra("email");
+            String name = getIntent().getStringExtra("name");
+
+            currentMainCollection = new MainCollectionObj(name, email);
+            // create new main collection from intent and add to data list
+            mainCollectionList.add(currentMainCollection);
+
+            // change sharepreference so that main screen wont show up next time
+            SharedPreferences shared = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+            SharedPreferences.Editor editor = shared.edit();
+            editor.putBoolean(SplashScreen.CHECK_IF_NEED_SCREEN, false);
+            editor.apply();
+
+        } else if (Objects.equals(caller, "splash")){
+            Message.showMessage(this, "I am from splash");
+
+            // get maincollection data from sqlite and assign to data list
+            wildlifeDB wildlifeDB = new wildlifeDB(this);
+            mainCollectionList = wildlifeDB.getMainCollectionList();
+            wildlifeDB.closeDBConnection();
+
+            // set current main collection according to preference (sort it)
+            SharedPreferences sharedP = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+            String current_email = sharedP.getString(CURRENT_EMAIL, "");
+
+            for(MainCollectionObj mcObj: mainCollectionList) {
+                if(Objects.equals(mcObj.getEmail(), current_email)) {
+                    currentMainCollection = mcObj;
+                }
+            }
+        }
+
         //get toolbar referene from layout and setup toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // set up navigation drawer
@@ -54,68 +101,23 @@ public class MainActivity extends AppCompatActivity
 
 
         //initialize fragment
-        MainCollectionObj currentMainColellection = new MainCollectionObj("2017 Collection","yma004@drury.edu");
-        try {
-            new MainCollecton2DB(this,currentMainColellection).execute("create").get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        currentMainCollection.saveToDB(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.placeholder, Collection.newInstance(currentMainColellection),"collection_fragment")
+                .replace(R.id.placeholder, Collection.newInstance(currentMainCollection),"collection_fragment")
                 .commit();
 
+        getSupportActionBar().setTitle(currentMainCollection.getMain_collection_name());
+
+        // set the preference to the current main collection
+        SharedPreferences sharedP = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedP.edit();
+        editor.putString(CURRENT_EMAIL, currentMainCollection.getEmail());
+        editor.apply();
     }
 
-    private class MainCollecton2DB extends AsyncTask<String, Void, MainCollectionObj> {
-        private MainCollectionObj main_collection;
-        private SQLiteDatabase db;
-        private Context context;
-        public MainCollecton2DB(Context context, MainCollectionObj _main) {
-            this.main_collection = _main;
-            this.context =context;
-        }
-
-        @Override
-        protected MainCollectionObj doInBackground(String... params) {
-            String method = params[0];
-
-            switch (method) {
-                case "create":
-                    db = new wildlifeDBHandler(context).getWritableDatabase();
-
-                    String[] projections = {
-                            MainCollectionTable.MC_NAME
-                    };
-
-                    String selection = MainCollectionTable.MC_NAME + " = ?";
-                    String[] selectionArgs = {main_collection.getMain_collection_name()};
-
-                    Cursor cursor = db.query(
-                            MainCollectionTable.TABLE_NAME,
-                            projections,
-                            selection,
-                            selectionArgs,
-                            null,
-                            null,
-                            null
-                    );
-
-                    if(cursor.getCount() == 0){
-                        ContentValues values = new ContentValues();
-                        values.put(MainCollectionTable.MC_NAME, main_collection.getMain_collection_name());
-                        values.put(MainCollectionTable.MC_EMAIL, main_collection.getEmail());
-                        db.insert(MainCollectionTable.TABLE_NAME, null, values);
-                    }
-                    cursor.close();
-                    break;
-                default:
-                    break;
-            }
-
-            return null;
-        }
-
+    public List<MainCollectionObj> getMainCollectionList() {
+        return mainCollectionList;
     }
 
     @Override

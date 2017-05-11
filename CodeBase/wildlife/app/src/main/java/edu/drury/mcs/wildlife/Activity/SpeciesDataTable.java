@@ -14,10 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -42,6 +38,7 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
     private String method = "getSpecies";
     private FloatingActionButton voice_search;
     private SearchView searchView;
+    private Hashtable<String, SpeciesCollected> storedData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +47,9 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
 
         // get bundles
         currentSpecies = getIntent().getParcelableExtra(sAdapter.EXTRA_CURRENTSPECIES);
+        // store existing sc data in to table with common name as key
+        storedData = storeInHash(currentSpecies);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(currentSpecies.getCommonName());
@@ -101,36 +101,35 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
         return super.onOptionsItemSelected(item);
     }
 
-    private List<SpeciesCollected> getSpeciesData(String json_string, Species currentSpecies) {
-        List<SpeciesCollected> data = new ArrayList<SpeciesCollected>();
-        String common_name;
-        String scientific_name;
-        JSONObject a;
-        JSONArray jsonArray;
-        Hashtable<String, SpeciesCollected> storedData = storeInHash(currentSpecies);
-
-        try{
-            jsonArray = new JSONArray(json_string);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                a = jsonArray.getJSONObject(i);
-                scientific_name = a.getString("scientific_name");
-                common_name = a.getString("common_name");
-                SpeciesCollected s = new SpeciesCollected(scientific_name, common_name);
-
-                if(storedData.get(s.getCommonName()) != null) {
-                    // s is already is already collected and switch with ours
-                    s = storedData.get(s.getCommonName());
-                }
-
-                data.add(s);
-            }
-
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        return data;
-    }
+//    private List<SpeciesCollected> getSpeciesData(String json_string, Species currentSpecies) {
+//        List<SpeciesCollected> data = new ArrayList<SpeciesCollected>();
+//        String common_name;
+//        String scientific_name;
+//        JSONObject a;
+//        JSONArray jsonArray;
+//
+//        try{
+//            jsonArray = new JSONArray(json_string);
+//            for(int i = 0; i < jsonArray.length(); i++) {
+//                a = jsonArray.getJSONObject(i);
+//                scientific_name = a.getString("scientific_name");
+//                common_name = a.getString("common_name");
+//                SpeciesCollected s = new SpeciesCollected(scientific_name, common_name);
+//
+//                if(storedData.get(s.getCommonName()) != null) {
+//                    // s is already is already collected and switch with ours
+//                    s = storedData.get(s.getCommonName());
+//                }
+//
+//                data.add(s);
+//            }
+//
+//        } catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//
+//        return data;
+//    }
 
     // store collected species data into hashtable with common name as key
     private Hashtable<String, SpeciesCollected> storeInHash(Species currentSpecies) {
@@ -166,10 +165,24 @@ public class SpeciesDataTable extends AppCompatActivity implements AsyncTaskComp
     }
 
     @Override
-    public void onTaskComplete(String jsonm_result_string) {
-        data = getSpeciesData(jsonm_result_string, currentSpecies);
+    public void onTaskComplete(List<SpeciesCollected> animalData) {
+        data = filteredData(animalData, storedData);
         //initilze and setup recycler view
         tAdapter.swap(data);
+    }
+
+    private List<SpeciesCollected> filteredData(List<SpeciesCollected> animalData, Hashtable<String, SpeciesCollected> storedData) {
+        List<SpeciesCollected> filtered = new ArrayList<>();
+
+        for (SpeciesCollected sc : animalData) {
+            if(storedData.get(sc.getCommonName()) != null) {
+                filtered.add(storedData.get(sc.getCommonName()));
+            } else {
+                filtered.add(sc);
+            }
+        }
+
+        return filtered;
     }
 
     @Override

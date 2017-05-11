@@ -11,8 +11,10 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import edu.drury.mcs.wildlife.Activity.ViewAndUpdateCollectionEntry;
 import edu.drury.mcs.wildlife.JavaClass.Message;
@@ -28,10 +31,12 @@ import edu.drury.mcs.wildlife.JavaClass.OnDataReturnListener;
 import edu.drury.mcs.wildlife.JavaClass.SpeciesCollected;
 import edu.drury.mcs.wildlife.R;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class updateSCDialog extends DialogFragment implements View.OnClickListener{
+public class updateSCDialog extends DialogFragment implements View.OnClickListener, TextView.OnEditorActionListener{
 
     private SpeciesCollected data;
     private OnDataReturnListener returnListener;
@@ -93,8 +98,12 @@ public class updateSCDialog extends DialogFragment implements View.OnClickListen
         update = (Button) dialog_view.findViewById(R.id.update);
         cancel = (Button) dialog_view.findViewById(R.id.cancel);
 
-        // detect edittext change and then change corresponding data
-        band_number.addTextChangedListener(new TextWatcher() {
+        quantity.setOnEditorActionListener(this);
+        quantity_rm.setOnEditorActionListener(this);
+        band_number.setOnEditorActionListener(this);
+
+
+        quantity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -108,7 +117,26 @@ public class updateSCDialog extends DialogFragment implements View.OnClickListen
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > 0) {
-                    data.setBand_num(band_number.getText().toString());
+                    quantity_captured = Integer.parseInt(editable.toString());
+                }
+            }
+        });
+
+        quantity_rm.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length() > 0) {
+                    quantity_removed = Integer.parseInt(editable.toString());
                 }
             }
         });
@@ -167,40 +195,46 @@ public class updateSCDialog extends DialogFragment implements View.OnClickListen
     public void onClick(View view) {
         if (view == update) {
             // set updated value to currentSC
-            data.setQuantity(quantity_captured);
-            data.setNum_removed(quantity_removed);
-            data.setNum_released(quantity_captured - quantity_removed);
-            data.setBand_num(band_number.getText().toString());
 
-            switch (disposition_spinner.getSelectedItem().toString()) {
-                case "Released":
-                    data.setStatus(SpeciesCollected.Disposition.RELEASED);
-                    break;
-                case "Held In Captivity":
-                    data.setStatus(SpeciesCollected.Disposition.HELD);
-                    break;
-                case "Killed For Study Purpose":
-                    data.setStatus(SpeciesCollected.Disposition.KILLED);
-                    break;
-                default:
-                    break;
-            }
-
-            if(specimen_yes.isChecked()) {
-                data.setVoucher_specimen_retained(true);
+            if(quantity_captured < quantity_removed) {
+                Message.showMessage(context, "Cannot remove more than captured");
             } else {
-                data.setVoucher_specimen_retained(false);
+                data.setQuantity(quantity_captured);
+                data.setNum_removed(quantity_removed);
+                data.setNum_released(quantity_captured - quantity_removed);
+                data.setBand_num(band_number.getText().toString());
+
+                switch (disposition_spinner.getSelectedItem().toString()) {
+                    case "Released":
+                        data.setStatus(SpeciesCollected.Disposition.RELEASED);
+                        break;
+                    case "Held In Captivity":
+                        data.setStatus(SpeciesCollected.Disposition.HELD);
+                        break;
+                    case "Killed For Study Purpose":
+                        data.setStatus(SpeciesCollected.Disposition.KILLED);
+                        break;
+                    default:
+                        break;
+                }
+
+                if(specimen_yes.isChecked()) {
+                    data.setVoucher_specimen_retained(true);
+                } else {
+                    data.setVoucher_specimen_retained(false);
+                }
+
+                if(blood_yes.isChecked()) {
+                    data.setIs_blood_taken(true);
+                } else {
+                    data.setIs_blood_taken(false);
+                }
+
+                //pass our updated DATA back with group_id, and adapter position to update the view and data
+                returnListener.onDataReturn(data, group_id, adapterPosition);
+                updateSCDialog.this.getDialog().cancel();
             }
 
-            if(blood_yes.isChecked()) {
-                data.setIs_blood_taken(true);
-            } else {
-                data.setIs_blood_taken(false);
-            }
-
-            //pass our updated DATA back with group_id, and adapter position to update the view and data
-            returnListener.onDataReturn(data, group_id, adapterPosition);
-            updateSCDialog.this.getDialog().cancel();
         } else if (view == cancel) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -214,6 +248,8 @@ public class updateSCDialog extends DialogFragment implements View.OnClickListen
             if(quantity_captured > 0 && quantity_captured > quantity_removed) {
                 quantity_captured --;
                 quantity.setText(Integer.toString(quantity_captured));
+            } else {
+                Message.showMessage(context, "Cannot remove more than captured");
             }
 
         } else if (view == rm_increase) {
@@ -232,4 +268,16 @@ public class updateSCDialog extends DialogFragment implements View.OnClickListen
         }
     }
 
+    @Override
+    public boolean onEditorAction(TextView textView, int action_id, KeyEvent keyEvent) {
+        if(action_id == EditorInfo.IME_ACTION_DONE) {
+            // hide soft keyboard
+            textView.clearFocus();
+            InputMethodManager imm = (InputMethodManager) ( context.getSystemService(INPUT_METHOD_SERVICE));
+            imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+
+            return true;
+        }
+        return false;
+    }
 }

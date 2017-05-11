@@ -4,6 +4,8 @@ package edu.drury.mcs.wildlife.JavaClass;
  * Created by mark93 on 2/21/2017.
  */
 
+import java.util.List;
+
 /**
  * This is a useful callback mechanism so we can abstract our AsyncTasks out into separate, re-usable
  * and testable classes yet still retain a hook back into the calling activity. Basically, it'll make classes
@@ -16,5 +18,5 @@ public interface AsyncTaskCompleteListener<T> {
      * Invoked when the AsyncTask has completed its execution.
      * @param result The resulting object from the AsyncTask.
      */
-    public void onTaskComplete(T result);
+    public void onTaskComplete(List<SpeciesCollected> result);
 }

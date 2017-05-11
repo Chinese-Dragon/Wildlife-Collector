@@ -2,15 +2,20 @@ package edu.drury.mcs.wildlife.Activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.concurrent.ExecutionException;
 
 import edu.drury.mcs.wildlife.DB.syncDBTask;
+import edu.drury.mcs.wildlife.R;
 
 public class SplashScreen extends AppCompatActivity {
+    public static final String CHECK_IF_NEED_SCREEN = "edu.drury.mcs.wildlife.CHECK_IF_NEED_SCREEN";
+
     private AlertDialog needInternet;
+    private SharedPreferences sharePref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +38,21 @@ public class SplashScreen extends AppCompatActivity {
                         }
                     }
 
-                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    sharePref = getSharedPreferences(getString(R.string.preference_file_key),MODE_PRIVATE);
+                    boolean needScreen = sharePref.getBoolean(CHECK_IF_NEED_SCREEN, true);
+
+                    if(needScreen) {
+                        Intent intent = new Intent(SplashScreen.this, FirstMainCollectionPage.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                        intent.putExtra("caller", "splash");
+                        startActivity(intent);
+                        finish();
+                    }
+
+
 
                 }
             }
